@@ -6,7 +6,7 @@ import {
 } from './dates.js';
 import { deviceLabel } from './device.js';
 
-const VERSION = '1.0.4';
+const VERSION = '1.0.5';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -483,12 +483,13 @@ function openSettings() {
   </div>`;
   document.body.appendChild(wrap);
   const sheet = wrap.querySelector('.sheet');
+  const unlock = lockBackground(wrap);
   requestAnimationFrame(() => wrap.classList.add('open'));
 
   const close = () => {
     wrap.classList.remove('open');
     sheet.style.transform = '';
-    setTimeout(() => wrap.remove(), 220);
+    setTimeout(() => { wrap.remove(); unlock(); }, 220);
   };
   const snapBack = () => {
     sheet.style.transition = '';
@@ -549,6 +550,28 @@ function openSettings() {
       toast('저장했어요');
       close();
     } catch (e) { handleError(e); }
+  };
+}
+
+// 시트가 열려 있는 동안 뒤 화면이 같이 움직이지 않게 고정 (아이폰 스크롤 전달 방지)
+function lockBackground(layer) {
+  const y = window.scrollY;
+  const b = document.body.style;
+  const prev = { position: b.position, top: b.top, left: b.left, right: b.right, overflow: b.overflow };
+  Object.assign(b, { position: 'fixed', top: `-${y}px`, left: '0', right: '0', overflow: 'hidden' });
+  const canScroll = (el) => el && el.scrollHeight > el.clientHeight + 1;
+  const onMove = (e) => {
+    // 실제로 스크롤할 내용이 있는 칸(챕터 입력칸, 설정 내용) 안에서만 스크롤 허용
+    const ta = e.target.closest('textarea');
+    const body = e.target.closest('.sheet-body');
+    if (canScroll(ta) || canScroll(body)) return;
+    e.preventDefault();
+  };
+  layer.addEventListener('touchmove', onMove, { passive: false });
+  return () => {
+    layer.removeEventListener('touchmove', onMove);
+    Object.assign(b, prev);
+    window.scrollTo(0, y);
   };
 }
 

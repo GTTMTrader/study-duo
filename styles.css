@@ -265,6 +265,8 @@ button.check.on span { background: var(--me); border-color: var(--me); }
   display: flex; align-items: flex-end; justify-content: center; transition: background-color .22s;
 }
 .sheet-back.open { background: rgba(20, 26, 46, .38); }
+.sheet-back, .confirm-back { overscroll-behavior: none; touch-action: none; }
+.sheet-body, .sheet textarea { touch-action: pan-y; }
 .sheet {
   width: min(460px, 100%);
   height: min(calc(100dvh - 48px - var(--safe-t)), 820px);
