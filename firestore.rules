@@ -5,7 +5,7 @@ service cloud.firestore {
     // ▼▼▼ 여기 이메일 두 개를 너랑 친구 이메일로 바꾸기 (전부 소문자로) ▼▼▼
     function isMember() {
       return request.auth != null
-        && request.auth.token.email in ['bully@study.com', 'friend@study.com'];
+        && request.auth.token.email in ['hellin@study.com', 'moon@study.com'];
     }
     // ▲▲▲ 여기만 수정 ▲▲▲
 
