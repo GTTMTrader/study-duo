@@ -72,7 +72,7 @@ input, select, textarea { font: inherit; color: inherit; }
   width: 38px; height: 38px; border-radius: 50%; border: 1px solid #e2e7f0; background: #fff;
   display: flex; align-items: center; justify-content: center; color: var(--sub); flex: none;
 }
-.icon-btn svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .dday {
   background: #eef2ff; border: 1px solid var(--me-line); border-radius: 13px; padding: 5px 10px;
   text-align: center; line-height: 1.3; min-width: 62px;
@@ -262,7 +262,7 @@ button.check.on span { background: var(--me); border-color: var(--me); }
 /* ── 설정 시트 ── */
 .sheet-back { position: fixed; inset: 0; background: rgba(20, 26, 46, .38); z-index: 20; display: flex; align-items: flex-end; justify-content: center; }
 .sheet {
-  width: min(460px, 100%); max-height: 92dvh; overflow-y: auto; background: #fff; border-radius: 24px 24px 0 0;
+  width: min(460px, 100%); max-height: 92dvh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; background: #fff; border-radius: 24px 24px 0 0;
   padding: 10px 22px calc(24px + var(--safe-b));
 }
 .sheet .grab { width: 40px; height: 5px; border-radius: 3px; background: #dfe3ec; margin: 4px auto 14px; }
@@ -271,7 +271,11 @@ button.check.on span { background: var(--me); border-color: var(--me); }
 .sheet .hint { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
 .sheet textarea.field { height: 240px; padding: 12px 14px; font-size: 16px; line-height: 1.5; resize: vertical; font-family: ui-monospace, 'D2Coding', Consolas, monospace; }
 .sheet .two { display: flex; gap: 10px; }
-.sheet .two > div { flex: 1; }
+.sheet .two > div { flex: 1 1 0; min-width: 0; }
+/* 아이폰 날짜칸 최소너비 때문에 화면 밖으로 밀리는 것 방지 */
+.field { min-width: 0; max-width: 100%; display: block; }
+input[type='date'].field { -webkit-appearance: none; appearance: none; text-align: left; line-height: 50px; }
+input[type='date'].field::-webkit-date-and-time-value { text-align: left; }
 .btn-line { height: 48px; border-radius: 14px; border: 1px solid #e0e7f4 !important; color: var(--sub); font-weight: 800; width: 100%; margin-top: 10px; background: #fff; }
 .sheet .foot { font-size: 11px; color: var(--muted-2); text-align: center; margin-top: 16px; line-height: 1.6; }
 
