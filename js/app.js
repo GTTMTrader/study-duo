@@ -6,7 +6,7 @@ import {
 } from './dates.js';
 import { deviceLabel } from './device.js';
 
-const VERSION = '1.0.3';
+const VERSION = '1.0.4';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -461,8 +461,8 @@ function openSettings() {
   const wrap = document.createElement('div');
   wrap.className = 'sheet-back';
   wrap.innerHTML = `<div class="sheet" role="dialog" aria-label="설정">
-    <div class="grab"></div>
-    <h2>설정</h2>
+    <div class="sheet-head" id="sheet-drag"><div class="grab"></div><h2>설정</h2></div>
+    <div class="sheet-body">
     <label>내 이름 <span class="muted" style="font-weight:600">(친구 화면에 표시)</span></label>
     <input class="field" id="set-name" maxlength="10" placeholder="예: 불리" value="${esc(myName)}">
     <div class="two">
@@ -473,14 +473,66 @@ function openSettings() {
     <label>챕터 · 개념서 단원</label>
     <textarea class="field" id="set-chapters" spellcheck="false">${esc(chaptersToText(chapters()))}</textarea>
     <div class="hint">형식: <b>번호 | 챕터명 | 페이지</b>, 아래 줄에 <b>- 단원명</b>. 개념서 목차의 대단원 번호 순서대로 적어주세요.<br>⚠ 이미 체크한 단원은 '순서'로 기억돼요. 중간에 단원을 끼워 넣으면 체크가 밀릴 수 있어요.</div>
-    <button class="btn-block" style="width:100%;margin-top:18px" id="set-save">저장</button>
-    <button class="btn-line" id="set-close">닫기</button>
-    <button class="btn-line" id="set-logout" style="color:var(--fr-strong)">${isDemo ? '데모 데이터 초기화' : '로그아웃'}</button>
+    <button class="text-btn" id="set-logout">${isDemo ? '데모 데이터 초기화' : '로그아웃'}</button>
     <div class="foot">${isDemo ? '데모 모드 · 이 기기에만 저장돼요' : esc(S().user?.email || '')} · v${VERSION}<br>시험일·시작일·챕터는 두 사람이 같이 써요.</div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-line" id="set-close">닫기</button>
+      <button class="btn-block" id="set-save">저장</button>
+    </div>
   </div>`;
   document.body.appendChild(wrap);
-  const close = () => wrap.remove();
-  wrap.addEventListener('click', (e) => { if (e.target === wrap) close(); });
+  const sheet = wrap.querySelector('.sheet');
+  requestAnimationFrame(() => wrap.classList.add('open'));
+
+  const close = () => {
+    wrap.classList.remove('open');
+    sheet.style.transform = '';
+    setTimeout(() => wrap.remove(), 220);
+  };
+  const snapBack = () => {
+    sheet.style.transition = '';
+    sheet.style.transform = '';
+  };
+  const askClose = () => {
+    if (wrap.querySelector('.confirm-back')) return;
+    const c = document.createElement('div');
+    c.className = 'confirm-back';
+    c.innerHTML = `<div class="confirm-box" role="alertdialog" aria-label="닫기 확인">
+      <b>설정을 닫을까요?</b><p>저장하지 않은 내용은 사라져요.</p>
+      <div class="confirm-row"><button class="btn-line" data-c="no">아니오</button><button class="btn-block" data-c="yes">예</button></div></div>`;
+    wrap.appendChild(c);
+    c.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-c]');
+      if (!b && e.target !== c) return;
+      c.remove();
+      if (b?.dataset.c === 'yes') close();
+    });
+  };
+
+  // 위쪽 손잡이를 아래로 끌면 → 닫을지 물어봄
+  const handle = wrap.querySelector('#sheet-drag');
+  let startY = null, dy = 0;
+  handle.addEventListener('pointerdown', (e) => {
+    startY = e.clientY; dy = 0;
+    sheet.style.transition = 'none';
+    handle.setPointerCapture?.(e.pointerId);
+  });
+  handle.addEventListener('pointermove', (e) => {
+    if (startY == null) return;
+    dy = Math.max(0, e.clientY - startY);
+    sheet.style.transform = `translateY(${dy}px)`;
+  });
+  const endDrag = () => {
+    if (startY == null) return;
+    startY = null;
+    snapBack();
+    if (dy > 70) askClose();
+  };
+  handle.addEventListener('pointerup', endDrag);
+  handle.addEventListener('pointercancel', endDrag);
+
+  wrap.addEventListener('click', (e) => { if (e.target === wrap) askClose(); });
   wrap.querySelector('#set-close').onclick = close;
   wrap.querySelector('#set-logout').onclick = async () => { close(); await store.logout(); };
   wrap.querySelector('#set-save').onclick = async () => {

@@ -260,16 +260,40 @@ button.check.on span { background: var(--me); border-color: var(--me); }
 .boot { min-height: 100dvh; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; }
 
 /* ── 설정 시트 ── */
-.sheet-back { position: fixed; inset: 0; background: rgba(20, 26, 46, .38); z-index: 20; display: flex; align-items: flex-end; justify-content: center; }
-.sheet {
-  width: min(460px, 100%); max-height: 92dvh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; background: #fff; border-radius: 24px 24px 0 0;
-  padding: 10px 22px calc(24px + var(--safe-b));
+.sheet-back {
+  position: fixed; inset: 0; background: rgba(20, 26, 46, 0); z-index: 20;
+  display: flex; align-items: flex-end; justify-content: center; transition: background-color .22s;
 }
-.sheet .grab { width: 40px; height: 5px; border-radius: 3px; background: #dfe3ec; margin: 4px auto 14px; }
-.sheet h2 { font-size: 20px; margin: 0 0 14px; letter-spacing: -.6px; }
+.sheet-back.open { background: rgba(20, 26, 46, .38); }
+.sheet {
+  width: min(460px, 100%);
+  height: min(calc(100dvh - 48px - var(--safe-t)), 820px);
+  display: flex; flex-direction: column; overflow: hidden;
+  background: #fff; border-radius: 24px 24px 0 0;
+  transform: translateY(100%); transition: transform .22s ease-out;
+}
+.sheet-back.open .sheet { transform: translateY(0); }
+.sheet-head { padding: 10px 22px 6px; touch-action: none; cursor: grab; flex: none; user-select: none; -webkit-user-select: none; }
+.sheet-head .grab { width: 44px; height: 5px; border-radius: 3px; background: #d5dae5; margin: 4px auto 14px; }
+.sheet h2 { font-size: 20px; margin: 0; letter-spacing: -.6px; }
+.sheet-body {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch; padding: 0 22px 14px; display: flex; flex-direction: column;
+}
+.sheet-body > *:not(textarea) { flex-shrink: 0; }
+.sheet-body .field:not(textarea) { height: 52px; }
+.sheet-foot {
+  flex: none; display: flex; gap: 10px; padding: 12px 22px calc(12px + var(--safe-b));
+  border-top: 1px solid var(--line-2); background: #fff;
+}
+.sheet-foot .btn-line, .sheet-foot .btn-block { flex: 1; height: 52px; margin: 0; }
 .sheet label { display: block; font-size: 12px; font-weight: 800; color: var(--sub); margin: 16px 0 7px; }
 .sheet .hint { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
-.sheet textarea.field { height: 240px; padding: 12px 14px; font-size: 16px; line-height: 1.5; resize: vertical; font-family: ui-monospace, 'D2Coding', Consolas, monospace; }
+/* 챕터 입력칸이 남는 높이를 채움 → 아래 버튼이 화면에 딱 맞게 */
+.sheet textarea.field {
+  flex: 1 1 auto; height: auto; min-height: 150px; padding: 12px 14px; font-size: 16px; line-height: 1.5;
+  resize: none; font-family: ui-monospace, 'D2Coding', Consolas, monospace;
+}
 .sheet .two { display: flex; gap: 10px; }
 .sheet .two > div { flex: 1 1 0; min-width: 0; }
 /* 아이폰 날짜칸 최소너비 때문에 화면 밖으로 밀리는 것 방지 */
@@ -277,7 +301,17 @@ button.check.on span { background: var(--me); border-color: var(--me); }
 input[type='date'].field { -webkit-appearance: none; appearance: none; text-align: left; line-height: 50px; }
 input[type='date'].field::-webkit-date-and-time-value { text-align: left; }
 .btn-line { height: 48px; border-radius: 14px; border: 1px solid #e0e7f4 !important; color: var(--sub); font-weight: 800; width: 100%; margin-top: 10px; background: #fff; }
-.sheet .foot { font-size: 11px; color: var(--muted-2); text-align: center; margin-top: 16px; line-height: 1.6; }
+.text-btn { margin: 16px auto 0; color: var(--fr-strong); font-size: 13px; font-weight: 800; padding: 6px 10px; }
+.sheet .foot { font-size: 11px; color: var(--muted-2); text-align: center; margin-top: 8px; line-height: 1.6; }
+
+/* 닫기 확인 창 */
+.confirm-back { position: fixed; inset: 0; z-index: 25; background: rgba(20, 26, 46, .28); display: flex; align-items: center; justify-content: center; padding: 24px; }
+.confirm-box { width: min(320px, 100%); background: #fff; border-radius: 20px; padding: 22px 20px 18px; text-align: center; box-shadow: 0 16px 40px rgba(20, 26, 46, .2); animation: popIn .18s ease-out; }
+@keyframes popIn { from { opacity: 0; transform: scale(.96); } }
+.confirm-box b { font-size: 17px; letter-spacing: -.4px; }
+.confirm-box p { margin: 8px 0 18px; font-size: 13px; color: var(--muted); }
+.confirm-row { display: flex; gap: 10px; }
+.confirm-row button { flex: 1; height: 48px; margin: 0; }
 
 /* ── 토스트 ── */
 .toast {
