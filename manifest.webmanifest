@@ -1,0 +1,17 @@
+{
+  "name": "우리의 공부",
+  "short_name": "우리의 공부",
+  "description": "스포츠영양코치 2인 스터디 · 공부시간 대결",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fbfcff",
+  "theme_color": "#fbfcff",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

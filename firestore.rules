@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ▼▼▼ 여기 이메일 두 개를 너랑 친구 이메일로 바꾸기 (전부 소문자로) ▼▼▼
+    function isMember() {
+      return request.auth != null
+        && request.auth.token.email in ['bully@study.com', 'friend@study.com'];
+    }
+    // ▲▲▲ 여기만 수정 ▲▲▲
+
+    function isSelf(uid) {
+      return isMember() && request.auth.uid == uid;
+    }
+
+    match /rooms/{roomId} {
+      // 시험일·시작일·챕터: 둘 다 읽고 고칠 수 있음
+      allow read, write: if isMember();
+
+      // 이름: 내 것만 수정
+      match /members/{uid} {
+        allow read: if isMember();
+        allow write: if isSelf(uid);
+      }
+
+      // 진행 중 타이머: 내 것만 수정
+      match /active/{uid} {
+        allow read: if isMember();
+        allow write: if isSelf(uid);
+      }
+
+      // 진도 체크: 내 것만 수정
+      match /progress/{uid} {
+        allow read: if isMember();
+        allow write: if isSelf(uid);
+      }
+
+      // 공부 기록: 둘 다 읽기, 내 기록만 만들기/지우기
+      match /sessions/{sessionId} {
+        allow read: if isMember();
+        allow create: if isMember()
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.durationSec is number
+          && request.resource.data.durationSec >= 0
+          && request.resource.data.durationSec < 86400;
+        allow update: if isMember()
+          && resource.data.uid == request.auth.uid
+          && request.resource.data.uid == request.auth.uid;
+        allow delete: if isMember() && resource.data.uid == request.auth.uid;
+      }
+    }
+  }
+}
