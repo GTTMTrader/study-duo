@@ -31,7 +31,10 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--outside); color: var(--ink); }
+html, body { margin: 0; background: var(--outside); color: var(--ink); overflow-x: hidden; overscroll-behavior-x: none; }
+/* 위아래 스크롤만 허용 (가로 밀림·확대 방지) */
+html, body { touch-action: pan-y; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.week-scroll { touch-action: pan-x pan-y; }
 button { font: inherit; color: inherit; border: 0; background: none; padding: 0; cursor: pointer; }
 input, select, textarea { font: inherit; color: inherit; }
 
@@ -40,6 +43,7 @@ input, select, textarea { font: inherit; color: inherit; }
   max-width: 460px;
   min-height: 100dvh;
   margin: 0 auto;
+  overflow-x: hidden;
   background: var(--bg-home);
   transition: background-color .25s;
 }
@@ -248,7 +252,7 @@ button.check.on span { background: var(--me); border-color: var(--me); }
 .login { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding: 30px 26px calc(30px + var(--safe-b)); }
 .login .app-title { font-size: 34px; }
 .login form { margin-top: 34px; display: flex; flex-direction: column; gap: 10px; }
-.field { width: 100%; height: 52px; border: 1px solid var(--me-line); border-radius: 14px; padding: 0 16px; background: #fff; font-size: 15px; outline: none; }
+.field { width: 100%; height: 52px; border: 1px solid var(--me-line); border-radius: 14px; padding: 0 16px; background: #fff; font-size: 16px; outline: none; }
 .field:focus { border-color: var(--me); box-shadow: 0 0 0 3px #e3eaff; }
 .btn-block { height: 54px; border-radius: 15px; background: var(--me-strong); color: #fff; font-weight: 900; font-size: 15px; margin-top: 6px; }
 .btn-block:disabled { opacity: .6; }
@@ -265,7 +269,7 @@ button.check.on span { background: var(--me); border-color: var(--me); }
 .sheet h2 { font-size: 20px; margin: 0 0 14px; letter-spacing: -.6px; }
 .sheet label { display: block; font-size: 12px; font-weight: 800; color: var(--sub); margin: 16px 0 7px; }
 .sheet .hint { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
-.sheet textarea.field { height: 240px; padding: 12px 14px; font-size: 13px; line-height: 1.55; resize: vertical; font-family: ui-monospace, 'D2Coding', Consolas, monospace; }
+.sheet textarea.field { height: 240px; padding: 12px 14px; font-size: 16px; line-height: 1.5; resize: vertical; font-family: ui-monospace, 'D2Coding', Consolas, monospace; }
 .sheet .two { display: flex; gap: 10px; }
 .sheet .two > div { flex: 1; }
 .btn-line { height: 48px; border-radius: 14px; border: 1px solid #e0e7f4 !important; color: var(--sub); font-weight: 800; width: 100%; margin-top: 10px; background: #fff; }

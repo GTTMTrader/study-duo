@@ -1,21 +1,21 @@
 // 오프라인에서도 앱이 열리게 하는 서비스워커.
 // 앱 파일은 '인터넷 먼저 → 안 되면 저장본', 글꼴·Firebase 라이브러리는 '저장본 먼저'.
 // 앱을 고쳐서 다시 올릴 때 VERSION 숫자를 올리면 됨.
-const VERSION = 'v1.0.0';
+const VERSION = 'v1.0.1';
 const CACHE = `studyduo-${VERSION}`;
 const SHELL = [
   './',
   './index.html',
-  './styles.css?v=1.0.0',
-  './js/app.js?v=1.0.0',
+  './styles.css?v=1.0.1',
+  './js/app.js?v=1.0.1',
   './js/config.js',
   './js/dates.js',
   './js/defaults.js',
   './js/device.js',
   './js/store-firebase.js',
   './js/store-demo.js',
-  './manifest.webmanifest',
-  './icons/icon-192.png',
+  './manifest.webmanifest?v=2',
+  './icons/icon-192.png?v=2',
 ];
 
 self.addEventListener('install', (e) => {
