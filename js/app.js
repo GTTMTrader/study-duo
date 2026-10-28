@@ -6,7 +6,7 @@ import {
 } from './dates.js';
 import { deviceLabel } from './device.js';
 
-const VERSION = '1.0.5';
+const VERSION = '1.0.6';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -484,6 +484,22 @@ function openSettings() {
   document.body.appendChild(wrap);
   const sheet = wrap.querySelector('.sheet');
   const unlock = lockBackground(wrap);
+
+  // 챕터 입력칸: 누르고 위아래로 쓸면 내용이 스크롤 (편집 중이 아닐 때는 직접 스크롤 처리)
+  const ta = wrap.querySelector('#set-chapters');
+  let ty = null;
+  ta.addEventListener('touchstart', (e) => {
+    ty = document.activeElement === ta ? null : e.touches[0].clientY;
+  }, { passive: true });
+  ta.addEventListener('touchmove', (e) => {
+    if (ty == null) return; // 편집 중이면 아이폰 기본 동작
+    const y = e.touches[0].clientY;
+    ta.scrollTop += ty - y;
+    ty = y;
+    e.preventDefault();
+    e.stopPropagation();
+  }, { passive: false });
+  ta.addEventListener('touchend', () => { ty = null; });
   requestAnimationFrame(() => wrap.classList.add('open'));
 
   const close = () => {
@@ -564,7 +580,7 @@ function lockBackground(layer) {
     // 실제로 스크롤할 내용이 있는 칸(챕터 입력칸, 설정 내용) 안에서만 스크롤 허용
     const ta = e.target.closest('textarea');
     const body = e.target.closest('.sheet-body');
-    if (canScroll(ta) || canScroll(body)) return;
+    if ((ta && document.activeElement === ta && canScroll(ta)) || canScroll(body)) return;
     e.preventDefault();
   };
   layer.addEventListener('touchmove', onMove, { passive: false });
@@ -811,6 +827,22 @@ window.addEventListener('hashchange', () => {
   const t = location.hash.slice(1);
   if (['home', 'timer', 'progress', 'stats'].includes(t) && t !== ui.tab) { ui.tab = t; window.scrollTo(0, 0); render(); }
 });
+
+// 새 버전이 올라오면 자동으로 새로고침 (GitHub Pages 캐시 때문에 늦게 반영되는 것 방지)
+async function checkUpdate() {
+  try {
+    const r = await fetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });
+    const v = (await r.json()).version;
+    if (!v || v === VERSION) return;
+    if (document.querySelector('.sheet-back')) return; // 설정 편집 중엔 건드리지 않음
+    const key = `studyduo-reloaded-${v}`;
+    if (sessionStorage.getItem(key)) return; // 무한 새로고침 방지
+    sessionStorage.setItem(key, '1');
+    location.reload();
+  } catch (e) {}
+}
+checkUpdate();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkUpdate(); });
 
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
