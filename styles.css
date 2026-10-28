@@ -176,6 +176,11 @@ input, select, textarea { font: inherit; color: inherit; }
 .separator { height: 1px; background: var(--line-2); margin: 16px 0 4px; }
 .session { display: grid; grid-template-columns: 1.3fr 1fr .7fr; gap: 6px; align-items: center; padding-top: 13px; font-size: 12.5px; color: var(--sub); }
 .session b { text-align: right; font-size: 13px; color: var(--ink-2); }
+button.session { width: 100%; text-align: left; grid-template-columns: 1.3fr 1fr .7fr 14px; border-radius: 10px; padding-bottom: 2px; }
+button.session:active, .recent-item.editable:active { background: #f5f7fd; }
+.chev-r { font-style: normal; color: #b4bccb; font-size: 18px; line-height: 1; text-align: right; }
+.recent-item.editable { cursor: pointer; }
+.hint-row { font-size: 11px; color: var(--muted-2); text-align: center; margin-top: 12px; }
 .quiet { text-align: center; font-size: 11.5px; color: var(--muted-2); margin-top: 16px; }
 
 /* ── 진도 ── */
@@ -300,8 +305,8 @@ button.check.on span { background: var(--me); border-color: var(--me); }
 .sheet .two > div { flex: 1 1 0; min-width: 0; }
 /* 아이폰 날짜칸 최소너비 때문에 화면 밖으로 밀리는 것 방지 */
 .field { min-width: 0; max-width: 100%; display: block; }
-input[type='date'].field { -webkit-appearance: none; appearance: none; text-align: left; line-height: 50px; }
-input[type='date'].field::-webkit-date-and-time-value { text-align: left; }
+input[type='date'].field, input[type='time'].field { -webkit-appearance: none; appearance: none; text-align: left; line-height: 50px; }
+input[type='date'].field::-webkit-date-and-time-value, input[type='time'].field::-webkit-date-and-time-value { text-align: left; }
 .btn-line { height: 48px; border-radius: 14px; border: 1px solid #e0e7f4 !important; color: var(--sub); font-weight: 800; width: 100%; margin-top: 10px; background: #fff; }
 .text-btn { margin: 16px auto 0; color: var(--fr-strong); font-size: 13px; font-weight: 800; padding: 6px 10px; }
 .sheet .foot { font-size: 11px; color: var(--muted-2); text-align: center; margin-top: 8px; line-height: 1.6; }
@@ -314,6 +319,21 @@ input[type='date'].field::-webkit-date-and-time-value { text-align: left; }
 .confirm-box p { margin: 8px 0 18px; font-size: 13px; color: var(--muted); }
 .confirm-row { display: flex; gap: 10px; }
 .confirm-row button { flex: 1; height: 48px; margin: 0; }
+.btn-block.danger { background: var(--fr-strong); }
+.edit-box { text-align: left; width: min(360px, 100%); max-height: calc(100dvh - 48px); overflow-y: auto; }
+.edit-box > b, .edit-box > p { display: block; text-align: center; }
+.edit-box p { margin: 6px 0 14px; }
+.edit-box label { display: block; font-size: 12px; font-weight: 800; color: var(--sub); margin: 14px 0 6px; }
+.edit-box .two { display: flex; gap: 10px; }
+.edit-box .two > div { flex: 1 1 0; min-width: 0; }
+.edit-box .field { height: 50px; }
+.edit-box .hint { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.edit-box .text-btn { display: block; }
+.types.small { margin-top: 0; }
+.types.small button { padding: 9px 0; }
+.min-row { display: flex; align-items: center; gap: 8px; }
+.min-row .field { flex: 1; }
+.min-row span { font-weight: 800; color: var(--sub); }
 
 /* ── 토스트 ── */
 .toast {

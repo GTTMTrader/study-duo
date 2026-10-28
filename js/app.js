@@ -6,7 +6,7 @@ import {
 } from './dates.js';
 import { deviceLabel } from './device.js';
 
-const VERSION = '1.0.7';
+const VERSION = '1.0.8';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -52,6 +52,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const S = () => store.state;
 const meId = () => S().user?.uid;
 const friendId = () => Object.keys(S().members || {}).find((k) => k !== meId()) || null;
+const myName = () => S().members?.[meId()]?.name || '나';
 const friendName = () => {
   const f = friendId();
   return (f && S().members[f]?.name) || '친구';
@@ -221,7 +222,7 @@ function renderHome() {
   <div class="duel">
     <div class="row" style="margin-bottom:14px"><span class="eyebrow">THIS WEEK'S RACE</span><span class="pill">주간 대결</span></div>
     <div class="row" style="align-items:flex-end">
-      <div><div class="who"><span class="dot me"></span>나${leader === 'me' ? ' <span>🏅</span>' : ''} ${liveTag(me, 'me')}</div>${scoreHTML(myW)}</div>
+      <div><div class="who"><span class="dot me"></span>${esc(myName())}${leader === 'me' ? ' <span>🏅</span>' : ''} ${liveTag(me, 'me')}</div>${scoreHTML(myW)}</div>
       <div style="text-align:right"><div class="who" style="justify-content:flex-end">${liveTag(fr, 'fr')} <span class="dot fr"></span>${esc(friendName())}${leader === 'fr' ? ' <span>🏅</span>' : ''}</div>${scoreHTML(frW)}</div>
     </div>
     <div class="race-track">${total ? `<div style="background:#4268ef;width:${myPct}%"></div><div style="background:var(--fr-bar);width:${100 - myPct}%"></div>` : '<div style="width:100%;background:#e6e9f0"></div>'}</div>
@@ -230,7 +231,7 @@ function renderHome() {
   ${!fr ? `<div class="empty-note" style="margin-top:10px;text-align:center">${isDemo ? '' : '친구가 아직 한 번도 로그인하지 않았어요.'}</div>` : ''}
   <div class="row sec-row"><span class="section-label">오늘은 얼마나 했을까?</span><span class="muted mini">${dateLabel(today)}</span></div>
   <div class="todayrow">
-    <div><div class="mini muted">나</div><div class="todaytime c-me">${smallHM(myT)}</div></div>
+    <div><div class="mini muted">${esc(myName())}</div><div class="todaytime c-me">${smallHM(myT)}</div></div>
     <div class="vline"></div>
     <div><div class="mini muted">${esc(friendName())}</div><div class="todaytime c-fr">${smallHM(frT)}</div></div>
   </div>
@@ -241,7 +242,7 @@ function renderHome() {
 
 function goalCard(title, sub, a, b, n) {
   return `<div class="card" style="padding:17px 18px"><div class="row"><span class="strong" style="font-size:14px">${title}</span><span class="mini muted">${sub}</span></div>
-    <div class="goal-line" style="margin-top:15px"><div class="lbl c-me">나</div><div class="progress-track" style="flex:1"><div class="progress-fill" style="width:${(a / n) * 100}%;background:var(--me)"></div></div><span class="mini strong">${a} / ${n}</span></div>
+    <div class="goal-line" style="margin-top:15px"><div class="lbl c-me">${esc(myName())}</div><div class="progress-track" style="flex:1"><div class="progress-fill" style="width:${(a / n) * 100}%;background:var(--me)"></div></div><span class="mini strong">${a} / ${n}</span></div>
     <div class="goal-line" style="margin-top:11px"><div class="lbl c-fr">${esc(friendName())}</div><div class="progress-track" style="flex:1"><div class="progress-fill" style="width:${(b / n) * 100}%;background:var(--fr)"></div></div><span class="mini strong">${b} / ${n}</span></div></div>`;
 }
 
@@ -288,7 +289,7 @@ function renderTimer() {
     : `오늘의 ${ordinal(nth)} 집중 세션${a.device && a.device !== deviceLabel() ? ` · ${esc(a.device)}에서 시작` : ''}`;
 
   const list = mineToday.length
-    ? mineToday.map((s) => `<div class="session"><span style="color:#8991a3">${kstHHMM(s.startAt)}–${kstHHMM(s.endAt)}</span><span>${esc(s.type)}</span><b>${hmText(s.durationSec)}</b></div>`).join('')
+    ? mineToday.map((s) => `<button class="session editable" data-action="edit-session" data-id="${esc(s.id)}"><span style="color:#8991a3">${kstHHMM(s.startAt)}–${kstHHMM(s.endAt)}</span><span>${esc(s.type)}</span><b>${hmText(s.durationSec)}</b><i class="chev-r">›</i></button>`).join('') + `<div class="hint-row">기록을 누르면 시간 수정·삭제할 수 있어요</div>`
     : `<div class="empty-note" style="padding-top:12px">아직 저장된 세션이 없어요.</div>`;
 
   return `
@@ -335,8 +336,8 @@ function renderProgress() {
     const mine = S().progress[me]?.concept?.[ch.no] || [];
     const theirs = S().progress[fr]?.concept?.[ch.no] || [];
     body = n
-      ? `<div class="mini-progress"><div><span class="c-me">● 나</span><b>${conceptDone(me, ch.no)} / ${n}</b></div><div><span class="c-fr">● ${esc(friendName())}</span><b>${conceptDone(fr, ch.no)} / ${n}</b></div></div>
-        <div class="listhead"><span>학습 항목</span><span>나</span><span>${esc(friendName().slice(0, 3))}</span></div>
+      ? `<div class="mini-progress"><div><span class="c-me">● ${esc(myName())}</span><b>${conceptDone(me, ch.no)} / ${n}</b></div><div><span class="c-fr">● ${esc(friendName())}</span><b>${conceptDone(fr, ch.no)} / ${n}</b></div></div>
+        <div class="listhead"><span>학습 항목</span><span>${esc(myName().slice(0, 3))}</span><span>${esc(friendName().slice(0, 3))}</span></div>
         ${ch.topics.map((t, i) => `<div class="topic"><div><span class="num">${i + 1}.</span>${esc(t)}</div>
           <button class="check ${mine.includes(i) ? 'on' : ''}" data-action="p-concept" data-i="${i}" aria-label="${esc(t)} 완료">${`<span>${mine.includes(i) ? ICONS.check : ''}</span>`}</button>
           <span class="check fr ${theirs.includes(i) ? 'on' : ''}">${theirs.includes(i) ? ICONS.check : ''}</span></div>`).join('')}`
@@ -348,8 +349,8 @@ function renderProgress() {
     const row = (key, label) => `<div class="topic"><div>${label}</div>
       <button class="check ${mw[key] ? 'on' : ''}" data-action="p-wb" data-key="${key}" aria-label="${label}"><span>${mw[key] ? ICONS.check : ''}</span></button>
       <span class="check fr ${fw[key] ? 'on' : ''}">${fw[key] ? ICONS.check : ''}</span></div>`;
-    body = `<div class="mini-progress"><div><span class="c-me">● 나</span><b>${cnt(mw)} / 2</b></div><div><span class="c-fr">● ${esc(friendName())}</span><b>${cnt(fw)} / 2</b></div></div>
-      <div class="listhead"><span>문제집</span><span>나</span><span>${esc(friendName().slice(0, 3))}</span></div>
+    body = `<div class="mini-progress"><div><span class="c-me">● ${esc(myName())}</span><b>${cnt(mw)} / 2</b></div><div><span class="c-fr">● ${esc(friendName())}</span><b>${cnt(fw)} / 2</b></div></div>
+      <div class="listhead"><span>문제집</span><span>${esc(myName().slice(0, 3))}</span><span>${esc(friendName().slice(0, 3))}</span></div>
       ${row('solved', '풀이 완료')}${row('wrong', '오답 정리')}
       <div class="practice-hint"><b>문제집은 간단하게.</b><span>풀이 완료 · 오답 정리 완료만 체크</span></div>`;
   }
@@ -429,9 +430,9 @@ function renderStats() {
   <div class="time-tabs">${[['today', '오늘'], ['week', '이번 주'], ['all', '전체']].map(([k, l]) => `<button class="${ui.statsRange === k ? 'active' : ''}" data-action="s-range" data-range="${k}">${l}</button>`).join('')}</div>
   <div class="recordcard" style="margin-top:18px">
     <div class="row"><span class="strong" style="font-size:15px">${title}</span><span class="mini muted">${rangeNote}</span></div>
-    <div class="statpair"><div><span class="mini c-me">● 나</span><strong>${smallHM(myT)}</strong></div><div><span class="mini c-fr">● ${esc(friendName())}</span><strong>${smallHM(frT)}</strong></div></div>
+    <div class="statpair"><div><span class="mini c-me">● ${esc(myName())}</span><strong>${smallHM(myT)}</strong></div><div><span class="mini c-fr">● ${esc(friendName())}</span><strong>${smallHM(frT)}</strong></div></div>
     ${chart}
-    <div class="chartlegend"><span class="c-me">● 나</span><span style="color:var(--fr-bar)">● ${esc(friendName())}</span></div>
+    <div class="chartlegend"><span class="c-me">● ${esc(myName())}</span><span style="color:var(--fr-bar)">● ${esc(friendName())}</span></div>
   </div>
   <div class="recordcard" style="margin-top:14px">
     <div class="row"><span class="section-label">나의 공부 구성</span><span class="mini muted">총 ${hmText(compTotal)}</span></div>
@@ -442,7 +443,7 @@ function renderStats() {
   <div class="recent">${shownRecents.length ? shownRecents.map((s) => {
       const c = chapterByNo(s.chapter);
       const mine = s.uid === me;
-      return `<div class="recent-item"><span class="dot ${mine ? 'me' : 'fr'}"></span><div class="grow"><b>${esc(s.type)} · ${esc(c?.title || '')}</b><div class="mini muted">${mine ? '' : esc(friendName()) + ' · '}${dateLabel(s.dateKST).replace(/ \(.\)/, '')} · ${kstHHMM(s.startAt)}–${kstHHMM(s.endAt)}</div></div><b>${hmText(s.durationSec)}</b>${mine ? `<button class="del" data-action="s-del" data-id="${esc(s.id)}" aria-label="삭제">×</button>` : '<span style="width:20px"></span>'}</div>`;
+      return `<div class="recent-item ${mine ? 'editable' : ''}" ${mine ? `data-action="edit-session" data-id="${esc(s.id)}"` : ''}><span class="dot ${mine ? 'me' : 'fr'}"></span><div class="grow"><b>${esc(s.type)} · ${esc(c?.title || '')}</b><div class="mini muted">${mine ? '' : esc(friendName()) + ' · '}${dateLabel(s.dateKST).replace(/ \(.\)/, '')} · ${kstHHMM(s.startAt)}–${kstHHMM(s.endAt)}</div></div><b>${hmText(s.durationSec)}</b>${mine ? '<i class="chev-r">›</i>' : '<span style="width:14px"></span>'}</div>`;
     }).join('') : '<div class="empty-note" style="padding:14px 0">아직 기록이 없어요.</div>'}</div>`;
 }
 
@@ -451,7 +452,7 @@ function barChart(cols, narrow = false) {
   // 보기 좋은 상한(30분 단위)
   const top = Math.ceil(max / 1800) * 1800;
   const h = (v) => (v > 0 ? Math.max(3, (v / top) * 120) : 0);
-  return `<div class="chart"><div class="chart-grid"></div>${cols.map((c) => `<div class="barcol ${c.today ? 'today' : ''}"><div class="barpair"><div style="height:${h(c.a)}px;background:var(--me)${narrow && cols.length > 9 ? ';width:8px' : ''}" title="나 ${hmText(c.a)}"></div><div style="height:${h(c.b)}px;background:var(--fr-bar)${narrow && cols.length > 9 ? ';width:8px' : ''}" title="${esc(friendName())} ${hmText(c.b)}"></div></div><span>${c.label}</span></div>`).join('')}</div>`;
+  return `<div class="chart"><div class="chart-grid"></div>${cols.map((c) => `<div class="barcol ${c.today ? 'today' : ''}"><div class="barpair"><div style="height:${h(c.a)}px;background:var(--me)${narrow && cols.length > 9 ? ';width:8px' : ''}" title="${esc(myName())} ${hmText(c.a)}"></div><div style="height:${h(c.b)}px;background:var(--fr-bar)${narrow && cols.length > 9 ? ';width:8px' : ''}" title="${esc(friendName())} ${hmText(c.b)}"></div></div><span>${c.label}</span></div>`).join('')}</div>`;
 }
 
 // ───────────────── 설정 시트 ─────────────────
@@ -589,6 +590,87 @@ function openSettings() {
       close();
     } catch (e) { handleError(e); }
   };
+}
+
+// ───────────────── 기록 수정/삭제 ─────────────────
+function kstMs(date, hhmm) {
+  return Date.parse(`${date}T${hhmm}:00+09:00`);
+}
+function openSessionEditor(id) {
+  const s = S().sessions.find((x) => x.id === id && x.uid === meId());
+  if (!s) return;
+  const ch = chapterByNo(s.chapter);
+  let type = s.type;
+  const wrap = document.createElement('div');
+  wrap.className = 'confirm-back';
+  const unlock = lockBackground(wrap);
+  const close = () => { wrap.remove(); unlock(); };
+
+  const formHTML = () => `<div class="confirm-box edit-box" role="dialog" aria-label="기록 수정">
+    <b>기록 수정</b>
+    <p>${dateLabel(s.dateKST)} · ${esc(ch?.title || '')}</p>
+    <div class="types small">${TYPES.map((t) => `<button class="${t === type ? 'selected' : ''}" data-type="${t}">${t}</button>`).join('')}</div>
+    <div class="two">
+      <div><label>시작</label><input class="field" type="time" id="e-start" value="${kstHHMM(s.startAt)}"></div>
+      <div><label>종료</label><input class="field" type="time" id="e-end" value="${kstHHMM(s.endAt)}"></div>
+    </div>
+    <label>공부한 시간</label>
+    <div class="min-row"><input class="field" type="number" inputmode="numeric" min="1" max="1440" id="e-min" value="${Math.round(s.durationSec / 60)}"><span>분</span></div>
+    <div class="hint">시작·종료를 바꾸면 자동 계산돼요. 중간에 쉰 시간은 빼고 직접 고쳐도 돼요.</div>
+    <div class="confirm-row" style="margin-top:16px"><button class="btn-line" data-e="cancel">취소</button><button class="btn-block" data-e="save">저장</button></div>
+    <button class="text-btn" data-e="delete">이 기록 삭제</button>
+  </div>`;
+  const askDeleteHTML = `<div class="confirm-box" role="alertdialog">
+    <b>이 기록을 삭제할까요?</b><p>친구 화면에서도 사라지고 되돌릴 수 없어요.</p>
+    <div class="confirm-row"><button class="btn-line" data-e="back">아니오</button><button class="btn-block danger" data-e="really-delete">삭제</button></div></div>`;
+
+  const span = () => {
+    const st = wrap.querySelector('#e-start').value, en = wrap.querySelector('#e-end').value;
+    if (!st || !en) return null;
+    const a = kstMs(s.dateKST, st);
+    let b = kstMs(s.dateKST, en);
+    if (b <= a) b += 864e5; // 자정 넘긴 경우
+    return { a, b };
+  };
+  const bindForm = () => {
+    wrap.innerHTML = formHTML();
+    const sync = () => { const sp = span(); if (sp) wrap.querySelector('#e-min').value = Math.round((sp.b - sp.a) / 60000); };
+    wrap.querySelector('#e-start').addEventListener('change', sync);
+    wrap.querySelector('#e-end').addEventListener('change', sync);
+  };
+  bindForm();
+  document.body.appendChild(wrap);
+
+  wrap.addEventListener('click', async (e) => {
+    if (e.target === wrap) return close();
+    const t = e.target.closest('[data-type]');
+    if (t) {
+      type = t.dataset.type;
+      wrap.querySelectorAll('.types button').forEach((b) => b.classList.toggle('selected', b.dataset.type === type));
+      return;
+    }
+    const act = e.target.closest('[data-e]')?.dataset.e;
+    if (!act) return;
+    try {
+      if (act === 'cancel') close();
+      else if (act === 'delete') wrap.innerHTML = askDeleteHTML;
+      else if (act === 'back') bindForm();
+      else if (act === 'really-delete') {
+        await store.deleteSession(s.id);
+        close();
+        toast('기록을 삭제했어요');
+      } else if (act === 'save') {
+        const sp = span();
+        if (!sp) return toast('시작·종료 시간을 입력해 주세요');
+        const min = parseInt(wrap.querySelector('#e-min').value, 10);
+        if (Number.isNaN(min) || min < 1 || min > 1440) return toast('공부한 시간은 1~1440분으로 입력해 주세요');
+        if (min * 60000 > sp.b - sp.a + 60000) return toast('공부한 시간이 시작~종료보다 길어요');
+        await store.updateSession(s.id, { type, startAt: sp.a, endAt: sp.b, durationSec: min * 60 });
+        close();
+        toast('수정했어요');
+      }
+    } catch (err) { handleError(err); }
+  });
 }
 
 // 시트가 열려 있는 동안 뒤 화면이 같이 움직이지 않게 고정 (아이폰 스크롤 전달 방지)
@@ -760,6 +842,9 @@ $app.addEventListener('click', async (e) => {
         break;
       case 's-all':
         ui.showAllRecent = !ui.showAllRecent; render();
+        break;
+      case 'edit-session':
+        openSessionEditor(el.dataset.id);
         break;
       case 's-del':
         if (confirm('이 기록을 삭제할까요? 친구 화면에서도 사라져요.')) await store.deleteSession(el.dataset.id);

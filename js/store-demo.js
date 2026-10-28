@@ -153,6 +153,10 @@ export function createDemoStore({ sample = false } = {}) {
       delete data.active[ME];
       commit();
     },
+    async updateSession(id, patch) {
+      data.sessions = data.sessions.map((s) => (s.id === id ? { ...s, ...patch } : s));
+      commit();
+    },
     async deleteSession(id) {
       data.sessions = data.sessions.filter((s) => s.id !== id);
       commit();

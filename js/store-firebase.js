@@ -241,6 +241,9 @@ export function createFirebaseStore() {
     async discardTimer() {
       await deleteDoc(sub('active', uid()));
     },
+    async updateSession(id, patch) {
+      await updateDoc(sub('sessions', id), patch);
+    },
     async deleteSession(id) {
       await deleteDoc(sub('sessions', id));
     },
