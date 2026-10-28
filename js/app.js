@@ -6,7 +6,7 @@ import {
 } from './dates.js';
 import { deviceLabel } from './device.js';
 
-const VERSION = '1.0.6';
+const VERSION = '1.0.7';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -486,20 +486,42 @@ function openSettings() {
   const unlock = lockBackground(wrap);
 
   // 챕터 입력칸: 누르고 위아래로 쓸면 내용이 스크롤 (편집 중이 아닐 때는 직접 스크롤 처리)
+  // 손을 떼도 아이폰처럼 관성으로 미끄러지며 서서히 멈춤
   const ta = wrap.querySelector('#set-chapters');
-  let ty = null;
+  let ty = null, lastT = 0, vel = 0, rafId = 0, target = 0;
+  const stopGlide = () => { cancelAnimationFrame(rafId); rafId = 0; };
   ta.addEventListener('touchstart', (e) => {
-    ty = document.activeElement === ta ? null : e.touches[0].clientY;
+    stopGlide();
+    if (document.activeElement === ta) { ty = null; return; }
+    ty = e.touches[0].clientY; lastT = performance.now(); vel = 0; target = ta.scrollTop;
   }, { passive: true });
   ta.addEventListener('touchmove', (e) => {
     if (ty == null) return; // 편집 중이면 아이폰 기본 동작
-    const y = e.touches[0].clientY;
-    ta.scrollTop += ty - y;
-    ty = y;
+    const y = e.touches[0].clientY, now = performance.now();
+    const dy = ty - y, dt = Math.max(1, now - lastT);
+    vel = 0.75 * (dy / dt) + 0.25 * vel; // px/ms, 최근 움직임 위주로 부드럽게
+    target = Math.max(0, Math.min(ta.scrollHeight - ta.clientHeight, target + dy));
+    ta.scrollTop = target;
+    ty = y; lastT = now;
     e.preventDefault();
     e.stopPropagation();
   }, { passive: false });
-  ta.addEventListener('touchend', () => { ty = null; });
+  ta.addEventListener('touchend', () => {
+    if (ty == null) return;
+    ty = null;
+    if (performance.now() - lastT > 80 || Math.abs(vel) < 0.05) return; // 멈췄다 뗀 경우
+    let prev = performance.now();
+    const glide = (now) => {
+      const dt = Math.min(32, now - prev); prev = now;
+      vel *= Math.pow(0.996, dt); // 감속 (값이 1에 가까울수록 오래 미끄러짐)
+      const max = ta.scrollHeight - ta.clientHeight;
+      target = Math.max(0, Math.min(max, target + vel * dt));
+      ta.scrollTop = target;
+      if (Math.abs(vel) < 0.02 || target <= 0 || target >= max) { rafId = 0; return; }
+      rafId = requestAnimationFrame(glide);
+    };
+    rafId = requestAnimationFrame(glide);
+  });
   requestAnimationFrame(() => wrap.classList.add('open'));
 
   const close = () => {
