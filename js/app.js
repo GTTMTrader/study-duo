@@ -6,7 +6,7 @@ import {
 } from './dates.js';
 import { deviceLabel } from './device.js';
 
-const VERSION = '1.1.0';
+const VERSION = '1.1.2';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -32,6 +32,8 @@ const ui = {
   progCh: null,
   progBook: 'concept',
   pracWho: 'me',
+  calMonth: null,
+  calSel: null,
   timerCh: pref.timerCh || null,
   timerChWeek: pref.timerChWeek || null,
   timerType: pref.timerType || '개념서',
@@ -477,11 +479,98 @@ function openChapterDates(chNo) {
 }
 
 // ───────────────── 기록 ─────────────────
+function statsTabs() {
+  return `<div class="time-tabs">${[['today', '오늘'], ['week', '이번 주'], ['all', '전체'], ['cal', '달력']].map(([k, l]) => `<button class="${ui.statsRange === k ? 'active' : ''}" data-action="s-range" data-range="${k}">${l}</button>`).join('')}</div>`;
+}
+
+// 달력: 날짜마다 그날 공부한 챕터가 자동으로 표시됨 (직접 입력 X)
+function renderCalendar(me, fr, today) {
+  if (!ui.calMonth) ui.calMonth = today.slice(0, 7);
+  if (!ui.calSel) ui.calSel = today;
+  const [y, m] = ui.calMonth.split('-').map(Number);
+  const first = `${ui.calMonth}-01`;
+  const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const last = `${ui.calMonth}-${String(lastDay).padStart(2, '0')}`;
+  const gridStart = mondayOf(first);
+  const gridEnd = addDays(mondayOf(last), 6);
+  const examDate = S().room.examDate;
+
+  // 날짜별 기록 모으기 (진행 중 타이머 포함)
+  const byDate = {};
+  const push = (s) => { (byDate[s.dateKST] ||= []).push(s); };
+  for (const s of S().sessions) {
+    if ((s.uid === me || s.uid === fr) && s.dateKST >= gridStart && s.dateKST <= gridEnd) push(s);
+  }
+  for (const [uid, a] of Object.entries(S().active)) {
+    if (uid !== me && uid !== fr) continue;
+    push({ id: `live-${uid}`, uid, type: a.type, chapter: a.chapter, startAt: a.sessionStart, endAt: nowMs(), durationSec: activeElapsed(a), dateKST: activeDate(a), live: true });
+  }
+  // 같은 챕터는 하나로 묶고, 누가 했는지는 색깔 점으로
+  const entries = (date) => {
+    const map = new Map();
+    for (const s of byDate[date] || []) {
+      const e = map.get(s.chapter) || { chapter: s.chapter, me: false, fr: false, sec: 0 };
+      if (s.uid === me) e.me = true; else e.fr = true;
+      e.sec += s.durationSec;
+      map.set(s.chapter, e);
+    }
+    return [...map.values()].sort((a, b) => b.sec - a.sec);
+  };
+
+  let cells = '';
+  for (let d = gridStart; d <= gridEnd; d = addDays(d, 1)) {
+    const inMonth = d.slice(0, 7) === ui.calMonth;
+    const es = entries(d);
+    const shown = es.slice(0, 2);
+    const cls = [
+      'cal-cell', inMonth ? '' : 'out', d === today ? 'today' : '', d === ui.calSel ? 'sel' : '',
+      d === examDate ? 'exam' : '', weekdayIdx(d) >= 5 ? 'wkend' : '',
+    ].join(' ');
+    cells += `<button class="${cls}" data-action="cal-day" data-date="${d}">
+      <span class="cal-num">${Number(d.slice(8))}</span>
+      ${d === examDate ? '<span class="cal-exam">시험</span>' : ''}
+      ${shown.map((e) => `<span class="cal-tag"><span class="cal-chno">Ch${e.chapter}<span class="cal-who">${e.me ? '<b class="me"></b>' : ''}${e.fr ? '<b class="fr"></b>' : ''}</span></span><span class="cal-title">${esc(chapterByNo(e.chapter)?.title || '')}</span></span>`).join('')}
+      ${es.length > 2 ? `<span class="cal-more">+${es.length - 2}</span>` : ''}
+    </button>`;
+  }
+
+  // 선택한 날 상세
+  const sel = ui.calSel;
+  const list = (byDate[sel] || []).slice().sort((a, b) => a.startAt - b.startAt);
+  const myT = list.filter((s) => s.uid === me).reduce((t, s) => t + s.durationSec, 0);
+  const frT = list.filter((s) => s.uid === fr).reduce((t, s) => t + s.durationSec, 0);
+  const detail = list.length
+    ? list.map((s) => {
+        const mine = s.uid === me;
+        const c = chapterByNo(s.chapter);
+        const editable = mine && !s.live;
+        return `<div class="recent-item ${editable ? 'editable' : ''}" ${editable ? `data-action="edit-session" data-id="${esc(s.id)}"` : ''}><span class="dot ${mine ? 'me' : 'fr'}"></span><div class="grow"><b>Ch${s.chapter} ${esc(c?.title || '')} · ${esc(s.type)}</b><div class="mini muted">${esc(mine ? myName() : friendName())} · ${kstHHMM(s.startAt)}–${s.live ? '진행 중' : kstHHMM(s.endAt)}</div></div><b>${hmText(s.durationSec)}</b>${editable ? '<i class="chev-r">›</i>' : '<span style="width:14px"></span>'}</div>`;
+      }).join('')
+    : '<div class="empty-note" style="padding:14px 0">이날은 기록이 없어요.</div>';
+
+  return `
+  ${head('THE NUMBERS', '학습 기록')}
+  ${statsTabs()}
+  <div class="recordcard cal-card" style="margin-top:18px">
+    <div class="row cal-nav">
+      <button class="cal-arrow" data-action="cal-move" data-d="-1" aria-label="이전 달">‹</button>
+      <span class="strong" style="font-size:16px">${y}년 ${m}월</span>
+      <button class="cal-arrow" data-action="cal-move" data-d="1" aria-label="다음 달">›</button>
+    </div>
+    <div class="cal-grid cal-head">${['월', '화', '수', '목', '금', '토', '일'].map((w) => `<span>${w}</span>`).join('')}</div>
+    <div class="cal-grid">${cells}</div>
+    <div class="chartlegend" style="margin-top:10px"><span class="c-me">● ${esc(myName())}</span><span style="color:var(--fr-bar)">● ${esc(friendName())}</span></div>
+  </div>
+  <div class="row" style="margin-top:20px"><span class="section-label">${dateLabel(sel)}</span><span class="mini muted"><span class="c-me">${hmText(myT)}</span> · <span class="c-fr">${hmText(frT)}</span></span></div>
+  <div class="recent">${detail}</div>`;
+}
+
 function renderStats() {
   const me = meId();
   const fr = friendId();
   const today = todayKST();
   const r = S().room;
+  if (ui.statsRange === 'cal') return renderCalendar(me, fr, today);
   let from, to, title, rangeNote, chart;
 
   if (ui.statsRange === 'today') {
@@ -542,7 +631,7 @@ function renderStats() {
 
   return `
   ${head('THE NUMBERS', '학습 기록')}
-  <div class="time-tabs">${[['today', '오늘'], ['week', '이번 주'], ['all', '전체']].map(([k, l]) => `<button class="${ui.statsRange === k ? 'active' : ''}" data-action="s-range" data-range="${k}">${l}</button>`).join('')}</div>
+  ${statsTabs()}
   <div class="recordcard" style="margin-top:18px">
     <div class="row"><span class="strong" style="font-size:15px">${title}</span><span class="mini muted">${rangeNote}</span></div>
     <div class="statpair"><div><span class="mini c-me">● ${esc(myName())}</span><strong>${smallHM(myT)}</strong></div><div><span class="mini c-fr">● ${esc(friendName())}</span><strong>${smallHM(frT)}</strong></div></div>
@@ -977,6 +1066,18 @@ $app.addEventListener('click', async (e) => {
       case 's-range':
         ui.statsRange = el.dataset.range; ui.showAllRecent = false; savePref(); render();
         break;
+      case 'cal-day':
+        ui.calSel = el.dataset.date;
+        if (ui.calSel.slice(0, 7) !== ui.calMonth) ui.calMonth = ui.calSel.slice(0, 7);
+        render();
+        break;
+      case 'cal-move': {
+        const [yy, mm] = ui.calMonth.split('-').map(Number);
+        const t = new Date(Date.UTC(yy, mm - 1 + Number(el.dataset.d), 1));
+        ui.calMonth = t.toISOString().slice(0, 7);
+        render();
+        break;
+      }
       case 's-all':
         ui.showAllRecent = !ui.showAllRecent; render();
         break;
