@@ -1,7 +1,9 @@
+import { addDays } from './dates.js';
+
 // 처음 방이 만들어질 때 쓰는 기본값. 앱 설정 화면에서 언제든 바꿀 수 있음.
 export const DEFAULT_ROOM = {
   examDate: '2027-01-09',
-  curriculumStart: '2026-11-02',
+  curriculumStart: '2026-10-26',
   chapters: [
     { no: 1, title: '소화와 흡수', pages: '', topics: [] },
     {
@@ -29,6 +31,19 @@ export const DEFAULT_ROOM = {
 };
 
 export const TYPES = ['개념서', '문제집', '복습'];
+export const PRACTICE_COUNT = 10; // 챕터당 연습문제 수
+export const SCHEMA = 2;           // 2: 챕터별 시작·끝 날짜
+
+// 날짜가 없는 챕터는 앞 챕터 다음 주(월~일)로 자동 배치
+export function fillChapterDates(chapters, curriculumStart) {
+  let next = curriculumStart;
+  return chapters.map((c) => {
+    const start = c.start || next;
+    const end = c.end && c.end >= start ? c.end : addDays(start, 6);
+    next = addDays(end, 1);
+    return { ...c, start, end };
+  });
+}
 
 // 설정 화면의 챕터 텍스트 <-> 데이터 변환
 export function chaptersToText(chapters) {

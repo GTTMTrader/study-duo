@@ -187,15 +187,33 @@ button.session:active, .recent-item.editable:active { background: #f5f7fd; }
 .week-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -22px; padding: 2px 22px 4px; scroll-snap-type: x proximity; }
 .week-scroll::-webkit-scrollbar { display: none; }
 .weekitem {
+  flex-basis: 86px !important;
   background: #f4f3f1; color: #8b8888; border: 1px solid #ece9e5; border-radius: 14px; text-align: center;
   flex: 0 0 78px; padding: 9px 4px; font-size: 14px; font-weight: 800; scroll-snap-align: start; position: relative;
 }
+.weekitem em { display: block; font-style: normal; font-size: 9.5px; font-weight: 600; opacity: .8; margin-top: 2px; white-space: nowrap; letter-spacing: -.2px; }
 .weekitem small { display: block; font-size: 10px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
 .weekitem.selected { background: var(--me); color: #fff; border-color: var(--me); }
 .weekitem.now:not(.selected)::after { content: ''; position: absolute; top: 6px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--me); }
 .chap-head { margin-top: 20px; align-items: flex-end; }
 .chap-no { font-size: 12px; color: var(--me-strong); font-weight: 900; }
 .chap-title { font-size: 25px; font-weight: 900; letter-spacing: -.9px; margin-top: 2px; }
+.date-chip { margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--me-line); border-radius: 11px; padding: 8px 12px; font-size: 13px; font-weight: 800; color: #27375b; }
+.date-chip .pen { font-size: 11.5px; color: var(--me-strong); font-weight: 800; }
+.prac-sum { display: flex; gap: 10px; margin-top: 14px; }
+.prac-card { flex: 1 1 0; min-width: 0; background: #fff; border: 1px solid #e9ebf2; border-radius: 14px; padding: 12px; font-size: 12px; font-weight: 800; }
+.prac-card > span { display: block; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prac-line { display: grid; grid-template-columns: 26px 1fr 30px; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px; color: var(--sub); }
+.prac-line .progress-track { height: 6px; }
+.prac-line b { text-align: right; color: #1c2540; font-size: 12px; }
+.who-tabs { display: flex; gap: 8px; margin-top: 14px; }
+.who-tabs button { flex: 1; height: 38px; border-radius: 11px; border: 1px solid #e3e7f0; background: #fff; font-size: 12.5px; font-weight: 800; color: #7c879f; }
+.who-tabs button.active { background: var(--me-soft); border-color: var(--me-line); color: var(--me-strong); }
+.who-tabs button.active.fr { background: #fdeceb; border-color: #f8d3ce; color: var(--fr-strong); }
+.who-tabs button:disabled { opacity: .5; }
+.listhead.four, .topic.four { grid-template-columns: 1fr 52px 52px 52px; }
+.check-row { display: flex !important; align-items: center; gap: 8px; font-size: 13px !important; font-weight: 700 !important; color: var(--ink-2) !important; margin-top: 14px !important; }
+.check-row input { width: 18px; height: 18px; accent-color: var(--me); }
 .booktabs { background: #f1f4fd; display: flex; border-radius: 14px; padding: 5px; margin-top: 17px; }
 .booktabs button { flex: 1; text-align: center; font-size: 14px; font-weight: 800; padding: 11px; color: #7c879f; border-radius: 11px; }
 .booktabs button.active { background: #fff; color: var(--me-strong); box-shadow: 0 1px 7px #e0e8ff; }

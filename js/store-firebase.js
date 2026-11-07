@@ -256,6 +256,13 @@ export function createFirebaseStore() {
         { merge: true }
       );
     },
+    async setPractice(chapter, key, list) {
+      await setDoc(
+        sub('progress', uid()),
+        { practice: { [chapter]: { [key]: list } } },
+        { merge: true }
+      );
+    },
     async setWorkbook(chapter, key, value) {
       await setDoc(
         sub('progress', uid()),

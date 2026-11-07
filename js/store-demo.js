@@ -165,6 +165,11 @@ export function createDemoStore({ sample = false } = {}) {
       prog().concept = { ...(prog().concept || {}), [chapter]: list };
       commit();
     },
+    async setPractice(chapter, key, list) {
+      const pr = (prog().practice ||= {});
+      pr[chapter] = { ...(pr[chapter] || {}), [key]: list };
+      commit();
+    },
     async setWorkbook(chapter, key, value) {
       const wb = (prog().workbook ||= {});
       wb[chapter] = { ...(wb[chapter] || {}), [key]: value };

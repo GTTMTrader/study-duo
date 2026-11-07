@@ -1,12 +1,12 @@
 import { firebaseConfig } from './config.js';
-import { TYPES, chaptersToText, textToChapters } from './defaults.js';
+import { TYPES, PRACTICE_COUNT, SCHEMA, chaptersToText, textToChapters, fillChapterDates } from './defaults.js';
 import {
   nowMs, todayKST, setTodayOverride, kstHHMM, daysBetween, addDays, mondayOf, weekdayIdx,
   dateLabel, shortDate, getPhase, splitHM, hmText, clockText,
 } from './dates.js';
 import { deviceLabel } from './device.js';
 
-const VERSION = '1.0.8';
+const VERSION = '1.1.0';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -31,6 +31,7 @@ const ui = {
   statsRange: pref.statsRange || 'week',
   progCh: null,
   progBook: 'concept',
+  pracWho: 'me',
   timerCh: pref.timerCh || null,
   timerChWeek: pref.timerChWeek || null,
   timerType: pref.timerType || '개념서',
@@ -57,7 +58,13 @@ const friendName = () => {
   const f = friendId();
   return (f && S().members[f]?.name) || '친구';
 };
-const chapters = () => S().room?.chapters || [];
+let _chMemo = { room: null, list: [] };
+const chapters = () => {
+  const r = S().room;
+  if (!r) return [];
+  if (_chMemo.room !== r) _chMemo = { room: r, list: fillChapterDates(r.chapters || [], r.curriculumStart) };
+  return _chMemo.list;
+};
 const chapterByNo = (no) => chapters().find((c) => c.no === Number(no));
 
 function activeElapsed(a, now = nowMs()) {
@@ -84,9 +91,36 @@ function secIn(uid, from, to, filter = () => true) {
   return t;
 }
 
+// 현재 단계: 챕터별 날짜(시작~끝) 기준
 function phaseNow() {
   const r = S().room;
-  return getPhase(todayKST(), r.curriculumStart, r.examDate, chapters().length);
+  const today = todayKST();
+  const chs = chapters();
+  const dExam = daysBetween(today, r.examDate);
+  if (dExam < 0) return { kind: 'done', dExam };
+  if (dExam === 0) return { kind: 'exam', dExam };
+  const idx = chs.findIndex((c) => c.start <= today && today <= c.end);
+  if (idx >= 0) return { kind: 'week', dExam, week: idx + 1 };
+  const nextIdx = chs.findIndex((c) => c.start > today);
+  if (nextIdx === 0) return { kind: 'before', dExam, week: 1, daysToStart: daysBetween(today, chs[0].start) };
+  if (nextIdx > 0) return { kind: 'week', dExam, week: nextIdx }; // 챕터 사이 빈 날 → 직전 챕터
+  return { kind: 'review', dExam };
+}
+const WDK = ['일', '월', '화', '수', '목', '금', '토'];
+function mdw(s) {
+  const d = new Date(s + 'T00:00:00Z');
+  return `${d.getUTCMonth() + 1}/${d.getUTCDate()} (${WDK[d.getUTCDay()]})`;
+}
+// 기존 데이터 1회 변환: 커리큘럼 10/26 시작 + 챕터별 날짜 저장
+let migrating = false;
+function maybeMigrate() {
+  const r = S().room;
+  if (!r || migrating || (r.schema || 1) >= SCHEMA) return;
+  migrating = true;
+  const base = r.chapters.map(({ start, end, ...c }) => c);
+  store.updateRoom({ curriculumStart: '2026-10-26', chapters: fillChapterDates(base, '2026-10-26'), schema: SCHEMA })
+    .catch(handleError)
+    .finally(() => { migrating = false; });
 }
 function currentChapterNo() {
   const p = phaseNow();
@@ -326,7 +360,7 @@ function renderProgress() {
   if (ui.progCh == null || !chapterByNo(ui.progCh)) ui.progCh = cur ?? chapters()[0]?.no;
   const ch = chapterByNo(ui.progCh);
   const chips = chapters()
-    .map((c) => `<button class="weekitem ${c.no === ui.progCh ? 'selected' : ''} ${c.no === cur ? 'now' : ''}" data-action="p-ch" data-ch="${c.no}">${String(c.no).padStart(2, '0')}<small>${esc(c.title)}</small></button>`)
+    .map((c) => `<button class="weekitem ${c.no === ui.progCh ? 'selected' : ''} ${c.no === cur ? 'now' : ''}" data-action="p-ch" data-ch="${c.no}">${String(c.no).padStart(2, '0')}<small>${esc(c.title)}</small><em>${shortDate(c.start)}–${shortDate(c.end)}</em></button>`)
     .join('');
   if (!ch) return `${head('KEEP GOING', '학습 진도')}<div class="card empty-note">챕터가 없어요. 설정에서 입력해 주세요.</div>`;
 
@@ -342,6 +376,8 @@ function renderProgress() {
           <button class="check ${mine.includes(i) ? 'on' : ''}" data-action="p-concept" data-i="${i}" aria-label="${esc(t)} 완료">${`<span>${mine.includes(i) ? ICONS.check : ''}</span>`}</button>
           <span class="check fr ${theirs.includes(i) ? 'on' : ''}">${theirs.includes(i) ? ICONS.check : ''}</span></div>`).join('')}`
       : `<div class="card empty-note" style="margin-top:14px">이 챕터의 단원 목록이 아직 없어요.<br>개념서 목차 사진 보고 <button class="linkish" data-action="open-settings">설정</button>에서 단원을 입력해 주세요.</div>`;
+  } else if (ui.progBook === 'practice') {
+    body = renderPractice(ch, me, fr);
   } else {
     const mw = workbookOf(me, ch.no);
     const fw = workbookOf(fr, ch.no);
@@ -359,8 +395,85 @@ function renderProgress() {
   ${head('KEEP GOING', '학습 진도')}
   <div class="week-scroll" id="chips">${chips}</div>
   <div class="row chap-head"><div><div class="chap-no">CHAPTER ${String(ch.no).padStart(2, '0')}</div><div class="chap-title">${esc(ch.title)}</div></div><div class="muted" style="font-size:13px">${esc(ch.pages)}</div></div>
-  <div class="booktabs"><button class="${ui.progBook === 'concept' ? 'active' : ''}" data-action="p-book" data-book="concept">개념서</button><button class="${ui.progBook === 'workbook' ? 'active' : ''}" data-action="p-book" data-book="workbook">문제집</button></div>
+  <button class="date-chip" data-action="p-dates" aria-label="챕터 날짜 수정">${mdw(ch.start)} ~ ${mdw(ch.end)}<span class="pen">✎ 수정</span></button>
+  <div class="booktabs">${[['concept', '개념서'], ['workbook', '문제집'], ['practice', '연습문제']].map(([k, l]) => `<button class="${ui.progBook === k ? 'active' : ''}" data-action="p-book" data-book="${k}">${l}</button>`).join('')}</div>
   ${body}`;
+}
+
+// 연습문제: 각자 챕터당 10문제 — 제작 / 풀이 / 오답
+const PRAC_KEYS = [['made', '제작'], ['solved', '풀이'], ['wrong', '오답']];
+function practiceOf(uid, chNo) {
+  const p = S().progress[uid]?.practice?.[chNo] || {};
+  return { made: p.made || [], solved: p.solved || [], wrong: p.wrong || [] };
+}
+function renderPractice(ch, me, fr) {
+  const N = PRACTICE_COUNT;
+  const mp = practiceOf(me, ch.no);
+  const fp = practiceOf(fr, ch.no);
+  const cnt = (list) => list.filter((i) => i < N).length;
+  const card = (p, name, cls) => `<div class="prac-card"><span class="${cls}">● ${esc(name)}</span>
+    ${PRAC_KEYS.map(([k, l]) => `<div class="prac-line"><span>${l}</span><div class="progress-track"><div class="progress-fill" style="width:${(cnt(p[k]) / N) * 100}%;background:var(--${cls === 'c-me' ? 'me' : 'fr'})${k === 'wrong' ? ';opacity:.45' : ''}"></div></div><b>${cnt(p[k])}${k === 'wrong' ? '' : `/${N}`}</b></div>`).join('')}</div>`;
+  const viewMe = ui.pracWho !== 'fr' || !fr;
+  const p = viewMe ? mp : fp;
+  const rows = Array.from({ length: N }, (_, i) => `<div class="topic four"><div><span class="num">Q${i + 1}</span></div>
+    ${PRAC_KEYS.map(([k, l]) => viewMe
+      ? `<button class="check ${p[k].includes(i) ? 'on' : ''}" data-action="p-prac" data-key="${k}" data-i="${i}" aria-label="Q${i + 1} ${l}"><span>${p[k].includes(i) ? ICONS.check : ''}</span></button>`
+      : `<span class="check fr ${p[k].includes(i) ? 'on' : ''}">${p[k].includes(i) ? ICONS.check : ''}</span>`).join('')}</div>`).join('');
+  return `<div class="prac-sum">${card(mp, myName(), 'c-me')}${card(fp, friendName(), 'c-fr')}</div>
+    <div class="who-tabs"><button class="${viewMe ? 'active' : ''}" data-action="p-who" data-who="me">${esc(myName())} 체크</button><button class="${!viewMe ? 'active fr' : ''}" data-action="p-who" data-who="fr" ${fr ? '' : 'disabled'}>${esc(friendName())} 체크</button></div>
+    <div class="listhead four"><span>문제</span><span>제작</span><span>풀이</span><span>오답</span></div>
+    ${rows}
+    <div class="practice-hint"><b>각자 챕터당 ${N}문제.</b><span>문제 만들면 제작 · 상대 문제 풀면 풀이 · 틀린 문제는 오답 체크${viewMe ? '' : ` (${esc(friendName())} 체크는 보기만 가능)`}</span></div>`;
+}
+
+// 챕터 날짜 수정
+function openChapterDates(chNo) {
+  const chs = chapters();
+  const idx = chs.findIndex((c) => c.no === chNo);
+  if (idx < 0) return;
+  const ch = chs[idx];
+  const wrap = document.createElement('div');
+  wrap.className = 'confirm-back';
+  const unlock = lockBackground(wrap);
+  const close = () => { wrap.remove(); unlock(); };
+  wrap.innerHTML = `<div class="confirm-box edit-box" role="dialog" aria-label="챕터 날짜 수정">
+    <b>Chapter ${String(ch.no).padStart(2, '0')} 날짜</b>
+    <p>${esc(ch.title)}</p>
+    <div class="two">
+      <div><label>시작</label><input class="field" type="date" id="d-start" value="${ch.start}"></div>
+      <div><label>끝</label><input class="field" type="date" id="d-end" value="${ch.end}"></div>
+    </div>
+    <label class="check-row"><input type="checkbox" id="d-shift" ${idx < chs.length - 1 ? 'checked' : 'disabled'}> 뒤 챕터들도 같이 밀기/당기기</label>
+    <div class="hint">기본은 월요일 시작 · 일요일 끝 (1주). 시작을 바꾸면 끝은 6일 뒤로 맞춰져요.</div>
+    <div class="confirm-row" style="margin-top:16px"><button class="btn-line" data-e="cancel">취소</button><button class="btn-block" data-e="save">저장</button></div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const $s = wrap.querySelector('#d-start'), $e = wrap.querySelector('#d-end');
+  let lastStart = ch.start;
+  $s.addEventListener('change', () => {
+    if ($s.value && $e.value === addDays(lastStart, 6)) $e.value = addDays($s.value, 6);
+    lastStart = $s.value || lastStart;
+  });
+  wrap.addEventListener('click', async (e) => {
+    if (e.target === wrap) return close();
+    const act = e.target.closest('[data-e]')?.dataset.e;
+    if (act === 'cancel') return close();
+    if (act !== 'save') return;
+    const start = $s.value, end = $e.value;
+    if (!start || !end) return toast('날짜를 입력해 주세요');
+    if (end < start) return toast('끝 날짜가 시작보다 빨라요');
+    const shift = wrap.querySelector('#d-shift').checked ? daysBetween(ch.end, end) : 0;
+    const next = chs.map((c, i) => {
+      if (i === idx) return { ...c, start, end };
+      if (i > idx && shift) return { ...c, start: addDays(c.start, shift), end: addDays(c.end, shift) };
+      return c;
+    });
+    try {
+      await store.updateRoom({ chapters: next });
+      close();
+      toast('날짜를 저장했어요');
+    } catch (err) { handleError(err); }
+  });
 }
 
 // ───────────────── 기록 ─────────────────
@@ -390,13 +503,15 @@ function renderStats() {
   } else {
     from = null; to = null;
     title = '전체 누적 공부시간';
-    rangeNote = `${shortDate(r.curriculumStart)}~`;
-    const n = chapters().length;
+    const chs = chapters();
+    rangeNote = `${shortDate(chs[0]?.start || r.curriculumStart)}~`;
     const bucket = (date) => {
-      const w = Math.floor(daysBetween(r.curriculumStart, date) / 7) + 1;
-      if (w < 1) return '준비';
-      if (w > n) return '복습';
-      return `W${w}`;
+      const i = chs.findIndex((c) => c.start <= date && date <= c.end);
+      if (i >= 0) return `W${i + 1}`;
+      if (!chs.length || date < chs[0].start) return '준비';
+      const next = chs.findIndex((c) => c.start > date);
+      if (next > 0) return `W${next}`; // 챕터 사이 빈 날
+      return '복습';
     };
     const curB = bucket(today);
     const labels = ['준비', ...chapters().map((_, i) => `W${i + 1}`), '복습'];
@@ -470,7 +585,7 @@ function openSettings() {
       <div><label>시험일</label><input class="field" type="date" id="set-exam" value="${esc(r.examDate)}"></div>
       <div><label>커리큘럼 시작일</label><input class="field" type="date" id="set-start" value="${esc(r.curriculumStart)}"></div>
     </div>
-    <div class="hint">시작일부터 매주(7일) 1챕터씩 진행돼요. 챕터가 끝나면 시험 전날까지 '최종 복습 기간'.</div>
+    <div class="hint">시작일을 바꾸면 모든 챕터가 그날부터 1주씩 다시 배치돼요. 챕터별 날짜는 <b>진도 탭</b>에서 하나씩 고칠 수 있어요. 마지막 챕터가 끝나면 시험 전날까지 '최종 복습 기간'.</div>
     <label>챕터 · 개념서 단원</label>
     <textarea class="field" id="set-chapters" spellcheck="false">${esc(chaptersToText(chapters()))}</textarea>
     <div class="hint">형식: <b>번호 | 챕터명 | 페이지</b>, 아래 줄에 <b>- 단원명</b>. 개념서 목차의 대단원 번호 순서대로 적어주세요.<br>⚠ 이미 체크한 단원은 '순서'로 기억돼요. 중간에 단원을 끼워 넣으면 체크가 밀릴 수 있어요.</div>
@@ -579,13 +694,18 @@ function openSettings() {
     const name = wrap.querySelector('#set-name').value.trim();
     const examDate = wrap.querySelector('#set-exam').value;
     const curriculumStart = wrap.querySelector('#set-start').value;
-    const chs = textToChapters(wrap.querySelector('#set-chapters').value);
+    const parsed = textToChapters(wrap.querySelector('#set-chapters').value);
+    const restart = curriculumStart !== r.curriculumStart;
+    const chs = fillChapterDates(parsed.map((c) => {
+      const old = chapters().find((o) => o.no === c.no);
+      return restart || !old ? c : { ...c, start: old.start, end: old.end };
+    }), curriculumStart);
     if (!examDate || !curriculumStart) return toast('날짜를 입력해 주세요');
     if (!chs.length) return toast('챕터를 최소 1개 입력해 주세요');
     if (new Set(chs.map((c) => c.no)).size !== chs.length) return toast('챕터 번호가 겹쳐요');
     try {
       if (name !== myName) await store.updateMyName(name);
-      await store.updateRoom({ examDate, curriculumStart, chapters: chs });
+      await store.updateRoom({ examDate, curriculumStart, chapters: chs, schema: SCHEMA });
       toast('저장했어요');
       close();
     } catch (e) { handleError(e); }
@@ -732,6 +852,7 @@ function render() {
   if (!st.authReady) { $app.innerHTML = '<div class="boot">불러오는 중…</div>'; return; }
   if (!st.user) { if (lastShell !== 'login') { lastShell = 'login'; renderLogin(); } return; }
   if (!st.roomLoaded || !st.room) { $app.innerHTML = '<div class="boot">데이터 연결 중…</div>'; lastShell = 'boot'; return; }
+  maybeMigrate();
   lastShell = 'app';
 
   const chipsScroll = document.getElementById('chips')?.scrollLeft;
@@ -820,6 +941,22 @@ $app.addEventListener('click', async (e) => {
       case 'p-ch':
         ui.progCh = Number(el.dataset.ch); render();
         break;
+      case 'p-dates':
+        openChapterDates(ui.progCh);
+        break;
+      case 'p-who':
+        ui.pracWho = el.dataset.who; render();
+        break;
+      case 'p-prac': {
+        const k = el.dataset.key;
+        const i = Number(el.dataset.i);
+        const list = [...(practiceOf(meId(), ui.progCh)[k])];
+        const at = list.indexOf(i);
+        if (at >= 0) list.splice(at, 1); else list.push(i);
+        list.sort((a, b) => a - b);
+        await store.setPractice(ui.progCh, k, list);
+        break;
+      }
       case 'p-book':
         ui.progBook = el.dataset.book; render();
         break;
