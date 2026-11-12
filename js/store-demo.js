@@ -23,6 +23,8 @@ function blank() {
     sessions: [],
     active: {},
     progress: {},
+    questions: {},
+    answers: {},
   };
 }
 
@@ -61,6 +63,17 @@ function sampleData() {
       device: who === ME ? '갤럭시' : '윈도우',
     });
   }
+  const q = (author, slot, text, choices, answer, explanation = '') => {
+    const id = `${author}_${ch}_${slot}`;
+    d.questions[id] = { id, author, chapter: ch, slot, text, choices, answer, explanation, createdAt: 0, updatedAt: 0 };
+    return id;
+  };
+  q(FRIEND, 0, '다음 중 단당류가 아닌 것은?', ['포도당', '과당', '갈락토스', '자당', '리보스'], 3, '자당은 포도당+과당으로 된 이당류.');
+  q(FRIEND, 1, '근육 글리코겐에 대한 설명으로 옳은 것은?', ['혈당 유지에 직접 쓰인다', '간 글리코겐보다 총량이 적다', '근육 자체의 에너지원으로 쓰인다', '운동 중에는 분해되지 않는다', '인슐린에 의해 분해된다'], 2);
+  q(FRIEND, 2, '탄수화물 로딩을 하는 주된 목적은?', ['체지방 감소', '근 글리코겐 저장량 증가', '단백질 합성 촉진', '수분 배출', '혈중 케톤 증가'], 1);
+  const mine = q(ME, 0, '혈당을 낮추는 호르몬은?', ['글루카곤', '에피네프린', '코르티솔', '인슐린', '성장호르몬'], 3);
+  q(ME, 1, '식이섬유에 대한 설명으로 틀린 것은?', ['소화효소로 분해되지 않는다', '배변을 돕는다', '혈당 상승을 완만하게 한다', '1g당 9kcal를 낸다', '수용성과 불용성이 있다'], 3);
+  d.answers[`${FRIEND}_${mine}`] = { id: `${FRIEND}_${mine}`, uid: FRIEND, qid: mine, author: ME, chapter: ch, slot: 0, choice: 0, correct: false, lastChoice: 0, lastCorrect: false, attempts: 1 };
   d.progress[ME] = { concept: { 2: [0, 1, 2, 3] }, workbook: { 2: { solved: true } } };
   d.progress[FRIEND] = { concept: { 2: [0, 1, 2] }, workbook: {} };
   return d;
@@ -81,6 +94,8 @@ export function createDemoStore({ sample = false } = {}) {
     state.sessions = [...data.sessions].sort((a, b) => b.startAt - a.startAt);
     state.active = data.active;
     state.progress = data.progress;
+    state.questions = data.questions || {};
+    state.answers = data.answers || {};
   }
   function commit() {
     if (!sample) {
@@ -164,6 +179,28 @@ export function createDemoStore({ sample = false } = {}) {
     async setConcept(chapter, list) {
       prog().concept = { ...(prog().concept || {}), [chapter]: list };
       commit();
+    },
+    async saveQuestion(chapter, slot, { text, choices, answer, explanation }) {
+      const id = `${ME}_${chapter}_${slot}`;
+      data.questions ||= {};
+      const prev = data.questions[id];
+      data.questions[id] = { id, author: ME, chapter, slot, text, choices, answer, explanation: explanation || '', createdAt: prev?.createdAt || nowMs(), updatedAt: nowMs() };
+      commit();
+    },
+    async deleteQuestion(id) {
+      delete data.questions[id];
+      commit();
+    },
+    async answerQuestion(q, choice) {
+      data.answers ||= {};
+      const id = `${ME}_${q.id}`;
+      const correct = choice === q.answer;
+      const prev = data.answers[id];
+      data.answers[id] = prev
+        ? { ...prev, lastChoice: choice, lastCorrect: correct, attempts: (prev.attempts || 1) + 1, lastAt: nowMs() }
+        : { id, uid: ME, qid: q.id, author: q.author, chapter: q.chapter, slot: q.slot, choice, correct, lastChoice: choice, lastCorrect: correct, attempts: 1, at: nowMs(), lastAt: nowMs() };
+      commit();
+      return correct;
     },
     async setPractice(chapter, key, list) {
       const pr = (prog().practice ||= {});

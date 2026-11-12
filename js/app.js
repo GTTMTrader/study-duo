@@ -6,7 +6,7 @@ import {
 } from './dates.js';
 import { deviceLabel } from './device.js';
 
-const VERSION = '1.1.2';
+const VERSION = '1.2.0';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -27,11 +27,17 @@ const pref = (() => {
   try { return JSON.parse(localStorage.getItem('studyduo-ui') || '{}'); } catch (e) { return {}; }
 })();
 const ui = {
-  tab: ['home', 'timer', 'progress', 'stats'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home',
+  tab: ['home', 'quiz', 'timer', 'progress', 'stats'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home',
   statsRange: pref.statsRange || 'week',
   progCh: null,
   progBook: 'concept',
   pracWho: 'me',
+  quizCh: null,
+  quizTab: 'solve',
+  quizSolve: null,
+  quizRetry: false,
+  quizJust: null,
+  wrongAll: false,
   calMonth: null,
   calSel: null,
   timerCh: pref.timerCh || null,
@@ -147,6 +153,7 @@ const ICONS = {
   progress: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 13l2 2 4-4"/></svg>',
   stats: '<svg viewBox="0 0 24 24"><path d="M4 21V13M9 21V7M14 21V15M19 21V3"/></svg>',
   check: '<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+  quiz: '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.5M12 16.8h.01"/></svg>',
 };
 
 function scoreHTML(sec, cls = 'score') {
@@ -248,9 +255,12 @@ function renderHome() {
   const goalLabel = p.kind === 'week' || p.kind === 'before' ? `Chapter ${chapters()[(p.week || 1) - 1]?.no ?? ''}` : '전체';
 
   const myActive = S().active[me];
+  const left = unsolvedCount();
   const cta = myActive
     ? `<button class="running" data-action="go" data-tab="timer"><span class="live-dot"></span> <span data-live="cta">${myActive.paused ? '일시정지 중' : '공부 중'} · ${clockText(activeElapsed(myActive))}</span><span class="arrow">→</span></button>`
-    : `<button data-action="go" data-tab="timer">▶&nbsp; 공부 시작하기 <span class="arrow">→</span></button>`;
+    : left
+      ? `<button data-action="go-quiz" data-qtab="solve">▶&nbsp; ${esc(friendName())} 문제 풀기 · ${left}개 <span class="arrow">→</span></button>`
+      : `<button data-action="go-quiz" data-qtab="make">✎&nbsp; 이번 주 문제 만들기 <span class="arrow">→</span></button>`;
 
   return `
   ${head('STUDY DUO', '우리의 공부<span class="dot-end">.</span>', ddayBadge())}
@@ -265,7 +275,7 @@ function renderHome() {
     <div class="row" style="margin-top:14px"><span class="race-msg ${msgCls}">${msg}</span><span class="mini muted">월~일 누적</span></div>
   </div>
   ${!fr ? `<div class="empty-note" style="margin-top:10px;text-align:center">${isDemo ? '' : '친구가 아직 한 번도 로그인하지 않았어요.'}</div>` : ''}
-  <div class="row sec-row"><span class="section-label">오늘은 얼마나 했을까?</span><span class="muted mini">${dateLabel(today)}</span></div>
+  <div class="row sec-row"><span class="section-label">오늘은 얼마나 했을까?</span><span class="muted mini">${dateLabel(today)} · <button class="linkish" data-action="go" data-tab="timer">타이머</button></span></div>
   <div class="todayrow">
     <div><div class="mini muted">${esc(myName())}</div><div class="todaytime c-me">${smallHM(myT)}</div></div>
     <div class="vline"></div>
@@ -404,9 +414,16 @@ function renderProgress() {
 
 // 연습문제: 각자 챕터당 10문제 — 제작 / 풀이 / 오답
 const PRAC_KEYS = [['made', '제작'], ['solved', '풀이'], ['wrong', '오답']];
+// 문제 탭 데이터에서 자동으로 계산 (직접 체크 X)
 function practiceOf(uid, chNo) {
-  const p = S().progress[uid]?.practice?.[chNo] || {};
-  return { made: p.made || [], solved: p.solved || [], wrong: p.wrong || [] };
+  const other = uid === meId() ? friendId() : meId();
+  const made = [], solved = [], wrong = [];
+  for (let i = 0; i < PRACTICE_COUNT; i++) {
+    if (qOf(uid, chNo, i)) made.push(i);
+    const a = ansOf(uid, qOf(other, chNo, i));
+    if (a) { solved.push(i); if (!a.correct) wrong.push(i); }
+  }
+  return { made, solved, wrong };
 }
 function renderPractice(ch, me, fr) {
   const N = PRACTICE_COUNT;
@@ -418,14 +435,223 @@ function renderPractice(ch, me, fr) {
   const viewMe = ui.pracWho !== 'fr' || !fr;
   const p = viewMe ? mp : fp;
   const rows = Array.from({ length: N }, (_, i) => `<div class="topic four"><div><span class="num">Q${i + 1}</span></div>
-    ${PRAC_KEYS.map(([k, l]) => viewMe
-      ? `<button class="check ${p[k].includes(i) ? 'on' : ''}" data-action="p-prac" data-key="${k}" data-i="${i}" aria-label="Q${i + 1} ${l}"><span>${p[k].includes(i) ? ICONS.check : ''}</span></button>`
-      : `<span class="check fr ${p[k].includes(i) ? 'on' : ''}">${p[k].includes(i) ? ICONS.check : ''}</span>`).join('')}</div>`).join('');
+    ${PRAC_KEYS.map(([k]) => `<span class="check ${viewMe ? 'me' : 'fr'} ${p[k].includes(i) ? 'on' : ''}">${p[k].includes(i) ? ICONS.check : ''}</span>`).join('')}</div>`).join('');
   return `<div class="prac-sum">${card(mp, myName(), 'c-me')}${card(fp, friendName(), 'c-fr')}</div>
     <div class="who-tabs"><button class="${viewMe ? 'active' : ''}" data-action="p-who" data-who="me">${esc(myName())} 체크</button><button class="${!viewMe ? 'active fr' : ''}" data-action="p-who" data-who="fr" ${fr ? '' : 'disabled'}>${esc(friendName())} 체크</button></div>
     <div class="listhead four"><span>문제</span><span>제작</span><span>풀이</span><span>오답</span></div>
     ${rows}
-    <div class="practice-hint"><b>각자 챕터당 ${N}문제.</b><span>문제 만들면 제작 · 상대 문제 풀면 풀이 · 틀린 문제는 오답 체크${viewMe ? '' : ` (${esc(friendName())} 체크는 보기만 가능)`}</span></div>`;
+    <div class="practice-hint"><b>문제 탭에서 자동으로 체크돼요.</b><span>문제 만들면 제작 · 상대 문제 풀면 풀이 · 처음에 틀리면 오답</span></div>
+    <button class="btn-line" style="margin-top:12px" data-action="go-quiz" data-qtab="make">문제 탭으로 가기 →</button>`;
+}
+
+
+// ───────────────── 문제은행 ─────────────────
+// 챕터마다 각자 5지선다 10문제 → 상대 문제 풀기 → 자동 채점 → 오답노트
+const CIRCLED = ['①', '②', '③', '④', '⑤'];
+const qKey = (uid, ch, slot) => `${uid}_${ch}_${slot}`;
+const qOf = (uid, ch, slot) => (uid ? S().questions?.[qKey(uid, ch, slot)] : undefined);
+const ansOf = (solver, q) => (solver && q ? S().answers?.[`${solver}_${q.id}`] : undefined);
+function partnerQs(chNo = null) {
+  const fr = friendId();
+  return Object.values(S().questions || {})
+    .filter((q) => q.author === fr && (chNo == null || q.chapter === chNo))
+    .sort((a, b) => a.chapter - b.chapter || a.slot - b.slot);
+}
+function unsolvedCount(chNo = null) {
+  return partnerQs(chNo).filter((q) => !ansOf(meId(), q)).length;
+}
+
+function chipsHTML(sel, action) {
+  const cur = currentChapterNo();
+  return `<div class="week-scroll" id="chips">${chapters()
+    .map((c) => `<button class="weekitem ${c.no === sel ? 'selected' : ''} ${c.no === cur ? 'now' : ''}" data-action="${action}" data-ch="${c.no}">${String(c.no).padStart(2, '0')}<small>${esc(c.title)}</small><em>${shortDate(c.start)}–${shortDate(c.end)}</em></button>`)
+    .join('')}</div>`;
+}
+
+function quizStats(uid, other, chNo) {
+  const N = PRACTICE_COUNT;
+  let made = 0, otherMade = 0, solved = 0, right = 0;
+  for (let i = 0; i < N; i++) {
+    if (qOf(uid, chNo, i)) made++;
+    const oq = qOf(other, chNo, i);
+    if (oq) {
+      otherMade++;
+      const a = ansOf(uid, oq);
+      if (a) { solved++; if (a.correct) right++; }
+    }
+  }
+  return { made, otherMade, solved, right };
+}
+
+function renderQuiz() {
+  const me = meId();
+  const fr = friendId();
+  if (ui.quizCh == null || !chapterByNo(ui.quizCh)) ui.quizCh = currentChapterNo() ?? chapters()[0]?.no;
+  if (ui.quizSolve) return renderSolve();
+  const ch = chapterByNo(ui.quizCh);
+  if (!ch) return `${head('QUIZ BANK', '문제은행')}<div class="card empty-note">챕터가 없어요.</div>`;
+  const N = PRACTICE_COUNT;
+  const ms = quizStats(me, fr, ch.no);
+  const fs = quizStats(fr, me, ch.no);
+  const sumCard = (st, name, cls) => `<div class="prac-card"><span class="${cls}">● ${esc(name)}</span>
+    <div class="q-sum-line"><span>만든 문제</span><b>${st.made}/${N}</b></div>
+    <div class="q-sum-line"><span>푼 문제</span><b>${st.solved}/${st.otherMade}</b></div>
+    <div class="q-sum-line"><span>정답</span><b>${st.right}${st.solved ? ` <small>(${Math.round((st.right / st.solved) * 100)}%)</small>` : ''}</b></div></div>`;
+
+  const tab = ui.quizTab || 'solve';
+  let body = '';
+  if (tab === 'solve') {
+    if (!fr) body = `<div class="card empty-note" style="margin-top:14px">${esc(friendName())}가 아직 로그인하지 않았어요.</div>`;
+    else {
+      const left = unsolvedCount(ch.no);
+      body = `${left ? `<button class="btn-block q-continue" data-action="q-continue">▶ 안 푼 문제 이어서 풀기 · ${left}개</button>` : ''}
+      <div class="qlist">${Array.from({ length: N }, (_, i) => {
+        const q = qOf(fr, ch.no, i);
+        if (!q) return `<div class="qrow empty"><span class="qno">Q${i + 1}</span><span class="qtext">아직 안 만들었어요</span></div>`;
+        const a = ansOf(me, q);
+        const st = !a ? '<span class="qstat todo">풀기</span>' : a.correct ? '<span class="qstat ok">정답</span>' : `<span class="qstat bad">오답${a.lastCorrect ? '→✓' : ''}</span>`;
+        return `<button class="qrow" data-action="q-open" data-id="${esc(q.id)}"><span class="qno">Q${i + 1}</span><span class="qtext">${esc(q.text)}</span>${st}</button>`;
+      }).join('')}</div>`;
+    }
+  } else if (tab === 'make') {
+    body = `<div class="qlist">${Array.from({ length: N }, (_, i) => {
+      const q = qOf(me, ch.no, i);
+      const a = ansOf(fr, q);
+      const st = !q ? '' : !a ? '<span class="qstat todo">안 풂</span>' : a.correct ? `<span class="qstat ok">${esc(friendName().slice(0, 3))} ✓</span>` : `<span class="qstat bad">${esc(friendName().slice(0, 3))} ✗</span>`;
+      return `<button class="qrow ${q ? '' : 'new'}" data-action="q-edit" data-slot="${i}"><span class="qno">Q${i + 1}</span><span class="qtext">${q ? esc(q.text) : '+ 문제 만들기'}</span>${st}</button>`;
+    }).join('')}</div>
+    <div class="practice-hint"><b>5지선다 · 챕터당 ${N}문제.</b><span>저장하면 ${esc(friendName())} 폰에 바로 떠요. 상대 결과(✓/✗)도 여기서 보여요.</span></div>`;
+  } else {
+    const list = Object.values(S().answers || {})
+      .filter((a) => a.uid === me && a.correct === false && (ui.wrongAll || a.chapter === ch.no))
+      .map((a) => ({ a, q: S().questions?.[a.qid] }))
+      .filter((x) => x.q)
+      .sort((x, y) => x.q.chapter - y.q.chapter || x.q.slot - y.q.slot);
+    body = `<div class="row" style="margin-top:14px"><span class="mini muted">처음에 틀린 문제 ${list.length}개</span>
+      <button class="filter-chip ${ui.wrongAll ? 'on' : ''}" data-action="q-wrongall">${ui.wrongAll ? '전체 챕터' : `Ch${ch.no}만`} ⇄</button></div>
+      ${list.length ? list.map(({ a, q }) => `<div class="wrong-card">
+        <div class="row"><b class="mini">Ch${q.chapter} · ${esc(friendName())} Q${q.slot + 1}</b>${a.lastCorrect ? '<span class="qstat ok">재도전 정답</span>' : '<span class="qstat bad">오답</span>'}</div>
+        <p class="wq">${esc(q.text)}</p>
+        <div class="wl bad">내 답 ${CIRCLED[a.choice]} ${esc(q.choices[a.choice])}</div>
+        <div class="wl ok">정답 ${CIRCLED[q.answer]} ${esc(q.choices[q.answer])}</div>
+        ${q.explanation ? `<div class="wexp">💡 ${esc(q.explanation)}</div>` : ''}
+        <button class="btn-line" data-action="q-open" data-id="${esc(q.id)}" data-retry="1">다시 풀기</button></div>`).join('')
+      : '<div class="card empty-note" style="margin-top:12px">틀린 문제가 없어요 👏</div>'}`;
+  }
+
+  return `
+  ${head('QUIZ BANK', '문제은행')}
+  ${chipsHTML(ch.no, 'q-ch')}
+  <div class="prac-sum">${sumCard(ms, myName(), 'c-me')}${sumCard(fs, friendName(), 'c-fr')}</div>
+  <div class="booktabs">${[['solve', `${esc(friendName())} 문제 풀기`], ['make', '내 문제 만들기'], ['wrong', '오답노트']].map(([k, l]) => `<button class="${tab === k ? 'active' : ''}" data-action="q-tab" data-qtab="${k}">${l}</button>`).join('')}</div>
+  ${body}`;
+}
+
+function renderSolve() {
+  const me = meId();
+  const q = S().questions?.[ui.quizSolve];
+  if (!q) { ui.quizSolve = null; return renderQuiz(); }
+  const a = ansOf(me, q);
+  const just = ui.quizJust && ui.quizJust.qid === q.id ? ui.quizJust : null;
+  const showResult = !!just || (a && !ui.quizRetry);
+  const picked = just ? just.choice : a ? a.lastChoice : null;
+  const right = picked === q.answer;
+  const next = partnerQs(q.chapter).find((x) => x.id !== q.id && !ansOf(me, x));
+  const choices = q.choices.map((c, i) => {
+    const cls = !showResult ? '' : i === q.answer ? 'right' : i === picked ? 'wrong' : 'dim';
+    return `<button class="choice ${cls}" data-action="q-pick" data-i="${i}" ${showResult ? 'disabled' : ''}><span class="cn">${CIRCLED[i]}</span><span>${esc(c)}</span></button>`;
+  }).join('');
+  return `
+  <div class="solve-top"><button class="back-btn" data-action="q-back">‹ 목록</button><span class="mini muted">Ch${q.chapter} · ${esc(friendName())}의 Q${q.slot + 1}</span></div>
+  <div class="solve-card"><div class="solve-q">${esc(q.text)}</div></div>
+  <div class="choices">${choices}</div>
+  ${showResult ? `<div class="result ${right ? 'ok' : 'bad'}"><b>${right ? '정답이에요! 🎉' : `아쉬워요. 정답은 ${CIRCLED[q.answer]}`}</b>
+    ${a && a.attempts > 1 ? `<span class="mini">처음 답: ${CIRCLED[a.choice]} · ${a.attempts}번째 도전</span>` : ''}
+    ${q.explanation ? `<div class="wexp">💡 ${esc(q.explanation)}</div>` : ''}</div>
+    <div class="confirm-row" style="margin-top:14px"><button class="btn-line" data-action="q-retry">다시 풀기</button>
+    ${next ? `<button class="btn-block" data-action="q-open" data-id="${esc(next.id)}">다음 문제 →</button>` : '<button class="btn-block" data-action="q-back">목록으로</button>'}</div>`
+  : '<div class="quiet">보기를 누르면 바로 채점돼요</div>'}`;
+}
+
+function confirmBox(title, msg, yes = '예', danger = false) {
+  return new Promise((resolve) => {
+    const c = document.createElement('div');
+    c.className = 'confirm-back';
+    c.style.zIndex = 40;
+    c.innerHTML = `<div class="confirm-box" role="alertdialog"><b>${title}</b><p>${msg}</p>
+      <div class="confirm-row"><button class="btn-line" data-c="no">아니오</button><button class="btn-block ${danger ? 'danger' : ''}" data-c="yes">${yes}</button></div></div>`;
+    document.body.appendChild(c);
+    c.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-c]');
+      if (!b && e.target !== c) return;
+      c.remove();
+      resolve(b?.dataset.c === 'yes');
+    });
+  });
+}
+
+function openQuestionEditor(chNo, slot) {
+  const me = meId();
+  const q = qOf(me, chNo, slot);
+  const fa = ansOf(friendId(), q);
+  let answer = q ? q.answer : null;
+  let dirty = false;
+  const wrap = document.createElement('div');
+  wrap.className = 'sheet-back';
+  wrap.innerHTML = `<div class="sheet qe-sheet" role="dialog" aria-label="문제 편집">
+    <div class="sheet-head"><div class="grab"></div><h2>Ch${chNo} · Q${slot + 1} ${q ? '수정' : '만들기'}</h2></div>
+    <div class="sheet-body">
+      <label>문제</label>
+      <textarea class="field" id="qe-text" rows="4" placeholder="예: 다음 중 단당류가 아닌 것은?">${esc(q?.text || '')}</textarea>
+      <label>보기 <span class="muted" style="font-weight:600">(정답 번호를 눌러 표시)</span></label>
+      ${[0, 1, 2, 3, 4].map((i) => `<div class="choice-edit"><button class="ans-pick ${answer === i ? 'on' : ''}" data-pick="${i}" aria-label="${i + 1}번을 정답으로">${CIRCLED[i]}</button><input class="field" id="qe-c${i}" placeholder="보기 ${i + 1}" value="${esc(q?.choices?.[i] || '')}"></div>`).join('')}
+      <label>해설 <span class="muted" style="font-weight:600">(선택)</span></label>
+      <textarea class="field" id="qe-exp" rows="2" placeholder="틀렸을 때 보여줄 설명">${esc(q?.explanation || '')}</textarea>
+      ${fa ? `<div class="hint">⚠ ${esc(friendName())}가 이미 푼 문제예요. 고쳐도 채점 결과는 그대로 남아요.</div>` : ''}
+      ${q ? '<button class="text-btn" data-q="delete">이 문제 삭제</button>' : ''}
+    </div>
+    <div class="sheet-foot"><button class="btn-line" data-q="cancel">취소</button><button class="btn-block" data-q="save">저장</button></div>
+  </div>`;
+  document.body.appendChild(wrap);
+  const unlock = lockBackground(wrap);
+  requestAnimationFrame(() => wrap.classList.add('open'));
+  const close = () => { wrap.classList.remove('open'); setTimeout(() => { wrap.remove(); unlock(); }, 220); };
+  const tryClose = async () => { if (!dirty || (await confirmBox('저장하지 않고 닫을까요?', '쓴 내용이 사라져요.'))) close(); };
+  wrap.addEventListener('input', () => { dirty = true; });
+  wrap.addEventListener('click', async (e) => {
+    if (e.target === wrap) return tryClose();
+    const pick = e.target.closest('[data-pick]');
+    if (pick) {
+      answer = Number(pick.dataset.pick);
+      dirty = true;
+      wrap.querySelectorAll('.ans-pick').forEach((b) => b.classList.toggle('on', Number(b.dataset.pick) === answer));
+      return;
+    }
+    const act = e.target.closest('[data-q]')?.dataset.q;
+    if (!act) return;
+    try {
+      if (act === 'cancel') return tryClose();
+      if (act === 'delete') {
+        if (await confirmBox('이 문제를 삭제할까요?', `${esc(friendName())} 화면에서도 사라져요.`, '삭제', true)) {
+          await store.deleteQuestion(q.id);
+          close();
+          toast('문제를 삭제했어요');
+        }
+        return;
+      }
+      if (act === 'save') {
+        const text = wrap.querySelector('#qe-text').value.trim();
+        const choices = [0, 1, 2, 3, 4].map((i) => wrap.querySelector(`#qe-c${i}`).value.trim());
+        const explanation = wrap.querySelector('#qe-exp').value.trim();
+        if (!text) return toast('문제를 입력해 주세요');
+        if (choices.some((c) => !c)) return toast('보기 5개를 모두 입력해 주세요');
+        if (answer == null) return toast('정답 번호를 눌러 표시해 주세요');
+        await store.saveQuestion(chNo, slot, { text, choices, answer, explanation });
+        close();
+        toast(q ? '수정했어요' : `저장했어요 · ${friendName()} 폰에 바로 떠요`);
+      }
+    } catch (err) { handleError(err); }
+  });
 }
 
 // 챕터 날짜 수정
@@ -948,15 +1174,16 @@ function render() {
   const y = window.scrollY;
   let body;
   if (ui.tab === 'timer') body = renderTimer();
+  else if (ui.tab === 'quiz') body = renderQuiz();
   else if (ui.tab === 'progress') body = renderProgress();
   else if (ui.tab === 'stats') body = renderStats();
   else body = renderHome();
 
-  const myActive = S().active[meId()];
+  const quizBadge = unsolvedCount() > 0 && ui.tab !== 'quiz';
   $app.dataset.tab = ui.tab;
   $app.innerHTML = `${isDemo ? `<div class="demo-bar">데모 모드 · 이 기기에만 저장돼요 · Firebase 연결 전${params.get('sample') === '1' ? ' · 시연 데이터' : ''}</div>` : ''}
   <div class="screen">${body}</div>
-  <nav class="nav">${[['home', '홈'], ['timer', '타이머'], ['progress', '진도'], ['stats', '기록']].map(([k, l]) => `<button class="${ui.tab === k ? 'active' : ''}" data-action="go" data-tab="${k}"><span class="${k === 'timer' && myActive && ui.tab !== 'timer' ? 'badge' : ''}">${ICONS[k]}</span><span>${l}</span></button>`).join('')}</nav>`;
+  <nav class="nav">${[['home', '홈'], ['quiz', '문제'], ['progress', '진도'], ['stats', '기록']].map(([k, l]) => `<button class="${ui.tab === k ? 'active' : ''}" data-action="go" data-tab="${k}"><span class="${k === 'quiz' && quizBadge ? 'badge' : ''}">${ICONS[k]}</span><span>${l}</span></button>`).join('')}</nav>`;
 
   const chips = document.getElementById('chips');
   if (chips) {
@@ -1029,6 +1256,48 @@ $app.addEventListener('click', async (e) => {
         break;
       case 'p-ch':
         ui.progCh = Number(el.dataset.ch); render();
+        break;
+      case 'go-quiz':
+        ui.tab = 'quiz'; ui.quizTab = el.dataset.qtab || 'solve'; ui.quizSolve = null; ui.quizJust = null;
+        ui.quizCh = currentChapterNo() ?? ui.quizCh;
+        history.replaceState(null, '', '#quiz'); window.scrollTo(0, 0); render();
+        break;
+      case 'q-ch':
+        ui.quizCh = Number(el.dataset.ch); render();
+        break;
+      case 'q-tab':
+        ui.quizTab = el.dataset.qtab; render();
+        break;
+      case 'q-wrongall':
+        ui.wrongAll = !ui.wrongAll; render();
+        break;
+      case 'q-continue': {
+        const nx = partnerQs(ui.quizCh).find((x) => !ansOf(meId(), x));
+        if (nx) { ui.quizSolve = nx.id; ui.quizRetry = false; ui.quizJust = null; window.scrollTo(0, 0); render(); }
+        break;
+      }
+      case 'q-open':
+        ui.quizSolve = el.dataset.id; ui.quizRetry = !!el.dataset.retry; ui.quizJust = null;
+        window.scrollTo(0, 0); render();
+        break;
+      case 'q-back':
+        ui.quizSolve = null; ui.quizJust = null; ui.quizRetry = false; render();
+        break;
+      case 'q-retry':
+        ui.quizRetry = true; ui.quizJust = null; render();
+        break;
+      case 'q-pick': {
+        const q = S().questions?.[ui.quizSolve];
+        if (!q) break;
+        const choice = Number(el.dataset.i);
+        ui.quizJust = { qid: q.id, choice };
+        ui.quizRetry = false;
+        render();
+        await store.answerQuestion(q, choice);
+        break;
+      }
+      case 'q-edit':
+        openQuestionEditor(ui.quizCh, Number(el.dataset.slot));
         break;
       case 'p-dates':
         openChapterDates(ui.progCh);
@@ -1147,6 +1416,7 @@ function errorText(err) {
   if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-email')) return '이메일 또는 비밀번호가 틀렸어요';
   if (c.includes('too-many-requests')) return '시도가 너무 많아요. 잠시 후 다시 해주세요';
   if (c.includes('network')) return '인터넷 연결을 확인해 주세요';
+  if (c.includes('permission-denied') && err.where === 'quiz') return '문제은행을 쓰려면 Firestore 규칙을 새로 게시해 주세요';
   if (c.includes('permission-denied')) return '권한이 없어요. Firestore 규칙에 이 이메일이 들어있는지 확인해 주세요';
   return err?.message || '알 수 없는 오류';
 }
@@ -1170,7 +1440,7 @@ store.onError(handleError);
 store.subscribe(render);
 window.addEventListener('hashchange', () => {
   const t = location.hash.slice(1);
-  if (['home', 'timer', 'progress', 'stats'].includes(t) && t !== ui.tab) { ui.tab = t; window.scrollTo(0, 0); render(); }
+  if (['home', 'quiz', 'timer', 'progress', 'stats'].includes(t) && t !== ui.tab) { ui.tab = t; window.scrollTo(0, 0); render(); }
 });
 
 // 새 버전이 올라오면 자동으로 새로고침 (GitHub Pages 캐시 때문에 늦게 반영되는 것 방지)

@@ -35,6 +35,26 @@ service cloud.firestore {
         allow write: if isSelf(uid);
       }
 
+      // 문제은행: 둘 다 읽기, 내가 만든 문제만 만들기/고치기/지우기
+      match /questions/{qid} {
+        allow read: if isMember();
+        allow create: if isMember() && request.resource.data.author == request.auth.uid;
+        allow update: if isMember()
+          && resource.data.author == request.auth.uid
+          && request.resource.data.author == request.auth.uid;
+        allow delete: if isMember() && resource.data.author == request.auth.uid;
+      }
+
+      // 문제 풀이 결과: 둘 다 읽기, 내 답만 저장
+      match /answers/{aid} {
+        allow read: if isMember();
+        allow create: if isMember() && request.resource.data.uid == request.auth.uid;
+        allow update: if isMember()
+          && resource.data.uid == request.auth.uid
+          && request.resource.data.uid == request.auth.uid;
+        allow delete: if isMember() && resource.data.uid == request.auth.uid;
+      }
+
       // 공부 기록: 둘 다 읽기, 내 기록만 만들기/지우기
       match /sessions/{sessionId} {
         allow read: if isMember();

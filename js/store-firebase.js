@@ -55,6 +55,8 @@ export function createFirebaseStore() {
     sessions: [],
     active: {},
     progress: {},
+    questions: {},
+    answers: {},
   };
 
   const emit = () => listeners.forEach((fn) => fn(state));
@@ -65,8 +67,24 @@ export function createFirebaseStore() {
     unsubs = [];
   }
 
+  // 문제은행 규칙이 아직 게시 안 됐을 때 알아보기 쉽게 표시
+  const failQuiz = (e) => { e.where = 'quiz'; fail(e); };
+  const mapListener = (name, key) =>
+    onSnapshot(
+      col(name),
+      (snap) => {
+        const o = {};
+        snap.forEach((d) => (o[d.id] = { id: d.id, ...d.data() }));
+        state[key] = o;
+        emit();
+      },
+      failQuiz
+    );
+
   function startListening(uid) {
     stopListening();
+    unsubs.push(mapListener('questions', 'questions'));
+    unsubs.push(mapListener('answers', 'answers'));
     unsubs.push(
       onSnapshot(
         roomRef,
@@ -160,6 +178,8 @@ export function createFirebaseStore() {
         sessions: [],
         active: {},
         progress: {},
+        questions: {},
+        answers: {},
       });
     }
     emit();
@@ -246,6 +266,34 @@ export function createFirebaseStore() {
     },
     async deleteSession(id) {
       await deleteDoc(sub('sessions', id));
+    },
+
+    // ── 문제은행 ──
+    async saveQuestion(chapter, slot, { text, choices, answer, explanation }) {
+      const id = `${uid()}_${chapter}_${slot}`;
+      const prev = state.questions[id];
+      await setDoc(sub('questions', id), {
+        author: uid(), chapter, slot, text, choices, answer, explanation: explanation || '',
+        createdAt: prev?.createdAt || nowMs(), updatedAt: nowMs(),
+      });
+    },
+    async deleteQuestion(id) {
+      await deleteDoc(sub('questions', id));
+    },
+    async answerQuestion(q, choice) {
+      const id = `${uid()}_${q.id}`;
+      const correct = choice === q.answer;
+      const prev = state.answers[id];
+      const now = nowMs();
+      if (!prev) {
+        await setDoc(sub('answers', id), {
+          uid: uid(), qid: q.id, author: q.author, chapter: q.chapter, slot: q.slot,
+          choice, correct, lastChoice: choice, lastCorrect: correct, attempts: 1, at: now, lastAt: now,
+        });
+      } else {
+        await updateDoc(sub('answers', id), { lastChoice: choice, lastCorrect: correct, attempts: (prev.attempts || 1) + 1, lastAt: now });
+      }
+      return correct;
     },
 
     // ── 진도 ──
