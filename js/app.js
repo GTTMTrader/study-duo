@@ -2,11 +2,12 @@ import { firebaseConfig } from './config.js';
 import { TYPES, PRACTICE_COUNT, SCHEMA, chaptersToText, textToChapters, fillChapterDates } from './defaults.js';
 import {
   nowMs, todayKST, setTodayOverride, kstHHMM, daysBetween, addDays, mondayOf, weekdayIdx,
-  dateLabel, shortDate, getPhase, splitHM, hmText, clockText,
+  dateLabel, shortDate, getPhase, kstDateStr, splitHM, hmText, clockText,
 } from './dates.js';
 import { deviceLabel } from './device.js';
+import { SKINS, getSkin, setSkin } from './skin.js';
 
-const VERSION = '1.2.0';
+const VERSION = '1.3.0';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -33,7 +34,7 @@ const ui = {
   progBook: 'concept',
   pracWho: 'me',
   quizCh: null,
-  quizTab: 'solve',
+  quizTab: 'make',
   quizSolve: null,
   quizRetry: false,
   quizJust: null,
@@ -182,12 +183,10 @@ function ddayBadge() {
 }
 
 // ───────────────── 홈 ─────────────────
+// 시간 대신: 문제 정답 대결 + 이번 주 할 일
 function renderHome() {
   const me = meId();
   const fr = friendId();
-  const today = todayKST();
-  const mon = mondayOf(today);
-  const sun = addDays(mon, 6);
   const p = phaseNow();
 
   // 상단 주차 표시
@@ -195,7 +194,7 @@ function renderHome() {
   if (p.kind === 'week' || p.kind === 'before') {
     const ch = chapters()[(p.week || 1) - 1];
     pillText = p.kind === 'before' ? `시작 D-${p.daysToStart}` : `WEEK ${String(p.week).padStart(2, '0')}`;
-    if (ch) metaText = `${esc(ch.title)}${ch.pages ? ` <span style="color:#c2c8d4;padding:0 5px">·</span> ${esc(ch.pages)}` : ''}`;
+    if (ch) metaText = `${esc(ch.title)}${ch.pages ? ` <span style="color:var(--faint);padding:0 5px">·</span> ${esc(ch.pages)}` : ''}`;
   } else if (p.kind === 'review') {
     pillText = '최종 복습 기간';
     metaText = `시험까지 ${p.dExam}일`;
@@ -207,89 +206,68 @@ function renderHome() {
     metaText = '수고했어요';
   }
 
-  // 주간 대결
-  const myW = secIn(me, mon, sun);
-  const frW = secIn(fr, mon, sun);
-  const total = myW + frW;
-  const myPct = total ? Math.max(4, Math.min(96, (myW / total) * 100)) : 50;
+  // 이번 주 챕터 (복습 기간·시험 이후엔 전체)
+  const weekCh = p.kind === 'week' || p.kind === 'before' ? chapters()[(p.week || 1) - 1] : null;
+  const chs = weekCh ? [weekCh] : chapters();
+  const tally = (uid, other) => chs.reduce((t, c) => {
+    const st = quizStats(uid, other, c.no);
+    t.made += st.made; t.solved += st.solved; t.right += st.right; t.otherMade += st.otherMade;
+    return t;
+  }, { made: 0, solved: 0, right: 0, otherMade: 0 });
+  const mt = tally(me, fr);
+  const ft = tally(fr, me);
+
+  // 정답 대결
+  const myS = mt.right, frS = ft.right, total = myS + frS;
+  const myPct = total ? Math.max(4, Math.min(96, (myS / total) * 100)) : 50;
+  const diff = Math.abs(myS - frS);
   let msg, msgCls = '';
-  const diff = Math.abs(myW - frW);
-  if (!total) { msg = '이번 주 첫 기록을 남겨보세요'; msgCls = 'even'; }
-  else if (diff < 60) { msg = '지금은 동점이에요'; msgCls = 'even'; }
-  else if (myW > frW) msg = `${hmText(diff)} 앞서 있어요`;
-  else { msg = `${hmText(diff)} 뒤처져 있어요`; msgCls = 'behind'; }
-  const leader = total && diff >= 60 ? (myW > frW ? 'me' : 'fr') : null;
-  const liveTag = (uid, cls) => {
-    const a = S().active[uid];
-    if (!a) return '';
-    return `<span class="live ${cls}">${a.paused ? '일시정지' : '공부 중'}</span>`;
-  };
+  if (!mt.solved && !ft.solved) { msg = '아직 푼 문제가 없어요'; msgCls = 'even'; }
+  else if (!diff) { msg = '지금은 동점이에요'; msgCls = 'even'; }
+  else if (myS > frS) msg = `${diff}문제 앞서 있어요`;
+  else { msg = `${diff}문제 뒤처져 있어요`; msgCls = 'behind'; }
+  const leader = diff ? (myS > frS ? 'me' : 'fr') : null;
+  const big = (n) => `<div class="score">${n}<span class="unit">문제</span></div>`;
+  const N = PRACTICE_COUNT * chs.length;
 
-  // 오늘
-  const myT = secIn(me, today, today);
-  const frT = secIn(fr, today, today);
+  // 이번 주 할 일
+  const sumBy = (fn) => chs.reduce((t, c) => t + fn(c), 0);
+  const rows = [
+    ['개념서 단원', sumBy((c) => conceptDone(me, c.no)), sumBy((c) => conceptDone(fr, c.no)), sumBy((c) => c.topics.length)],
+    ['문제집', sumBy((c) => { const w = workbookOf(me, c.no); return (w.solved ? 1 : 0) + (w.wrong ? 1 : 0); }), sumBy((c) => { const w = workbookOf(fr, c.no); return (w.solved ? 1 : 0) + (w.wrong ? 1 : 0); }), 2 * chs.length],
+    ['문제 만들기', mt.made, ft.made, N],
+    ['상대 문제 풀기', mt.solved, ft.solved, [mt.otherMade, ft.otherMade]],
+  ];
+  const cell = (v, n, cls) => `<div class="todo-cell"><div class="progress-track"><div class="progress-fill" style="width:${n ? Math.min(100, (v / n) * 100) : 0}%;background:var(--${cls})"></div></div><b>${v}/${n}</b></div>`;
+  const todo = rows.map(([label, a, b, n]) => {
+    const [na, nb] = Array.isArray(n) ? n : [n, n];
+    return `<div class="todo-row"><span class="todo-lbl">${label}</span>${cell(a, na, 'me')}${cell(b, nb, 'fr')}</div>`;
+  }).join('');
 
-  // 함께 달성할 목표
-  let goal;
-  if (p.kind === 'week' || p.kind === 'before') {
-    const ch = chapters()[(p.week || 1) - 1];
-    if (!ch) goal = `<div class="card empty-note">챕터가 없어요. 설정에서 입력해 주세요.</div>`;
-    else if (!ch.topics.length) {
-      goal = `<div class="card"><div class="row"><span class="strong" style="font-size:14px">개념서 단원 완료</span></div>
-        <div class="empty-note" style="margin-top:8px">이 챕터의 단원 목록이 아직 없어요. <button class="linkish" data-action="open-settings">설정</button>에서 개념서 목차를 입력하면 진도 체크가 생겨요.</div></div>`;
-    } else {
-      const n = ch.topics.length;
-      const a = conceptDone(me, ch.no);
-      const b = conceptDone(fr, ch.no);
-      goal = goalCard('개념서 단원 완료', `총 ${n}개 단원`, a, b, n);
-    }
-  } else {
-    let n = 0, a = 0, b = 0;
-    for (const ch of chapters()) {
-      n += ch.topics.length;
-      a += conceptDone(me, ch.no);
-      b += conceptDone(fr, ch.no);
-    }
-    goal = n ? goalCard('전체 개념서 단원', `총 ${n}개 단원`, a, b, n) : `<div class="card empty-note">설정에서 단원 목록을 입력해 주세요.</div>`;
-  }
-  const goalLabel = p.kind === 'week' || p.kind === 'before' ? `Chapter ${chapters()[(p.week || 1) - 1]?.no ?? ''}` : '전체';
-
-  const myActive = S().active[me];
   const left = unsolvedCount();
-  const cta = myActive
-    ? `<button class="running" data-action="go" data-tab="timer"><span class="live-dot"></span> <span data-live="cta">${myActive.paused ? '일시정지 중' : '공부 중'} · ${clockText(activeElapsed(myActive))}</span><span class="arrow">→</span></button>`
-    : left
-      ? `<button data-action="go-quiz" data-qtab="solve">▶&nbsp; ${esc(friendName())} 문제 풀기 · ${left}개 <span class="arrow">→</span></button>`
-      : `<button data-action="go-quiz" data-qtab="make">✎&nbsp; 이번 주 문제 만들기 <span class="arrow">→</span></button>`;
+  const cta = left
+    ? `<button data-action="go-quiz" data-qtab="solve">▶&nbsp; ${esc(friendName())} 문제 풀기 · ${left}개 <span class="arrow">→</span></button>`
+    : `<button data-action="go-quiz" data-qtab="make">✎&nbsp; 이번 주 문제 만들기 <span class="arrow">→</span></button>`;
 
   return `
   ${head('STUDY DUO', '우리의 공부<span class="dot-end">.</span>', ddayBadge())}
   <div class="row meta-row"><span class="pill blue">${pillText}</span><div class="muted mini">${metaText}</div></div>
   <div class="duel">
-    <div class="row" style="margin-bottom:14px"><span class="eyebrow">THIS WEEK'S RACE</span><span class="pill">주간 대결</span></div>
+    <div class="row" style="margin-bottom:14px"><span class="eyebrow">THIS WEEK'S RACE</span><span class="pill">${weekCh ? `Ch${weekCh.no} 정답 대결` : '전체 정답 대결'}</span></div>
     <div class="row" style="align-items:flex-end">
-      <div><div class="who"><span class="dot me"></span>${esc(myName())}${leader === 'me' ? ' <span>🏅</span>' : ''} ${liveTag(me, 'me')}</div>${scoreHTML(myW)}</div>
-      <div style="text-align:right"><div class="who" style="justify-content:flex-end">${liveTag(fr, 'fr')} <span class="dot fr"></span>${esc(friendName())}${leader === 'fr' ? ' <span>🏅</span>' : ''}</div>${scoreHTML(frW)}</div>
+      <div><div class="who"><span class="dot me"></span>${esc(myName())}${leader === 'me' ? ' <span>🏅</span>' : ''}</div>${big(myS)}<div class="score-sub">푼 문제 ${mt.solved}/${mt.otherMade}</div></div>
+      <div style="text-align:right"><div class="who" style="justify-content:flex-end"><span class="dot fr"></span>${esc(friendName())}${leader === 'fr' ? ' <span>🏅</span>' : ''}</div>${big(frS)}<div class="score-sub">푼 문제 ${ft.solved}/${ft.otherMade}</div></div>
     </div>
-    <div class="race-track">${total ? `<div style="background:#4268ef;width:${myPct}%"></div><div style="background:var(--fr-bar);width:${100 - myPct}%"></div>` : '<div style="width:100%;background:#e6e9f0"></div>'}</div>
-    <div class="row" style="margin-top:14px"><span class="race-msg ${msgCls}">${msg}</span><span class="mini muted">월~일 누적</span></div>
+    <div class="race-track">${total ? `<div style="background:var(--me);width:${myPct}%"></div><div style="background:var(--fr-bar);width:${100 - myPct}%"></div>` : '<div style="width:100%;background:var(--track)"></div>'}</div>
+    <div class="row" style="margin-top:14px"><span class="race-msg ${msgCls}">${msg}</span><span class="mini muted">${weekCh ? `${shortDate(weekCh.start)}–${shortDate(weekCh.end)}` : '전체 챕터'}</span></div>
   </div>
-  ${!fr ? `<div class="empty-note" style="margin-top:10px;text-align:center">${isDemo ? '' : '친구가 아직 한 번도 로그인하지 않았어요.'}</div>` : ''}
-  <div class="row sec-row"><span class="section-label">오늘은 얼마나 했을까?</span><span class="muted mini">${dateLabel(today)} · <button class="linkish" data-action="go" data-tab="timer">타이머</button></span></div>
-  <div class="todayrow">
-    <div><div class="mini muted">${esc(myName())}</div><div class="todaytime c-me">${smallHM(myT)}</div></div>
-    <div class="vline"></div>
-    <div><div class="mini muted">${esc(friendName())}</div><div class="todaytime c-fr">${smallHM(frT)}</div></div>
+  ${!fr ? `<div class="empty-note" style="margin-top:10px;text-align:center">${isDemo ? '' : '상대가 아직 한 번도 로그인하지 않았어요.'}</div>` : ''}
+  <div class="row sec-row" style="margin-bottom:10px"><span class="section-label">${weekCh ? '이번 주 할 일' : '전체 진행'}</span><span class="mini muted">${weekCh ? `Chapter ${weekCh.no}` : `${chs.length}개 챕터`}</span></div>
+  <div class="card todo-card">
+    <div class="todo-row todo-head"><span></span><span class="c-me">● ${esc(myName())}</span><span class="c-fr">● ${esc(friendName())}</span></div>
+    ${todo}
   </div>
-  <div class="row sec-row" style="margin-bottom:10px"><span class="section-label">함께 달성할 목표</span><span class="mini muted">${goalLabel}</span></div>
-  ${goal}
   <div class="cta">${cta}</div>`;
-}
-
-function goalCard(title, sub, a, b, n) {
-  return `<div class="card" style="padding:17px 18px"><div class="row"><span class="strong" style="font-size:14px">${title}</span><span class="mini muted">${sub}</span></div>
-    <div class="goal-line" style="margin-top:15px"><div class="lbl c-me">${esc(myName())}</div><div class="progress-track" style="flex:1"><div class="progress-fill" style="width:${(a / n) * 100}%;background:var(--me)"></div></div><span class="mini strong">${a} / ${n}</span></div>
-    <div class="goal-line" style="margin-top:11px"><div class="lbl c-fr">${esc(friendName())}</div><div class="progress-track" style="flex:1"><div class="progress-fill" style="width:${(b / n) * 100}%;background:var(--fr)"></div></div><span class="mini strong">${b} / ${n}</span></div></div>`;
 }
 
 // ───────────────── 타이머 ─────────────────
@@ -335,7 +313,7 @@ function renderTimer() {
     : `오늘의 ${ordinal(nth)} 집중 세션${a.device && a.device !== deviceLabel() ? ` · ${esc(a.device)}에서 시작` : ''}`;
 
   const list = mineToday.length
-    ? mineToday.map((s) => `<button class="session editable" data-action="edit-session" data-id="${esc(s.id)}"><span style="color:#8991a3">${kstHHMM(s.startAt)}–${kstHHMM(s.endAt)}</span><span>${esc(s.type)}</span><b>${hmText(s.durationSec)}</b><i class="chev-r">›</i></button>`).join('') + `<div class="hint-row">기록을 누르면 시간 수정·삭제할 수 있어요</div>`
+    ? mineToday.map((s) => `<button class="session editable" data-action="edit-session" data-id="${esc(s.id)}"><span style="color:var(--muted-2)">${kstHHMM(s.startAt)}–${kstHHMM(s.endAt)}</span><span>${esc(s.type)}</span><b>${hmText(s.durationSec)}</b><i class="chev-r">›</i></button>`).join('') + `<div class="hint-row">기록을 누르면 시간 수정·삭제할 수 있어요</div>`
     : `<div class="empty-note" style="padding-top:12px">아직 저장된 세션이 없어요.</div>`;
 
   return `
@@ -352,9 +330,9 @@ function renderTimer() {
     ${a ? `<button data-action="t-discard">기록 안 하고 취소</button>` : ''}
   </div>
   <div class="timepanel">
-    <div class="row"><span style="font-size:13px;color:#778198;font-weight:750">오늘 누적 · 진행 중 포함</span><span style="font-size:22px;font-weight:900" data-live="todayTotal">${hmText(secIn(me, today, today))}</span></div>
+    <div class="row"><span style="font-size:13px;color:var(--muted);font-weight:750">오늘 누적 · 진행 중 포함</span><span style="font-size:22px;font-weight:900" data-live="todayTotal">${hmText(secIn(me, today, today))}</span></div>
     <div class="separator"></div>
-    <div class="row"><span style="font-size:14px;color:#45506b;font-weight:750">저장된 세션</span><span class="mini" style="color:#8991a3">${mineToday.length}개</span></div>
+    <div class="row"><span style="font-size:14px;color:var(--ink-2);font-weight:750">저장된 세션</span><span class="mini" style="color:var(--muted-2)">${mineToday.length}개</span></div>
     ${list}
   </div>
   <div class="quiet">지금은 나의 시간. 경쟁 결과는 홈에서 확인해요.</div>`;
@@ -498,7 +476,7 @@ function renderQuiz() {
     <div class="q-sum-line"><span>푼 문제</span><b>${st.solved}/${st.otherMade}</b></div>
     <div class="q-sum-line"><span>정답</span><b>${st.right}${st.solved ? ` <small>(${Math.round((st.right / st.solved) * 100)}%)</small>` : ''}</b></div></div>`;
 
-  const tab = ui.quizTab || 'solve';
+  const tab = ui.quizTab || 'make';
   let body = '';
   if (tab === 'solve') {
     if (!fr) body = `<div class="card empty-note" style="margin-top:14px">${esc(friendName())}가 아직 로그인하지 않았어요.</div>`;
@@ -543,7 +521,7 @@ function renderQuiz() {
   ${head('QUIZ BANK', '문제은행')}
   ${chipsHTML(ch.no, 'q-ch')}
   <div class="prac-sum">${sumCard(ms, myName(), 'c-me')}${sumCard(fs, friendName(), 'c-fr')}</div>
-  <div class="booktabs">${[['solve', `${esc(friendName())} 문제 풀기`], ['make', '내 문제 만들기'], ['wrong', '오답노트']].map(([k, l]) => `<button class="${tab === k ? 'active' : ''}" data-action="q-tab" data-qtab="${k}">${l}</button>`).join('')}</div>
+  <div class="booktabs">${[['make', '내 문제'], ['solve', `${esc(friendName())} 문제`], ['wrong', '오답노트']].map(([k, l]) => `<button class="${tab === k ? 'active' : ''}" data-action="q-tab" data-qtab="${k}">${l}</button>`).join('')}</div>
   ${body}`;
 }
 
@@ -705,11 +683,27 @@ function openChapterDates(chNo) {
 }
 
 // ───────────────── 기록 ─────────────────
+// 시간 없이: 챕터별 현황 + 달력(문제 만들기·풀기·진도 활동)
 function statsTabs() {
-  return `<div class="time-tabs">${[['today', '오늘'], ['week', '이번 주'], ['all', '전체'], ['cal', '달력']].map(([k, l]) => `<button class="${ui.statsRange === k ? 'active' : ''}" data-action="s-range" data-range="${k}">${l}</button>`).join('')}</div>`;
+  return `<div class="time-tabs">${[['chapters', '챕터별'], ['cal', '달력']].map(([k, l]) => `<button class="${ui.statsRange === k ? 'active' : ''}" data-action="s-range" data-range="${k}">${l}</button>`).join('')}</div>`;
 }
 
-// 달력: 날짜마다 그날 공부한 챕터가 자동으로 표시됨 (직접 입력 X)
+// 날짜 → {uid|챕터|종류: {uid, chapter, kind, n, right}}
+function activityByDate(me, fr, from, to) {
+  const out = {};
+  const add = (date, uid, chapter, kind, right) => {
+    if (!date || date < from || date > to || (uid !== me && uid !== fr)) return;
+    const day = (out[date] ||= {});
+    const e = (day[`${uid}|${chapter}|${kind}`] ||= { uid, chapter, kind, n: 0, right: 0 });
+    e.n++;
+    if (right) e.right++;
+  };
+  for (const s of S().sessions) add(s.dateKST, s.uid, s.chapter, 'study');
+  for (const q of Object.values(S().questions || {})) if (q.createdAt > 0) add(kstDateStr(q.createdAt), q.author, q.chapter, 'make');
+  for (const a of Object.values(S().answers || {})) if (a.at > 0) add(kstDateStr(a.at), a.uid, a.chapter, 'solve', a.correct);
+  return out;
+}
+
 function renderCalendar(me, fr, today) {
   if (!ui.calMonth) ui.calMonth = today.slice(0, 7);
   if (!ui.calSel) ui.calSel = today;
@@ -720,58 +714,41 @@ function renderCalendar(me, fr, today) {
   const gridStart = mondayOf(first);
   const gridEnd = addDays(mondayOf(last), 6);
   const examDate = S().room.examDate;
+  const act = activityByDate(me, fr, gridStart, gridEnd);
 
-  // 날짜별 기록 모으기 (진행 중 타이머 포함)
-  const byDate = {};
-  const push = (s) => { (byDate[s.dateKST] ||= []).push(s); };
-  for (const s of S().sessions) {
-    if ((s.uid === me || s.uid === fr) && s.dateKST >= gridStart && s.dateKST <= gridEnd) push(s);
-  }
-  for (const [uid, a] of Object.entries(S().active)) {
-    if (uid !== me && uid !== fr) continue;
-    push({ id: `live-${uid}`, uid, type: a.type, chapter: a.chapter, startAt: a.sessionStart, endAt: nowMs(), durationSec: activeElapsed(a), dateKST: activeDate(a), live: true });
-  }
   // 같은 챕터는 하나로 묶고, 누가 했는지는 색깔 점으로
   const entries = (date) => {
     const map = new Map();
-    for (const s of byDate[date] || []) {
-      const e = map.get(s.chapter) || { chapter: s.chapter, me: false, fr: false, sec: 0 };
-      if (s.uid === me) e.me = true; else e.fr = true;
-      e.sec += s.durationSec;
-      map.set(s.chapter, e);
+    for (const e of Object.values(act[date] || {})) {
+      const g = map.get(e.chapter) || { chapter: e.chapter, me: false, fr: false, n: 0 };
+      if (e.uid === me) g.me = true; else g.fr = true;
+      g.n += e.n;
+      map.set(e.chapter, g);
     }
-    return [...map.values()].sort((a, b) => b.sec - a.sec);
+    return [...map.values()].sort((a, b) => b.n - a.n);
   };
 
   let cells = '';
   for (let d = gridStart; d <= gridEnd; d = addDays(d, 1)) {
     const inMonth = d.slice(0, 7) === ui.calMonth;
     const es = entries(d);
-    const shown = es.slice(0, 2);
-    const cls = [
-      'cal-cell', inMonth ? '' : 'out', d === today ? 'today' : '', d === ui.calSel ? 'sel' : '',
-      d === examDate ? 'exam' : '', weekdayIdx(d) >= 5 ? 'wkend' : '',
-    ].join(' ');
+    const cls = ['cal-cell', inMonth ? '' : 'out', d === today ? 'today' : '', d === ui.calSel ? 'sel' : '', d === examDate ? 'exam' : '', weekdayIdx(d) >= 5 ? 'wkend' : ''].join(' ');
     cells += `<button class="${cls}" data-action="cal-day" data-date="${d}">
       <span class="cal-num">${Number(d.slice(8))}</span>
       ${d === examDate ? '<span class="cal-exam">시험</span>' : ''}
-      ${shown.map((e) => `<span class="cal-tag"><span class="cal-chno">Ch${e.chapter}<span class="cal-who">${e.me ? '<b class="me"></b>' : ''}${e.fr ? '<b class="fr"></b>' : ''}</span></span><span class="cal-title">${esc(chapterByNo(e.chapter)?.title || '')}</span></span>`).join('')}
+      ${es.slice(0, 2).map((e) => `<span class="cal-tag"><span class="cal-chno">Ch${e.chapter}<span class="cal-who">${e.me ? '<b class="me"></b>' : ''}${e.fr ? '<b class="fr"></b>' : ''}</span></span><span class="cal-title">${esc(chapterByNo(e.chapter)?.title || '')}</span></span>`).join('')}
       ${es.length > 2 ? `<span class="cal-more">+${es.length - 2}</span>` : ''}
     </button>`;
   }
 
-  // 선택한 날 상세
+  // 선택한 날 상세 (시간 없이 한 일만)
   const sel = ui.calSel;
-  const list = (byDate[sel] || []).slice().sort((a, b) => a.startAt - b.startAt);
-  const myT = list.filter((s) => s.uid === me).reduce((t, s) => t + s.durationSec, 0);
-  const frT = list.filter((s) => s.uid === fr).reduce((t, s) => t + s.durationSec, 0);
+  const selAct = activityByDate(me, fr, sel, sel)[sel] || {};
+  const order = { make: 0, solve: 1, study: 2 };
+  const list = Object.values(selAct).sort((a, b) => (a.uid === me ? 0 : 1) - (b.uid === me ? 0 : 1) || a.chapter - b.chapter || order[a.kind] - order[b.kind]);
+  const what = (e) => e.kind === 'make' ? `문제 ${e.n}개 만듦` : e.kind === 'solve' ? `문제 ${e.n}개 풂 · 정답 ${e.right}` : '공부 기록';
   const detail = list.length
-    ? list.map((s) => {
-        const mine = s.uid === me;
-        const c = chapterByNo(s.chapter);
-        const editable = mine && !s.live;
-        return `<div class="recent-item ${editable ? 'editable' : ''}" ${editable ? `data-action="edit-session" data-id="${esc(s.id)}"` : ''}><span class="dot ${mine ? 'me' : 'fr'}"></span><div class="grow"><b>Ch${s.chapter} ${esc(c?.title || '')} · ${esc(s.type)}</b><div class="mini muted">${esc(mine ? myName() : friendName())} · ${kstHHMM(s.startAt)}–${s.live ? '진행 중' : kstHHMM(s.endAt)}</div></div><b>${hmText(s.durationSec)}</b>${editable ? '<i class="chev-r">›</i>' : '<span style="width:14px"></span>'}</div>`;
-      }).join('')
+    ? list.map((e) => `<div class="recent-item"><span class="dot ${e.uid === me ? 'me' : 'fr'}"></span><div class="grow"><b>Ch${e.chapter} ${esc(chapterByNo(e.chapter)?.title || '')}</b><div class="mini muted">${esc(e.uid === me ? myName() : friendName())}</div></div><b class="act-what">${what(e)}</b></div>`).join('')
     : '<div class="empty-note" style="padding:14px 0">이날은 기록이 없어요.</div>';
 
   return `
@@ -787,102 +764,53 @@ function renderCalendar(me, fr, today) {
     <div class="cal-grid">${cells}</div>
     <div class="chartlegend" style="margin-top:10px"><span class="c-me">● ${esc(myName())}</span><span style="color:var(--fr-bar)">● ${esc(friendName())}</span></div>
   </div>
-  <div class="row" style="margin-top:20px"><span class="section-label">${dateLabel(sel)}</span><span class="mini muted"><span class="c-me">${hmText(myT)}</span> · <span class="c-fr">${hmText(frT)}</span></span></div>
-  <div class="recent">${detail}</div>`;
+  <div class="row" style="margin-top:20px"><span class="section-label">${dateLabel(sel)}</span></div>
+  <div class="recent">${detail}</div>
+  <div class="hint-row">문제를 만들거나 푼 날에 자동으로 표시돼요</div>`;
 }
 
 function renderStats() {
   const me = meId();
   const fr = friendId();
   const today = todayKST();
-  const r = S().room;
+  if (ui.statsRange !== 'cal') ui.statsRange = 'chapters';
   if (ui.statsRange === 'cal') return renderCalendar(me, fr, today);
-  let from, to, title, rangeNote, chart;
 
-  if (ui.statsRange === 'today') {
-    from = to = today;
-    title = '오늘 공부시간';
-    rangeNote = dateLabel(today);
-    const cols = TYPES.map((t) => ({ label: t, a: secIn(me, from, to, (s) => s.type === t), b: secIn(fr, from, to, (s) => s.type === t) }));
-    chart = barChart(cols);
-  } else if (ui.statsRange === 'week') {
-    from = mondayOf(today);
-    to = addDays(from, 6);
-    title = '주간 누적 공부시간';
-    rangeNote = '월–일';
-    const cols = ['월', '화', '수', '목', '금', '토', '일'].map((l, i) => {
-      const d = addDays(from, i);
-      return { label: l, a: secIn(me, d, d), b: secIn(fr, d, d), today: d === today };
-    });
-    chart = barChart(cols);
-  } else {
-    from = null; to = null;
-    title = '전체 누적 공부시간';
-    const chs = chapters();
-    rangeNote = `${shortDate(chs[0]?.start || r.curriculumStart)}~`;
-    const bucket = (date) => {
-      const i = chs.findIndex((c) => c.start <= date && date <= c.end);
-      if (i >= 0) return `W${i + 1}`;
-      if (!chs.length || date < chs[0].start) return '준비';
-      const next = chs.findIndex((c) => c.start > date);
-      if (next > 0) return `W${next}`; // 챕터 사이 빈 날
-      return '복습';
-    };
-    const curB = bucket(today);
-    const labels = ['준비', ...chapters().map((_, i) => `W${i + 1}`), '복습'];
-    const sums = Object.fromEntries(labels.map((l) => [l, { a: 0, b: 0 }]));
-    for (const s of S().sessions) {
-      const k = bucket(s.dateKST);
-      if (s.uid === me) sums[k].a += s.durationSec;
-      else if (s.uid === fr) sums[k].b += s.durationSec;
-    }
-    for (const [uid, a] of Object.entries(S().active)) {
-      const k = bucket(activeDate(a));
-      if (uid === me) sums[k].a += activeElapsed(a);
-      else if (uid === fr) sums[k].b += activeElapsed(a);
-    }
-    const shown = labels.filter((l) => (l !== '준비' || sums[l].a + sums[l].b > 0) && (l !== '복습' || curB === '복습' || sums[l].a + sums[l].b > 0));
-    chart = barChart(shown.map((l) => ({ label: l.replace('W', ''), a: sums[l].a, b: sums[l].b, today: l === curB })), true);
-  }
+  const cur = currentChapterNo();
+  const tot = (uid, other) => chapters().reduce((t, c) => {
+    const st = quizStats(uid, other, c.no);
+    t.made += st.made; t.solved += st.solved; t.right += st.right;
+    t.concept += conceptDone(uid, c.no);
+    return t;
+  }, { made: 0, solved: 0, right: 0, concept: 0 });
+  const mt = tot(me, fr), ft = tot(fr, me);
+  const topics = chapters().reduce((t, c) => t + c.topics.length, 0);
+  const pct = (t) => (t.solved ? `${Math.round((t.right / t.solved) * 100)}<span>%</span>` : '–');
+  const box = (t, name, cls) => `<div><span class="mini ${cls}">● ${esc(name)}</span><strong>${pct(t)}</strong>
+    <div class="stat-lines"><span>정답 ${t.right}/${t.solved}</span><span>만든 문제 ${t.made}</span><span>개념서 ${t.concept}/${topics}</span></div></div>`;
 
-  const myT = secIn(me, from, to);
-  const frT = secIn(fr, from, to);
-  const comp = TYPES.map((t) => ({ t, sec: secIn(me, from, to, (s) => s.type === t) }));
-  const compTotal = comp.reduce((x, y) => x + y.sec, 0);
-  const compColors = ['#4168eb', '#8fb4ff', '#cbd8f4'];
-
-  const inRange = (s) => (!from || s.dateKST >= from) && (!to || s.dateKST <= to);
-  const recents = S().sessions.filter((s) => (s.uid === me || s.uid === fr) && inRange(s));
-  const shownRecents = ui.showAllRecent ? recents : recents.slice(0, 5);
+  const rows = chapters().map((c) => {
+    const ms = quizStats(me, fr, c.no), fs = quizStats(fr, me, c.no);
+    const n = c.topics.length;
+    return `<div class="ch-row ${c.no === cur ? 'now' : ''}">
+      <div class="ch-name"><b>Ch${c.no} ${esc(c.title)}</b><small>${shortDate(c.start)}–${shortDate(c.end)}</small></div>
+      <div class="ch-val"><span class="c-me">${n ? `${conceptDone(me, c.no)}/${n}` : '–'}</span><span class="c-fr">${n ? `${conceptDone(fr, c.no)}/${n}` : '–'}</span></div>
+      <div class="ch-val"><span class="c-me">${ms.right}/${ms.otherMade}</span><span class="c-fr">${fs.right}/${fs.otherMade}</span></div>
+    </div>`;
+  }).join('');
 
   return `
   ${head('THE NUMBERS', '학습 기록')}
   ${statsTabs()}
   <div class="recordcard" style="margin-top:18px">
-    <div class="row"><span class="strong" style="font-size:15px">${title}</span><span class="mini muted">${rangeNote}</span></div>
-    <div class="statpair"><div><span class="mini c-me">● ${esc(myName())}</span><strong>${smallHM(myT)}</strong></div><div><span class="mini c-fr">● ${esc(friendName())}</span><strong>${smallHM(frT)}</strong></div></div>
-    ${chart}
-    <div class="chartlegend"><span class="c-me">● ${esc(myName())}</span><span style="color:var(--fr-bar)">● ${esc(friendName())}</span></div>
+    <div class="row"><span class="strong" style="font-size:15px">전체 정답률</span><span class="mini muted">상대 문제 기준</span></div>
+    <div class="statpair">${box(mt, myName(), 'c-me')}${box(ft, friendName(), 'c-fr')}</div>
   </div>
-  <div class="recordcard" style="margin-top:14px">
-    <div class="row"><span class="section-label">나의 공부 구성</span><span class="mini muted">총 ${hmText(compTotal)}</span></div>
-    <div class="strip">${compTotal ? comp.map((c, i) => `<div style="width:${(c.sec / compTotal) * 100}%;background:${compColors[i]}"></div>`).join('') : ''}</div>
-    ${comp.map((c, i) => `<div class="keyrow"><span><span style="color:${compColors[i]}">●</span> ${c.t} ${hmText(c.sec)}</span><b>${compTotal ? Math.round((c.sec / compTotal) * 100) : 0}%</b></div>`).join('')}
-  </div>
-  <div class="row" style="margin-top:22px"><span class="section-label">최근 기록</span>${recents.length > 5 ? `<button class="mini muted" data-action="s-all">${ui.showAllRecent ? '접기' : `모두 보기 (${recents.length}) →`}</button>` : ''}</div>
-  <div class="recent">${shownRecents.length ? shownRecents.map((s) => {
-      const c = chapterByNo(s.chapter);
-      const mine = s.uid === me;
-      return `<div class="recent-item ${mine ? 'editable' : ''}" ${mine ? `data-action="edit-session" data-id="${esc(s.id)}"` : ''}><span class="dot ${mine ? 'me' : 'fr'}"></span><div class="grow"><b>${esc(s.type)} · ${esc(c?.title || '')}</b><div class="mini muted">${mine ? '' : esc(friendName()) + ' · '}${dateLabel(s.dateKST).replace(/ \(.\)/, '')} · ${kstHHMM(s.startAt)}–${kstHHMM(s.endAt)}</div></div><b>${hmText(s.durationSec)}</b>${mine ? '<i class="chev-r">›</i>' : '<span style="width:14px"></span>'}</div>`;
-    }).join('') : '<div class="empty-note" style="padding:14px 0">아직 기록이 없어요.</div>'}</div>`;
-}
-
-function barChart(cols, narrow = false) {
-  const max = Math.max(1, ...cols.flatMap((c) => [c.a, c.b]));
-  // 보기 좋은 상한(30분 단위)
-  const top = Math.ceil(max / 1800) * 1800;
-  const h = (v) => (v > 0 ? Math.max(3, (v / top) * 120) : 0);
-  return `<div class="chart"><div class="chart-grid"></div>${cols.map((c) => `<div class="barcol ${c.today ? 'today' : ''}"><div class="barpair"><div style="height:${h(c.a)}px;background:var(--me)${narrow && cols.length > 9 ? ';width:8px' : ''}" title="${esc(myName())} ${hmText(c.a)}"></div><div style="height:${h(c.b)}px;background:var(--fr-bar)${narrow && cols.length > 9 ? ';width:8px' : ''}" title="${esc(friendName())} ${hmText(c.b)}"></div></div><span>${c.label}</span></div>`).join('')}</div>`;
+  <div class="recordcard ch-table" style="margin-top:14px">
+    <div class="ch-row ch-head"><span>챕터</span><span>개념서</span><span>정답</span></div>
+    ${rows}
+    <div class="chartlegend" style="margin-top:12px"><span class="c-me">● ${esc(myName())}</span><span style="color:var(--fr-bar)">● ${esc(friendName())}</span></div>
+  </div>`;
 }
 
 // ───────────────── 설정 시트 ─────────────────
@@ -894,7 +822,9 @@ function openSettings() {
   wrap.innerHTML = `<div class="sheet" role="dialog" aria-label="설정">
     <div class="sheet-head" id="sheet-drag"><div class="grab"></div><h2>설정</h2></div>
     <div class="sheet-body">
-    <label>내 이름 <span class="muted" style="font-weight:600">(친구 화면에 표시)</span></label>
+    <label>스킨 색상 <span class="muted" style="font-weight:600">(이 기기에만 적용)</span></label>
+    <div class="skin-pick" role="radiogroup" aria-label="스킨">${SKINS.map((s) => `<button role="radio" aria-checked="${getSkin() === s.id}" class="${getSkin() === s.id ? 'on' : ''}" data-skin="${s.id}"><span class="sdot" style="background:${s.color}">${getSkin() === s.id ? '✓' : ''}</span><span class="nm">${s.name}</span></button>`).join('')}</div>
+    <label>내 이름 <span class="muted" style="font-weight:600">(상대 화면에도 표시)</span></label>
     <input class="field" id="set-name" maxlength="10" placeholder="예: 불리" value="${esc(myName)}">
     <div class="two">
       <div><label>시험일</label><input class="field" type="date" id="set-exam" value="${esc(r.examDate)}"></div>
@@ -1004,6 +934,15 @@ function openSettings() {
 
   wrap.addEventListener('click', (e) => { if (e.target === wrap) askClose(); });
   wrap.querySelector('#set-close').onclick = close;
+  wrap.querySelectorAll('[data-skin]').forEach((b) => b.addEventListener('click', () => {
+    setSkin(b.dataset.skin);
+    wrap.querySelectorAll('[data-skin]').forEach((x) => {
+      const on = x.dataset.skin === b.dataset.skin;
+      x.classList.toggle('on', on);
+      x.setAttribute('aria-checked', on);
+      x.querySelector('.sdot').textContent = on ? '✓' : '';
+    });
+  }));
   wrap.querySelector('#set-logout').onclick = async () => { close(); await store.logout(); };
   wrap.querySelector('#set-save').onclick = async () => {
     const name = wrap.querySelector('#set-name').value.trim();
@@ -1183,7 +1122,7 @@ function render() {
   $app.dataset.tab = ui.tab;
   $app.innerHTML = `${isDemo ? `<div class="demo-bar">데모 모드 · 이 기기에만 저장돼요 · Firebase 연결 전${params.get('sample') === '1' ? ' · 시연 데이터' : ''}</div>` : ''}
   <div class="screen">${body}</div>
-  <nav class="nav">${[['home', '홈'], ['quiz', '문제'], ['progress', '진도'], ['stats', '기록']].map(([k, l]) => `<button class="${ui.tab === k ? 'active' : ''}" data-action="go" data-tab="${k}"><span class="${k === 'quiz' && quizBadge ? 'badge' : ''}">${ICONS[k]}</span><span>${l}</span></button>`).join('')}</nav>`;
+  <nav class="nav">${[['home', '홈'], ['progress', '진도'], ['quiz', '문제'], ['stats', '기록']].map(([k, l]) => `<button class="${ui.tab === k ? 'active' : ''}" data-action="go" data-tab="${k}"><span class="${k === 'quiz' && quizBadge ? 'badge' : ''}">${ICONS[k]}</span><span>${l}</span></button>`).join('')}</nav>`;
 
   const chips = document.getElementById('chips');
   if (chips) {
