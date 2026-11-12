@@ -216,6 +216,17 @@ export function createDemoStore({ sample = false } = {}) {
       data.room = { ...data.room, ...patch };
       commit();
     },
+    async restoreMine({ room, name, progress, questions, answers, sessions }) {
+      if (room) data.room = { ...data.room, ...room };
+      if (name != null) data.members[ME] = { ...data.members[ME], name };
+      if (progress) data.progress[ME] = progress;
+      data.questions ||= {}; data.answers ||= {};
+      for (const q of questions) data.questions[q.id] = q;
+      for (const a of answers) data.answers[a.id] = a;
+      for (const s of sessions) { data.sessions = data.sessions.filter((x) => x.id !== s.id); data.sessions.push(s); }
+      commit();
+      return questions.length + answers.length + sessions.length;
+    },
     async updateMyName(name) {
       data.members[ME] = { ...data.members[ME], name };
       commit();

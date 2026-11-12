@@ -323,6 +323,22 @@ export function createFirebaseStore() {
     async updateRoom(patch) {
       await setDoc(roomRef, patch, { merge: true });
     },
+    // 백업 복원: 이미 내 uid로 바꿔 둔 데이터를 묶어서 저장 (한 번에 최대 400건씩)
+    async restoreMine({ room, name, progress, questions, answers, sessions }) {
+      const ops = [];
+      if (room) ops.push((b) => b.set(roomRef, room, { merge: true }));
+      if (name != null) ops.push((b) => b.set(sub('members', uid()), { name }, { merge: true }));
+      if (progress) ops.push((b) => b.set(sub('progress', uid()), progress));
+      for (const q of questions) { const { id, ...d } = q; ops.push((b) => b.set(sub('questions', id), d)); }
+      for (const a of answers) { const { id, ...d } = a; ops.push((b) => b.set(sub('answers', id), d)); }
+      for (const s of sessions) { const { id, ...d } = s; ops.push((b) => b.set(sub('sessions', id), d)); }
+      for (let i = 0; i < ops.length; i += 400) {
+        const batch = writeBatch(db);
+        ops.slice(i, i + 400).forEach((op) => op(batch));
+        await batch.commit();
+      }
+      return ops.length;
+    },
     async updateMyName(name) {
       await setDoc(sub('members', uid()), { name }, { merge: true });
     },

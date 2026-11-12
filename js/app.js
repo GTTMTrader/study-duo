@@ -7,7 +7,7 @@ import {
 import { deviceLabel } from './device.js';
 import { SKINS, getSkin, setSkin } from './skin.js';
 
-const VERSION = '1.3.0';
+const VERSION = '1.4.0';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -834,6 +834,12 @@ function openSettings() {
     <label>챕터 · 개념서 단원</label>
     <textarea class="field" id="set-chapters" spellcheck="false">${esc(chaptersToText(chapters()))}</textarea>
     <div class="hint">형식: <b>번호 | 챕터명 | 페이지</b>, 아래 줄에 <b>- 단원명</b>. 개념서 목차의 대단원 번호 순서대로 적어주세요.<br>⚠ 이미 체크한 단원은 '순서'로 기억돼요. 중간에 단원을 끼워 넣으면 체크가 밀릴 수 있어요.</div>
+    <label>백업</label>
+    <div class="backup-box">
+      <div class="two"><button class="btn-line" id="set-backup">⬇ 백업 파일 받기</button><button class="btn-line" id="set-restore">⬆ 백업에서 복원</button></div>
+      <input type="file" id="set-restore-file" accept=".json,application/json" hidden>
+      <div class="hint">문제·풀이 결과·진도·챕터 날짜를 파일 하나로 저장해요. 폰에서는 "파일에 저장"이나 드라이브·카톡 나에게 보내기로 보관하면 돼요.<br><span id="set-lastbackup">${lastBackupText()}</span></div>
+    </div>
     <button class="text-btn" id="set-logout">${isDemo ? '데모 데이터 초기화' : '로그아웃'}</button>
     <div class="foot">${isDemo ? '데모 모드 · 이 기기에만 저장돼요' : esc(S().user?.email || '')} · v${VERSION}<br>시험일·시작일·챕터는 두 사람이 같이 써요.</div>
     </div>
@@ -944,6 +950,12 @@ function openSettings() {
     });
   }));
   wrap.querySelector('#set-logout').onclick = async () => { close(); await store.logout(); };
+  wrap.querySelector('#set-backup').onclick = async () => {
+    try { await downloadBackup(); wrap.querySelector('#set-lastbackup').textContent = lastBackupText(); } catch (err) { handleError(err); }
+  };
+  const $file = wrap.querySelector('#set-restore-file');
+  wrap.querySelector('#set-restore').onclick = () => $file.click();
+  $file.onchange = async () => { const f = $file.files?.[0]; $file.value = ''; if (f) await restoreFromFile(f); };
   wrap.querySelector('#set-save').onclick = async () => {
     const name = wrap.querySelector('#set-name').value.trim();
     const examDate = wrap.querySelector('#set-exam').value;
@@ -1045,6 +1057,107 @@ function openSessionEditor(id) {
       }
     } catch (err) { handleError(err); }
   });
+}
+
+
+// ───────────────── 백업 ─────────────────
+// 파일 하나(JSON)에 둘의 데이터를 전부 담음. 복원할 땐 "내 것"만 되돌림 (상대 것은 상대 폰에서 복원).
+const BACKUP_APP = 'study-duo';
+const strip = (o) => JSON.parse(JSON.stringify(o ?? null));
+function buildBackup() {
+  const st = S();
+  const r = st.room || {};
+  return {
+    app: BACKUP_APP,
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    exportedBy: { uid: meId(), email: st.user?.email || '', name: myName() },
+    room: { examDate: r.examDate, curriculumStart: r.curriculumStart, chapters: chapters(), schema: r.schema || SCHEMA },
+    members: strip(st.members),
+    progress: strip(st.progress),
+    questions: strip(st.questions || {}),
+    answers: strip(st.answers || {}),
+    sessions: strip(st.sessions || []),
+  };
+}
+function backupFileName() {
+  const d = new Date(nowMs() + 9 * 3600e3).toISOString();
+  return `study-duo-backup-${d.slice(0, 10)}-${d.slice(11, 16).replace(':', '')}.json`;
+}
+async function downloadBackup() {
+  const data = buildBackup();
+  const name = backupFileName();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const file = new File([blob], name, { type: 'application/json' });
+  // 폰: 공유 시트로 "파일에 저장"/드라이브/카톡 등 / PC: 다운로드 폴더
+  if (navigator.canShare && navigator.canShare({ files: [file] }) && /iPhone|iPad|Android/i.test(navigator.userAgent)) {
+    try {
+      await navigator.share({ files: [file], title: '우리의 공부 백업' });
+      markBackup();
+      return;
+    } catch (e) {
+      if (e?.name === 'AbortError') return;
+    }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  markBackup();
+}
+function markBackup() {
+  try { localStorage.setItem('studyduo-last-backup', String(Date.now())); } catch (e) {}
+  toast('백업 파일을 만들었어요');
+}
+function lastBackupText() {
+  let t = 0;
+  try { t = Number(localStorage.getItem('studyduo-last-backup') || 0); } catch (e) {}
+  if (!t) return '아직 이 기기에서 백업한 적 없어요';
+  const d = new Date(t + 9 * 3600e3).toISOString();
+  return `마지막 백업: ${Number(d.slice(5, 7))}/${Number(d.slice(8, 10))} ${d.slice(11, 16)}`;
+}
+
+// 백업 파일 → 내 현재 계정 기준으로 바꿔서 복원 (계정을 새로 만들었어도 이메일로 찾아서 맞춤)
+async function restoreFromFile(file) {
+  let b;
+  try { b = JSON.parse(await file.text()); } catch (e) { return toast('백업 파일을 읽을 수 없어요'); }
+  if (!b || b.app !== BACKUP_APP) return toast('우리의 공부 백업 파일이 아니에요');
+  const me = meId();
+  const fr = friendId();
+  const myEmail = (S().user?.email || '').toLowerCase();
+  const members = b.members || {};
+  const byEmail = (email) => Object.keys(members).find((k) => (members[k]?.email || '').toLowerCase() === email);
+  const oldMe = (myEmail && byEmail(myEmail)) || (isDemo ? b.exportedBy?.uid : null);
+  if (!oldMe) return toast('이 백업에서 내 계정 데이터를 찾지 못했어요');
+  const oldFr = Object.keys(members).find((k) => k !== oldMe) || null;
+  const frEmail = fr ? (S().members[fr]?.email || '').toLowerCase() : '';
+  const oldFrMatch = oldFr && (!frEmail || (members[oldFr]?.email || '').toLowerCase() === frEmail) ? oldFr : null;
+  const mapUid = (u) => (u === oldMe ? me : u === oldFrMatch && fr ? fr : u);
+
+  const questions = Object.values(b.questions || {}).filter((q) => q.author === oldMe)
+    .map((q) => ({ ...q, author: me, id: `${me}_${q.chapter}_${q.slot}` }));
+  const answers = Object.values(b.answers || {}).filter((a) => a.uid === oldMe).map((a) => {
+    const author = mapUid(a.author);
+    const qid = `${author}_${a.chapter}_${a.slot}`;
+    return { ...a, uid: me, author, qid, id: `${me}_${qid}` };
+  });
+  const sessions = (b.sessions || []).filter((s) => s.uid === oldMe)
+    .map((s) => ({ ...s, uid: me, id: `${me}_${s.startAt}` }));
+  const progress = b.progress?.[oldMe] || null;
+  const name = members[oldMe]?.name ?? null;
+  const room = b.room ? { examDate: b.room.examDate, curriculumStart: b.room.curriculumStart, chapters: b.room.chapters, schema: b.room.schema || SCHEMA } : null;
+  const t = Date.parse(b.exportedAt || '');
+  const when = t ? new Date(t + 9 * 3600e3).toISOString().slice(0, 16).replace('T', ' ') : '';
+
+  const ok = await confirmBox('이 백업으로 되돌릴까요?',
+    `${esc(when)} 백업 · 내 문제 ${questions.length}개, 내 풀이 ${answers.length}개, 진도, 시험일·챕터 설정을 지금 데이터 위에 덮어써요.<br>${esc(friendName())} 데이터는 ${esc(friendName())} 폰에서 같은 파일로 복원하면 돼요.`,
+    '복원');
+  if (!ok) return;
+  try {
+    await store.restoreMine({ room, name, progress, questions, answers, sessions });
+    toast('백업에서 복원했어요');
+  } catch (err) { handleError(err); }
 }
 
 // 시트가 열려 있는 동안 뒤 화면이 같이 움직이지 않게 고정 (아이폰 스크롤 전달 방지)
