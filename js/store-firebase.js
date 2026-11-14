@@ -297,12 +297,11 @@ export function createFirebaseStore() {
     },
 
     // ── 진도 ──
-    async setConcept(chapter, list) {
-      await setDoc(
-        sub('progress', uid()),
-        { concept: { [chapter]: list } },
-        { merge: true }
-      );
+    // 체크한 날짜도 같이 저장 (달력 표시용)
+    async setConcept(chapter, list, addedIdx = null) {
+      const data = { concept: { [chapter]: list } };
+      if (addedIdx != null) data.checkedAt = { [chapter]: { [`c${addedIdx}`]: nowMs() } };
+      await setDoc(sub('progress', uid()), data, { merge: true });
     },
     async setPractice(chapter, key, list) {
       await setDoc(
@@ -312,11 +311,9 @@ export function createFirebaseStore() {
       );
     },
     async setWorkbook(chapter, key, value) {
-      await setDoc(
-        sub('progress', uid()),
-        { workbook: { [chapter]: { [key]: value } } },
-        { merge: true }
-      );
+      const data = { workbook: { [chapter]: { [key]: value } } };
+      if (value) data.checkedAt = { [chapter]: { [`w_${key}`]: nowMs() } };
+      await setDoc(sub('progress', uid()), data, { merge: true });
     },
 
     // ── 설정 ──

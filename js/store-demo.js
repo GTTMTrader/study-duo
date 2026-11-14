@@ -176,8 +176,9 @@ export function createDemoStore({ sample = false } = {}) {
       data.sessions = data.sessions.filter((s) => s.id !== id);
       commit();
     },
-    async setConcept(chapter, list) {
+    async setConcept(chapter, list, addedIdx = null) {
       prog().concept = { ...(prog().concept || {}), [chapter]: list };
+      if (addedIdx != null) { const c = (prog().checkedAt ||= {}); c[chapter] = { ...(c[chapter] || {}), [`c${addedIdx}`]: nowMs() }; }
       commit();
     },
     async saveQuestion(chapter, slot, { text, choices, answer, explanation }) {
@@ -210,6 +211,7 @@ export function createDemoStore({ sample = false } = {}) {
     async setWorkbook(chapter, key, value) {
       const wb = (prog().workbook ||= {});
       wb[chapter] = { ...(wb[chapter] || {}), [key]: value };
+      if (value) { const c = (prog().checkedAt ||= {}); c[chapter] = { ...(c[chapter] || {}), [`w_${key}`]: nowMs() }; }
       commit();
     },
     async updateRoom(patch) {

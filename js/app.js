@@ -7,7 +7,7 @@ import {
 import { deviceLabel } from './device.js';
 import { SKINS, getSkin, setSkin } from './skin.js';
 
-const VERSION = '1.4.0';
+const VERSION = '1.4.1';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -701,6 +701,23 @@ function activityByDate(me, fr, from, to) {
   for (const s of S().sessions) add(s.dateKST, s.uid, s.chapter, 'study');
   for (const q of Object.values(S().questions || {})) if (q.createdAt > 0) add(kstDateStr(q.createdAt), q.author, q.chapter, 'make');
   for (const a of Object.values(S().answers || {})) if (a.at > 0) add(kstDateStr(a.at), a.uid, a.chapter, 'solve', a.correct);
+  // 진도 체크: 체크한 날짜에 표시. 날짜 저장 전에 체크한 건 그 챕터 기간 마지막 날에 '날짜 기록 전'으로.
+  for (const [uid, p] of Object.entries(S().progress || {})) {
+    for (const ch of chapters()) {
+      const at = p.checkedAt?.[ch.no] || {};
+      const today = todayKST();
+      const legacyDay = ch.end < today ? ch.end : today;
+      (p.concept?.[ch.no] || []).filter((i) => i < ch.topics.length).forEach((i) => {
+        const ms = at[`c${i}`];
+        add(ms ? kstDateStr(ms) : legacyDay, uid, ch.no, ms ? 'concept' : 'concept-old');
+      });
+      ['solved', 'wrong'].forEach((k) => {
+        if (!p.workbook?.[ch.no]?.[k]) return;
+        const ms = at[`w_${k}`];
+        add(ms ? kstDateStr(ms) : legacyDay, uid, ch.no, ms ? 'workbook' : 'workbook-old');
+      });
+    }
+  }
   return out;
 }
 
@@ -744,9 +761,16 @@ function renderCalendar(me, fr, today) {
   // 선택한 날 상세 (시간 없이 한 일만)
   const sel = ui.calSel;
   const selAct = activityByDate(me, fr, sel, sel)[sel] || {};
-  const order = { make: 0, solve: 1, study: 2 };
+  const order = { concept: 0, 'concept-old': 1, workbook: 2, 'workbook-old': 3, make: 4, solve: 5, study: 6 };
   const list = Object.values(selAct).sort((a, b) => (a.uid === me ? 0 : 1) - (b.uid === me ? 0 : 1) || a.chapter - b.chapter || order[a.kind] - order[b.kind]);
-  const what = (e) => e.kind === 'make' ? `문제 ${e.n}개 만듦` : e.kind === 'solve' ? `문제 ${e.n}개 풂 · 정답 ${e.right}` : '공부 기록';
+  const what = (e) => ({
+    make: `문제 ${e.n}개 만듦`,
+    solve: `문제 ${e.n}개 풂 · 정답 ${e.right}`,
+    concept: `개념서 ${e.n}단원 체크`,
+    'concept-old': `개념서 ${e.n}단원 완료<small>날짜 기록 전</small>`,
+    workbook: `문제집 ${e.n === 2 ? '풀이·오답' : ''} 체크`.replace('  ', ' '),
+    'workbook-old': `문제집 체크<small>날짜 기록 전</small>`,
+  }[e.kind] || '공부 기록');
   const detail = list.length
     ? list.map((e) => `<div class="recent-item"><span class="dot ${e.uid === me ? 'me' : 'fr'}"></span><div class="grow"><b>Ch${e.chapter} ${esc(chapterByNo(e.chapter)?.title || '')}</b><div class="mini muted">${esc(e.uid === me ? myName() : friendName())}</div></div><b class="act-what">${what(e)}</b></div>`).join('')
     : '<div class="empty-note" style="padding:14px 0">이날은 기록이 없어요.</div>';
@@ -766,7 +790,7 @@ function renderCalendar(me, fr, today) {
   </div>
   <div class="row" style="margin-top:20px"><span class="section-label">${dateLabel(sel)}</span></div>
   <div class="recent">${detail}</div>
-  <div class="hint-row">문제를 만들거나 푼 날에 자동으로 표시돼요</div>`;
+  <div class="hint-row">진도 체크·문제 만들기·풀기를 한 날에 자동으로 표시돼요<br>11/15 전에 체크한 진도는 날짜가 없어서 그 챕터 마지막 날에 모아서 보여요</div>`;
 }
 
 function renderStats() {
@@ -1376,7 +1400,7 @@ $app.addEventListener('click', async (e) => {
         const at = list.indexOf(i);
         if (at >= 0) list.splice(at, 1); else list.push(i);
         list.sort((a, b) => a - b);
-        await store.setConcept(ui.progCh, list);
+        await store.setConcept(ui.progCh, list, at >= 0 ? null : i);
         break;
       }
       case 'p-wb': {
