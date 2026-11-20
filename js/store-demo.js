@@ -25,6 +25,7 @@ function blank() {
     progress: {},
     questions: {},
     answers: {},
+    solo: { settings: null, progress: {}, blog: {}, content: null },
   };
 }
 
@@ -79,6 +80,14 @@ function sampleData() {
   return d;
 }
 
+// Firestore setDoc(merge:true)와 같은 방식: 객체는 깊게 합치고 배열·값은 교체
+function deepMerge(a, b) {
+  if (!b || typeof b !== 'object' || Array.isArray(b)) return b;
+  const out = { ...(a && typeof a === 'object' && !Array.isArray(a) ? a : {}) };
+  for (const [k, v] of Object.entries(b)) out[k] = v && typeof v === 'object' && !Array.isArray(v) ? deepMerge(out[k], v) : v;
+  return out;
+}
+
 export function createDemoStore({ sample = false } = {}) {
   let data = sample ? sampleData() : load() || blank();
   const listeners = new Set();
@@ -96,6 +105,8 @@ export function createDemoStore({ sample = false } = {}) {
     state.progress = data.progress;
     state.questions = data.questions || {};
     state.answers = data.answers || {};
+    data.solo ||= { settings: null, progress: {}, blog: {}, content: null };
+    state.solo = { loaded: true, error: null, ...data.solo };
   }
   function commit() {
     if (!sample) {
@@ -179,6 +190,14 @@ export function createDemoStore({ sample = false } = {}) {
     async setConcept(chapter, list, addedIdx = null) {
       prog().concept = { ...(prog().concept || {}), [chapter]: list };
       if (addedIdx != null) { const c = (prog().checkedAt ||= {}); c[chapter] = { ...(c[chapter] || {}), [`c${addedIdx}`]: nowMs() }; }
+      commit();
+    },
+    async soloMerge(name, patch) {
+      data.solo[name] = deepMerge(data.solo[name] || {}, patch);
+      commit();
+    },
+    async soloSet(name, value) {
+      data.solo[name] = JSON.parse(JSON.stringify(value));
       commit();
     },
     async saveQuestion(chapter, slot, { text, choices, answer, explanation }) {

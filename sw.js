@@ -1,18 +1,22 @@
 // 오프라인에서도 앱이 열리게 하는 서비스워커.
 // 앱 파일은 '인터넷 먼저 → 안 되면 저장본', 글꼴·Firebase 라이브러리는 '저장본 먼저'.
 // 앱을 고쳐서 다시 올릴 때 VERSION 숫자를 올리면 됨.
-const VERSION = 'v1.4.1';
+const VERSION = 'v1.5.0';
 const CACHE = `studyduo-${VERSION}`;
 const SHELL = [
   './',
   './index.html',
-  './styles.css?v=1.4.1',
-  './js/app.js?v=1.4.1',
+  './styles.css?v=1.5.0',
+  './js/app.js?v=1.5.0',
   './js/config.js',
   './js/dates.js',
   './js/defaults.js',
   './js/device.js',
   './js/skin.js',
+  './js/solo.js',
+  './js/solo-content.js',
+  './js/solo-plan.js',
+  './data/moneyprinter-marupong.json',
   './js/store-firebase.js',
   './js/store-demo.js',
   './manifest.webmanifest?v=3',

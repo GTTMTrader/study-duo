@@ -13,6 +13,11 @@ service cloud.firestore {
       return isMember() && request.auth.uid == uid;
     }
 
+    // 내 공부(머프·마루둥둥): 본인만 읽고 쓰기 — 상대도 못 봄
+    match /users/{uid}/{document=**} {
+      allow read, write: if isSelf(uid);
+    }
+
     match /rooms/{roomId} {
       // 시험일·시작일·챕터: 둘 다 읽고 고칠 수 있음
       allow read, write: if isMember();

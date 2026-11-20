@@ -6,8 +6,9 @@ import {
 } from './dates.js';
 import { deviceLabel } from './device.js';
 import { SKINS, getSkin, setSkin } from './skin.js';
+import { createSolo } from './solo.js';
 
-const VERSION = '1.4.1';
+const VERSION = '1.5.0';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -27,7 +28,12 @@ if (isDemo) {
 const pref = (() => {
   try { return JSON.parse(localStorage.getItem('studyduo-ui') || '{}'); } catch (e) { return {}; }
 })();
+// 공간: duo = 우리의 공부(가영과 함께) / solo = 내 공부(머프·마루둥둥)
+let SPACE = 'duo';
+try { if (localStorage.getItem('studyduo-space') === 'solo') SPACE = 'solo'; } catch (e) {}
 const ui = {
+  space: SPACE,
+  animate: true,
   tab: ['home', 'quiz', 'timer', 'progress', 'stats'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'home',
   statsRange: pref.statsRange || 'week',
   progCh: null,
@@ -157,6 +163,14 @@ const ICONS = {
   quiz: '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.5M12 16.8h.01"/></svg>',
 };
 
+// 내 공부(솔로) 모듈
+const solo = createSolo({
+  S, store, esc, ICONS, todayKST, nowMs, head, confirmBox, lockBackground,
+  toast: (m) => toast(m), handleError: (e) => handleError(e), render: () => render(),
+  navigated: () => { ui.animate = true; window.scrollTo(0, 0); render(); },
+  skinHTML: () => skinHTML(), bindSkin: (w) => bindSkin(w), backupHTML: () => backupHTML(), bindBackup: (w) => bindBackup(w),
+});
+
 function scoreHTML(sec, cls = 'score') {
   const { h, m } = splitHM(sec);
   if (h === 0) return `<div class="${cls}">${m}<span class="unit">분</span></div>`;
@@ -169,7 +183,8 @@ function smallHM(sec) {
 }
 
 function head(brand, title, extra = '') {
-  return `<div class="apphead"><div><div class="smallbrand">${brand}</div><div class="app-title">${title}</div></div>
+  return `<div class="space-switch" role="tablist" aria-label="공간 전환"><span class="sw-pill ${ui.space}"></span><button role="tab" aria-selected="${ui.space === 'duo'}" class="${ui.space === 'duo' ? 'on' : ''}" data-action="space" data-space="duo">우리의 공부</button><button role="tab" aria-selected="${ui.space === 'solo'}" class="${ui.space === 'solo' ? 'on' : ''}" data-action="space" data-space="solo">내 공부</button></div>
+  <div class="apphead"><div><div class="smallbrand">${brand}</div><div class="app-title">${title}</div></div>
   <div class="head-right">${extra}<button class="icon-btn" data-action="open-settings" aria-label="설정">${ICONS.gear}</button></div></div>`;
 }
 
@@ -837,6 +852,38 @@ function renderStats() {
   </div>`;
 }
 
+// 설정 화면 공통 조각 (우리의 공부 · 내 공부 설정에서 같이 씀)
+function skinHTML() {
+  return `<div class="skin-pick" role="radiogroup" aria-label="스킨">${SKINS.map((s) => `<button role="radio" aria-checked="${getSkin() === s.id}" class="${getSkin() === s.id ? 'on' : ''}" data-skin="${s.id}"><span class="sdot" style="background:${s.color}">${getSkin() === s.id ? '✓' : ''}</span><span class="nm">${s.name}</span></button>`).join('')}</div>`;
+}
+function bindSkin(wrap) {
+  wrap.querySelectorAll('[data-skin]').forEach((b) => b.addEventListener('click', () => {
+    setSkin(b.dataset.skin);
+    wrap.querySelectorAll('[data-skin]').forEach((x) => {
+      const on = x.dataset.skin === b.dataset.skin;
+      x.classList.toggle('on', on);
+      x.setAttribute('aria-checked', on);
+      x.querySelector('.sdot').textContent = on ? '✓' : '';
+    });
+  }));
+}
+function backupHTML() {
+  return `<label>백업</label>
+    <div class="backup-box">
+      <div class="two"><button class="btn-line" id="set-backup">⬇ 백업 파일 받기</button><button class="btn-line" id="set-restore">⬆ 백업에서 복원</button></div>
+      <input type="file" id="set-restore-file" accept=".json,application/json" hidden>
+      <div class="hint">우리의 공부(문제·풀이·진도·챕터 날짜)와 내 공부(영상 체크·메모·교재·설정)를 파일 하나로 저장해요. 폰에서는 "파일에 저장"이나 드라이브·카톡 나에게 보내기로 보관하면 돼요.<br><span id="set-lastbackup">${lastBackupText()}</span></div>
+    </div>`;
+}
+function bindBackup(wrap) {
+  wrap.querySelector('#set-backup').onclick = async () => {
+    try { await downloadBackup(); wrap.querySelector('#set-lastbackup').textContent = lastBackupText(); } catch (err) { handleError(err); }
+  };
+  const $file = wrap.querySelector('#set-restore-file');
+  wrap.querySelector('#set-restore').onclick = () => $file.click();
+  $file.onchange = async () => { const f = $file.files?.[0]; $file.value = ''; if (f) await restoreFromFile(f); };
+}
+
 // ───────────────── 설정 시트 ─────────────────
 function openSettings() {
   const r = S().room;
@@ -847,7 +894,7 @@ function openSettings() {
     <div class="sheet-head" id="sheet-drag"><div class="grab"></div><h2>설정</h2></div>
     <div class="sheet-body">
     <label>스킨 색상 <span class="muted" style="font-weight:600">(이 기기에만 적용)</span></label>
-    <div class="skin-pick" role="radiogroup" aria-label="스킨">${SKINS.map((s) => `<button role="radio" aria-checked="${getSkin() === s.id}" class="${getSkin() === s.id ? 'on' : ''}" data-skin="${s.id}"><span class="sdot" style="background:${s.color}">${getSkin() === s.id ? '✓' : ''}</span><span class="nm">${s.name}</span></button>`).join('')}</div>
+    ${skinHTML()}
     <label>내 이름 <span class="muted" style="font-weight:600">(상대 화면에도 표시)</span></label>
     <input class="field" id="set-name" maxlength="10" placeholder="예: 불리" value="${esc(myName)}">
     <div class="two">
@@ -858,12 +905,7 @@ function openSettings() {
     <label>챕터 · 개념서 단원</label>
     <textarea class="field" id="set-chapters" spellcheck="false">${esc(chaptersToText(chapters()))}</textarea>
     <div class="hint">형식: <b>번호 | 챕터명 | 페이지</b>, 아래 줄에 <b>- 단원명</b>. 개념서 목차의 대단원 번호 순서대로 적어주세요.<br>⚠ 이미 체크한 단원은 '순서'로 기억돼요. 중간에 단원을 끼워 넣으면 체크가 밀릴 수 있어요.</div>
-    <label>백업</label>
-    <div class="backup-box">
-      <div class="two"><button class="btn-line" id="set-backup">⬇ 백업 파일 받기</button><button class="btn-line" id="set-restore">⬆ 백업에서 복원</button></div>
-      <input type="file" id="set-restore-file" accept=".json,application/json" hidden>
-      <div class="hint">문제·풀이 결과·진도·챕터 날짜를 파일 하나로 저장해요. 폰에서는 "파일에 저장"이나 드라이브·카톡 나에게 보내기로 보관하면 돼요.<br><span id="set-lastbackup">${lastBackupText()}</span></div>
-    </div>
+    ${backupHTML()}
     <button class="text-btn" id="set-logout">${isDemo ? '데모 데이터 초기화' : '로그아웃'}</button>
     <div class="foot">${isDemo ? '데모 모드 · 이 기기에만 저장돼요' : esc(S().user?.email || '')} · v${VERSION}<br>시험일·시작일·챕터는 두 사람이 같이 써요.</div>
     </div>
@@ -964,22 +1006,9 @@ function openSettings() {
 
   wrap.addEventListener('click', (e) => { if (e.target === wrap) askClose(); });
   wrap.querySelector('#set-close').onclick = close;
-  wrap.querySelectorAll('[data-skin]').forEach((b) => b.addEventListener('click', () => {
-    setSkin(b.dataset.skin);
-    wrap.querySelectorAll('[data-skin]').forEach((x) => {
-      const on = x.dataset.skin === b.dataset.skin;
-      x.classList.toggle('on', on);
-      x.setAttribute('aria-checked', on);
-      x.querySelector('.sdot').textContent = on ? '✓' : '';
-    });
-  }));
+  bindSkin(wrap);
   wrap.querySelector('#set-logout').onclick = async () => { close(); await store.logout(); };
-  wrap.querySelector('#set-backup').onclick = async () => {
-    try { await downloadBackup(); wrap.querySelector('#set-lastbackup').textContent = lastBackupText(); } catch (err) { handleError(err); }
-  };
-  const $file = wrap.querySelector('#set-restore-file');
-  wrap.querySelector('#set-restore').onclick = () => $file.click();
-  $file.onchange = async () => { const f = $file.files?.[0]; $file.value = ''; if (f) await restoreFromFile(f); };
+  bindBackup(wrap);
   wrap.querySelector('#set-save').onclick = async () => {
     const name = wrap.querySelector('#set-name').value.trim();
     const examDate = wrap.querySelector('#set-exam').value;
@@ -1102,6 +1131,7 @@ function buildBackup() {
     questions: strip(st.questions || {}),
     answers: strip(st.answers || {}),
     sessions: strip(st.sessions || []),
+    solo: { owner: (st.user?.email || '').toLowerCase(), ...strip(solo.backupPart()) },
   };
 }
 function backupFileName() {
@@ -1174,12 +1204,15 @@ async function restoreFromFile(file) {
   const t = Date.parse(b.exportedAt || '');
   const when = t ? new Date(t + 9 * 3600e3).toISOString().slice(0, 16).replace('T', ' ') : '';
 
+  // 내 공부 부분은 백업한 사람이 나일 때만 되돌림 (가영 백업으로 내 공부를 덮어쓰지 않게)
+  const soloPart = b.solo && (b.solo.owner || '').toLowerCase() === myEmail ? b.solo : null;
   const ok = await confirmBox('이 백업으로 되돌릴까요?',
-    `${esc(when)} 백업 · 내 문제 ${questions.length}개, 내 풀이 ${answers.length}개, 진도, 시험일·챕터 설정을 지금 데이터 위에 덮어써요.<br>${esc(friendName())} 데이터는 ${esc(friendName())} 폰에서 같은 파일로 복원하면 돼요.`,
+    `${esc(when)} 백업 · 내 문제 ${questions.length}개, 내 풀이 ${answers.length}개, 진도, 시험일·챕터 설정${soloPart ? `, ${esc(solo.backupSummary(soloPart))}` : ''}을 지금 데이터 위에 덮어써요.<br>${esc(friendName())} 데이터는 ${esc(friendName())} 폰에서 같은 파일로 복원하면 돼요.`,
     '복원');
   if (!ok) return;
   try {
     await store.restoreMine({ room, name, progress, questions, answers, sessions });
+    if (soloPart) await solo.restorePart(soloPart);
     toast('백업에서 복원했어요');
   } catch (err) { handleError(err); }
 }
@@ -1248,18 +1281,29 @@ function render() {
 
   const chipsScroll = document.getElementById('chips')?.scrollLeft;
   const y = window.scrollY;
+  // 입력 중이던 칸(메모·검색)은 다시 그려도 커서·글자 유지
+  const ae = document.activeElement;
+  const keep = ae && $app.contains(ae) && ae.dataset?.fid ? { fid: ae.dataset.fid, value: ae.value, s: ae.selectionStart, e: ae.selectionEnd } : null;
   let body;
-  if (ui.tab === 'timer') body = renderTimer();
+  if (ui.space === 'solo') body = solo.renderBody();
+  else if (ui.tab === 'timer') body = renderTimer();
   else if (ui.tab === 'quiz') body = renderQuiz();
   else if (ui.tab === 'progress') body = renderProgress();
   else if (ui.tab === 'stats') body = renderStats();
   else body = renderHome();
 
   const quizBadge = unsolvedCount() > 0 && ui.tab !== 'quiz';
-  $app.dataset.tab = ui.tab;
+  $app.dataset.tab = ui.space === 'solo' ? `solo-${solo.ui.tab}` : ui.tab;
+  $app.dataset.space = ui.space;
+  const navHTML = ui.space === 'solo' ? solo.navHTML() : [['home', '홈'], ['progress', '진도'], ['quiz', '문제'], ['stats', '기록']].map(([k, l]) => `<button class="${ui.tab === k ? 'active' : ''}" data-action="go" data-tab="${k}"><span class="${k === 'quiz' && quizBadge ? 'badge' : ''}">${ICONS[k]}</span><span>${l}</span></button>`).join('');
   $app.innerHTML = `${isDemo ? `<div class="demo-bar">데모 모드 · 이 기기에만 저장돼요 · Firebase 연결 전${params.get('sample') === '1' ? ' · 시연 데이터' : ''}</div>` : ''}
-  <div class="screen">${body}</div>
-  <nav class="nav">${[['home', '홈'], ['progress', '진도'], ['quiz', '문제'], ['stats', '기록']].map(([k, l]) => `<button class="${ui.tab === k ? 'active' : ''}" data-action="go" data-tab="${k}"><span class="${k === 'quiz' && quizBadge ? 'badge' : ''}">${ICONS[k]}</span><span>${l}</span></button>`).join('')}</nav>`;
+  <div class="screen ${ui.animate ? 'enter' : ''}">${body}</div>
+  <nav class="nav">${navHTML}</nav>`;
+  ui.animate = false;
+  if (keep) {
+    const el = $app.querySelector(`[data-fid="${CSS.escape(keep.fid)}"]`);
+    if (el) { el.value = keep.value; el.focus({ preventScroll: true }); try { el.setSelectionRange(keep.s, keep.e); } catch (e) {} }
+  }
 
   const chips = document.getElementById('chips');
   if (chips) {
@@ -1298,8 +1342,26 @@ $app.addEventListener('click', async (e) => {
   if (!el) return;
   const act = el.dataset.action;
   try {
+    if (act === 'space') {
+      const sp = el.dataset.space;
+      if (sp !== ui.space) {
+        ui.space = sp;
+        try { localStorage.setItem('studyduo-space', sp); } catch (err) {}
+        ui.animate = true;
+        history.replaceState(null, '', sp === 'solo' ? '#solo' : '#' + ui.tab);
+        window.scrollTo(0, 0);
+        render();
+      }
+      return;
+    }
+    if (act === 'open-settings' && ui.space === 'solo') { solo.openSettings(); return; }
+    if (ui.space === 'solo') {
+      const r = await solo.handle(act, el);
+      if (r) return;
+    }
     switch (act) {
       case 'go':
+        ui.animate = true;
         ui.tab = el.dataset.tab;
         history.replaceState(null, '', '#' + ui.tab);
         window.scrollTo(0, 0);
@@ -1438,6 +1500,11 @@ $app.addEventListener('click', async (e) => {
   }
 });
 
+// 내 공부: 메모 저장 · 교재 검색
+$app.addEventListener('change', (e) => { if (ui.space === 'solo') solo.onChange(e); });
+$app.addEventListener('input', (e) => { if (ui.space === 'solo') solo.onInput(e); });
+$app.addEventListener('keydown', (e) => { if (ui.space === 'solo') solo.onKey(e); });
+
 $app.addEventListener('change', (e) => {
   if (e.target.matches('[data-action="t-chapter"]')) {
     ui.timerCh = Number(e.target.value);
@@ -1492,6 +1559,7 @@ function errorText(err) {
   if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found') || c.includes('invalid-email')) return '이메일 또는 비밀번호가 틀렸어요';
   if (c.includes('too-many-requests')) return '시도가 너무 많아요. 잠시 후 다시 해주세요';
   if (c.includes('network')) return '인터넷 연결을 확인해 주세요';
+  if (c.includes('permission-denied') && err.where === 'solo') return '내 공부를 쓰려면 Firestore 규칙을 새로 게시해 주세요';
   if (c.includes('permission-denied') && err.where === 'quiz') return '문제은행을 쓰려면 Firestore 규칙을 새로 게시해 주세요';
   if (c.includes('permission-denied')) return '권한이 없어요. Firestore 규칙에 이 이메일이 들어있는지 확인해 주세요';
   return err?.message || '알 수 없는 오류';
@@ -1516,7 +1584,7 @@ store.onError(handleError);
 store.subscribe(render);
 window.addEventListener('hashchange', () => {
   const t = location.hash.slice(1);
-  if (['home', 'quiz', 'timer', 'progress', 'stats'].includes(t) && t !== ui.tab) { ui.tab = t; window.scrollTo(0, 0); render(); }
+  if (ui.space === 'duo' && ['home', 'quiz', 'timer', 'progress', 'stats'].includes(t) && t !== ui.tab) { ui.tab = t; window.scrollTo(0, 0); render(); }
 });
 
 // 새 버전이 올라오면 자동으로 새로고침 (GitHub Pages 캐시 때문에 늦게 반영되는 것 방지)

@@ -1,0 +1,3836 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_id": "moneyprinter-marupong-dual-study-curriculum",
+  "generated_at": "2026-11-20",
+  "language": "ko-KR",
+  "timezone": "Asia/Seoul",
+  "user_progress_import_policy": "PRESERVE_EXISTING_USER_PROGRESS; ALL IMPORTED ITEMS ARE CONTENT DEFINITIONS, NOT CLAIMS ABOUT USER COMPLETION",
+  "source_verification": {
+    "moneyprinter_pdf": "MoneyPrinter_Notability_2026-10-22_RESTART.pdf, 65 pages, conversation-provided and re-read for import",
+    "blog_catalog": "blog publisher index + category pages inspected in 2026-11; article title inventory matched to official lists",
+    "caution": "Some article exact URLs were not individually verified; use collection_index_url rather than constructing a guessed article URL."
+  },
+  "app_schedule_policy": {
+    "mode": "rolling_queue_not_fixed_deadline",
+    "start_date": null,
+    "start_date_meaning": "Ask once in app or begin on the next user-selected study day, not on the outdated 2026-10-22 PDF reference date",
+    "regular_weekdays_iso": [
+      2,
+      3,
+      5,
+      6
+    ],
+    "regular_weekdays_ko": [
+      "화",
+      "수",
+      "금",
+      "토"
+    ],
+    "video_study_minutes_target": {
+      "2": [
+        90,
+        120
+      ],
+      "3": [
+        90,
+        120
+      ],
+      "5": [
+        180,
+        240
+      ],
+      "6": [
+        180,
+        240
+      ]
+    },
+    "extraordinary_pdf_original_schedule": {
+      "2026-10-22": "목요일에 학습 예정 (과거 근무 교체 기록)",
+      "2026-10-23": "금요일에 학습 예정 (과거 근무 교체 기록)",
+      "2026-11-11": "근무일로 학습 부담 낮춤 (과거 편성 기록)",
+      "2026-11-13": "상대적으로 여유로운 근무일 (과거 편성 기록)",
+      "2026-11-14": "상대적으로 여유로운 근무일 (과거 편성 기록)"
+    },
+    "never_autoskip_missed_sessions": true,
+    "do_not_reset_completed_on_schedule_change": true,
+    "allow_finish_multiple_sessions_early": true,
+    "allow_partial_video_progress": true,
+    "phase_unlock_mode": "completion_gated",
+    "phase_B_unlock_rule": "phase_A_all_video_assignments_done",
+    "phase_C_unlock_rule": "phase_B_all_week_tasks_done AND review_logs_present",
+    "blog_policy": "separate_library_and_progress; optional reading during phase A and core practice references during phases B,C"
+  },
+  "playlist_sources": [
+    {
+      "id": "basic",
+      "title": "기본강의",
+      "playlist_id": "PLgB8Zl1S_YpS6-_d65ytFWvG8ZmFAQNfH"
+    },
+    {
+      "id": "deep",
+      "title": "차트분석 심화",
+      "playlist_id": "PLgB8Zl1S_YpQ-Lj4Hrylv0ES9pskblHtq"
+    },
+    {
+      "id": "classroom",
+      "title": "강의실",
+      "playlist_id": "PLgB8Zl1S_YpSyTKls_s5R1-zpdF_EA_Um"
+    },
+    {
+      "id": "replay",
+      "title": "차트 복기",
+      "playlist_id": "PLgB8Zl1S_YpSW4jkM5H7TX571-yxlojtF"
+    },
+    {
+      "id": "live",
+      "title": "라이브 방송",
+      "playlist_id": "PLgB8Zl1S_YpS-V6MYzPBW9zMnRj3I969E"
+    }
+  ],
+  "phase_A_video_sessions": [
+    {
+      "planned_date_in_pdf": "2026-10-22",
+      "weekday_ko": "목",
+      "title": "기초 셋업 - 선물·트레이딩뷰·차트 읽기",
+      "video_items": [
+        {
+          "id": "mp-1fV2b2bSMq0",
+          "title": "비트코인 선물이란? 기초 개념 강의",
+          "source_playlist": "기본강의",
+          "duration": "8:59",
+          "duration_seconds": 539,
+          "video_id": "1fV2b2bSMq0",
+          "url": "https://www.youtube.com/watch?v=1fV2b2bSMq0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=1fV2b2bSMq0",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-WD1LV6CsWRw",
+          "title": "비트코인 차트 세계의 끝판왕, 트레이딩뷰 TradingView 사용법",
+          "source_playlist": "기본강의",
+          "duration": "9:21",
+          "duration_seconds": 561,
+          "video_id": "WD1LV6CsWRw",
+          "url": "https://www.youtube.com/watch?v=WD1LV6CsWRw",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=WD1LV6CsWRw",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-ViPwZDsmdPY",
+          "title": "비트코인 차트 작도하는 법! 보조지표의 활용 feat. 두나무에 기둥 세워",
+          "source_playlist": "기본강의",
+          "duration": "11:34",
+          "duration_seconds": 694,
+          "video_id": "ViPwZDsmdPY",
+          "url": "https://www.youtube.com/watch?v=ViPwZDsmdPY",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ViPwZDsmdPY",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-XeeXsY0Xhc8",
+          "title": "차트 보는 법에 대한 가장 쉬운 설명",
+          "source_playlist": "기본강의",
+          "duration": "1:49:05",
+          "duration_seconds": 6545,
+          "video_id": "XeeXsY0Xhc8",
+          "url": "https://www.youtube.com/watch?v=XeeXsY0Xhc8",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=XeeXsY0Xhc8",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-9c5HLhu4cHk",
+          "title": "차트 보는 것에 대한 가장 쉬운 설명",
+          "source_playlist": "강의실",
+          "duration": "12:04",
+          "duration_seconds": 724,
+          "video_id": "9c5HLhu4cHk",
+          "url": "https://www.youtube.com/watch?v=9c5HLhu4cHk",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=9c5HLhu4cHk",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        7
+      ],
+      "id": "MP-A-01",
+      "sequence": 1,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 9063,
+      "video_count": 5,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-01",
+        "MARU-MANUAL-03"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-10-23",
+      "weekday_ko": "금",
+      "title": "심화 1 - 분석 방법 + 풀 라이브",
+      "video_items": [
+        {
+          "id": "mp-IeOY3XM_mUI",
+          "title": "차트 분석 심화 (제 1강) - 분석 방법",
+          "source_playlist": "차트분석 심화",
+          "duration": "10:29",
+          "duration_seconds": 629,
+          "video_id": "IeOY3XM_mUI",
+          "url": "https://www.youtube.com/watch?v=IeOY3XM_mUI",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=IeOY3XM_mUI",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-wsyYHLsX0tE",
+          "title": "9/16) 차트 분석 심화 - 제 1강 - 분석 방법",
+          "source_playlist": "라이브 방송",
+          "duration": "2:27:23",
+          "duration_seconds": 8843,
+          "video_id": "wsyYHLsX0tE",
+          "url": "https://www.youtube.com/watch?v=wsyYHLsX0tE",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=wsyYHLsX0tE",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-4BiCwvwx8HY",
+          "title": "미래를 준비하는 복습! 비트코인 차트 복기, 가격 예측하는 법",
+          "source_playlist": "차트 복기",
+          "duration": "8:19",
+          "duration_seconds": 499,
+          "video_id": "4BiCwvwx8HY",
+          "url": "https://www.youtube.com/watch?v=4BiCwvwx8HY",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=4BiCwvwx8HY",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-oQSuVi4jmuE",
+          "title": "(매매 복기) 질질 흐르는 차트에서의 매수 조건들",
+          "source_playlist": "차트 복기",
+          "duration": "15:12",
+          "duration_seconds": 912,
+          "video_id": "oQSuVi4jmuE",
+          "url": "https://www.youtube.com/watch?v=oQSuVi4jmuE",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=oQSuVi4jmuE",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        8
+      ],
+      "id": "MP-A-02",
+      "sequence": 2,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 10883,
+      "video_count": 4,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-01",
+        "MARU-MANUAL-15"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-10-27",
+      "weekday_ko": "화",
+      "title": "바닥잡기 1-5강 - 저점 포착 프레임",
+      "video_items": [
+        {
+          "id": "mp-ej27eMR8Wk0",
+          "title": "眞 바닥 잡는 법 (제1강) 마지막 봉이 가장 길 때! - 비트코인 바닥잡기의 정석",
+          "source_playlist": "기본강의",
+          "duration": "17:02",
+          "duration_seconds": 1022,
+          "video_id": "ej27eMR8Wk0",
+          "url": "https://www.youtube.com/watch?v=ej27eMR8Wk0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ej27eMR8Wk0",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-DXjJgtBXktc",
+          "title": "眞 바닥 잡는 법 (제2강) 첫번째 봉이 가장 길 때! - 비트코인 바닥잡기의 정석",
+          "source_playlist": "기본강의",
+          "duration": "18:01",
+          "duration_seconds": 1081,
+          "video_id": "DXjJgtBXktc",
+          "url": "https://www.youtube.com/watch?v=DXjJgtBXktc",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=DXjJgtBXktc",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-mLLWOiA5bKo",
+          "title": "眞 바닥 잡는 법 (제3강) 천천히 흐르는 장 - 비트코인 바닥잡기의 정석",
+          "source_playlist": "기본강의",
+          "duration": "9:29",
+          "duration_seconds": 569,
+          "video_id": "mLLWOiA5bKo",
+          "url": "https://www.youtube.com/watch?v=mLLWOiA5bKo",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=mLLWOiA5bKo",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-JudnycGNcOY",
+          "title": "眞 바닥 잡는 법 (제4강) 무지성 대 폭락 시! - 비트코인 바닥잡기의 정석",
+          "source_playlist": "기본강의",
+          "duration": "15:00",
+          "duration_seconds": 900,
+          "video_id": "JudnycGNcOY",
+          "url": "https://www.youtube.com/watch?v=JudnycGNcOY",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=JudnycGNcOY",
+          "review_repeat": false
+        },
+        {
+          "id": "mp--GFxtCaK63k",
+          "title": "眞 바닥 잡는 법 (제5강) 두번째 바닥 매수 (쌍바닥, 쌍봉) - 비트코인 바닥잡기의 정석",
+          "source_playlist": "기본강의",
+          "duration": "8:54",
+          "duration_seconds": 534,
+          "video_id": "-GFxtCaK63k",
+          "url": "https://www.youtube.com/watch?v=-GFxtCaK63k",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=-GFxtCaK63k",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-LEPSieTuO9c",
+          "title": "[2편] 캔들 카운팅, 거래량으로 매매 시나리오 짜는 법 / 실전 호가창으로 바닥 잡는 비법 공개!",
+          "source_playlist": "강의실",
+          "duration": "13:12",
+          "duration_seconds": 792,
+          "video_id": "LEPSieTuO9c",
+          "url": "https://www.youtube.com/watch?v=LEPSieTuO9c",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=LEPSieTuO9c",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-K0IG0LIkItc",
+          "title": "우리가 코인에 물리는 이유! 방지법을 알아보자 (차트복기) feat. 만장일치 매매법",
+          "source_playlist": "차트 복기",
+          "duration": "5:48",
+          "duration_seconds": 348,
+          "video_id": "K0IG0LIkItc",
+          "url": "https://www.youtube.com/watch?v=K0IG0LIkItc",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=K0IG0LIkItc",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        9,
+        10
+      ],
+      "id": "MP-A-03",
+      "sequence": 3,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 5246,
+      "video_count": 7,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-40",
+        "MARU-VPA-5_1"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-10-28",
+      "weekday_ko": "수",
+      "title": "리스크 - FOMO·꼬리·손절·재진입",
+      "video_items": [
+        {
+          "id": "mp-PR29Bgur1kU",
+          "title": "FOMO를 이기는 마음가짐 / CVD 파이어 차트, 청산맵 보는 법",
+          "source_playlist": "라이브 방송",
+          "duration": "1:16:39",
+          "duration_seconds": 4599,
+          "video_id": "PR29Bgur1kU",
+          "url": "https://www.youtube.com/watch?v=PR29Bgur1kU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=PR29Bgur1kU",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-qQ-v73dgegg",
+          "title": "캔들 꼬리잡는 법 / 포지션 진입시의 근거들",
+          "source_playlist": "강의실",
+          "duration": "9:10",
+          "duration_seconds": 550,
+          "video_id": "qQ-v73dgegg",
+          "url": "https://www.youtube.com/watch?v=qQ-v73dgegg",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=qQ-v73dgegg",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-GLRKkr-HK0k",
+          "title": "당신이 손절 확정을 못 짓는다면, 매매를 하면 안됩니다",
+          "source_playlist": "강의실",
+          "duration": "10:50",
+          "duration_seconds": 650,
+          "video_id": "GLRKkr-HK0k",
+          "url": "https://www.youtube.com/watch?v=GLRKkr-HK0k",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=GLRKkr-HK0k",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-qCTzR3wskyU",
+          "title": "큰 가격대를 돌파 했을 때의 매매 / 손절치고 재진입 하는 기준",
+          "source_playlist": "강의실",
+          "duration": "10:35",
+          "duration_seconds": 635,
+          "video_id": "qCTzR3wskyU",
+          "url": "https://www.youtube.com/watch?v=qCTzR3wskyU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=qCTzR3wskyU",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        11
+      ],
+      "id": "MP-A-04",
+      "sequence": 4,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 6434,
+      "video_count": 4,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-08",
+        "MARU-MASTER_CLASS-06"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-10-30",
+      "weekday_ko": "금",
+      "title": "심화 2 - 지지·저항 + 풀 라이브",
+      "video_items": [
+        {
+          "id": "mp-3pDMFNcbb1I",
+          "title": "차트 분석 심화 (제 2강) - 지지와 저항",
+          "source_playlist": "차트분석 심화",
+          "duration": "11:13",
+          "duration_seconds": 673,
+          "video_id": "3pDMFNcbb1I",
+          "url": "https://www.youtube.com/watch?v=3pDMFNcbb1I",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=3pDMFNcbb1I",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-SoWvODkmTcw",
+          "title": "9/21) 차트 분석 심화 - 제 2강 - 지지와 저항",
+          "source_playlist": "라이브 방송",
+          "duration": "2:44:57",
+          "duration_seconds": 9897,
+          "video_id": "SoWvODkmTcw",
+          "url": "https://www.youtube.com/watch?v=SoWvODkmTcw",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=SoWvODkmTcw",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-l8UbbMGUyGA",
+          "title": "1월 돈복사 해준 구간의 매매 포인트들 요점정리! 참 쉽죠!? 차트 복기",
+          "source_playlist": "차트 복기",
+          "duration": "6:24",
+          "duration_seconds": 384,
+          "video_id": "l8UbbMGUyGA",
+          "url": "https://www.youtube.com/watch?v=l8UbbMGUyGA",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=l8UbbMGUyGA",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-bqV57Lw3Wfs",
+          "title": "12/4 비트코인 대폭락 차트 복기!! 대폭락장에 돈복사 하는 법 (시즌3)",
+          "source_playlist": "차트 복기",
+          "duration": "5:59",
+          "duration_seconds": 359,
+          "video_id": "bqV57Lw3Wfs",
+          "url": "https://www.youtube.com/watch?v=bqV57Lw3Wfs",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=bqV57Lw3Wfs",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        12
+      ],
+      "id": "MP-A-05",
+      "sequence": 5,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 11313,
+      "video_count": 4,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-05",
+        "MARU-PRICE_REPORT-04"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-10-31",
+      "weekday_ko": "토",
+      "title": "조정장 대응 - Q&A + 스탑로스·휩소",
+      "video_items": [
+        {
+          "id": "mp-jjwTl9Z6p5U",
+          "title": "조정장에서의 대응 방법 / Q&A 세션",
+          "source_playlist": "라이브 방송",
+          "duration": "2:42:18",
+          "duration_seconds": 9738,
+          "video_id": "jjwTl9Z6p5U",
+          "url": "https://www.youtube.com/watch?v=jjwTl9Z6p5U",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=jjwTl9Z6p5U",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-CBlw4Hv2pm0",
+          "title": "저는 스윙 하기 싫어요.. / 스탑로스의 기준 잡는 법",
+          "source_playlist": "강의실",
+          "duration": "5:29",
+          "duration_seconds": 329,
+          "video_id": "CBlw4Hv2pm0",
+          "url": "https://www.youtube.com/watch?v=CBlw4Hv2pm0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=CBlw4Hv2pm0",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-9AkCgfr9JDk",
+          "title": "휩소는 손절이 나은 이유. 그것이 \"확률\" 이니까",
+          "source_playlist": "강의실",
+          "duration": "6:05",
+          "duration_seconds": 365,
+          "video_id": "9AkCgfr9JDk",
+          "url": "https://www.youtube.com/watch?v=9AkCgfr9JDk",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=9AkCgfr9JDk",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        13
+      ],
+      "id": "MP-A-06",
+      "sequence": 6,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 10432,
+      "video_count": 3,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-08",
+        "MARU-MASTER_CLASS-06"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-03",
+      "weekday_ko": "화",
+      "title": "심화 3 준비 - 캔들·수렴·상황판단",
+      "video_items": [
+        {
+          "id": "mp-2tbrXmdZCb0",
+          "title": "차트 분석 심화 (제 3강) - 캔들 패턴",
+          "source_playlist": "차트분석 심화",
+          "duration": "23:53",
+          "duration_seconds": 1433,
+          "video_id": "2tbrXmdZCb0",
+          "url": "https://www.youtube.com/watch?v=2tbrXmdZCb0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=2tbrXmdZCb0",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-_y4-87Ezq8c",
+          "title": "삼각수렴이란? 방향 예측과 확률",
+          "source_playlist": "강의실",
+          "duration": "4:43",
+          "duration_seconds": 283,
+          "video_id": "_y4-87Ezq8c",
+          "url": "https://www.youtube.com/watch?v=_y4-87Ezq8c",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=_y4-87Ezq8c",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-T52I8IDA-z4",
+          "title": "쌍봉 떡락 자리지만 오를것 같은 차트! 퀀텀 삼고초려 메타. 킹보나치",
+          "source_playlist": "차트 복기",
+          "duration": "6:52",
+          "duration_seconds": 412,
+          "video_id": "T52I8IDA-z4",
+          "url": "https://www.youtube.com/watch?v=T52I8IDA-z4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=T52I8IDA-z4",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-fSl9zDVM8Jk",
+          "title": "구름대 돌파 추격숏 중",
+          "source_playlist": "라이브 방송",
+          "duration": "14:04",
+          "duration_seconds": 844,
+          "video_id": "fSl9zDVM8Jk",
+          "url": "https://www.youtube.com/watch?v=fSl9zDVM8Jk",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=fSl9zDVM8Jk",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-DBa590YpD1Q",
+          "title": "CPI 발표 실시간 단타 매매 [3월 14일]",
+          "source_playlist": "강의실",
+          "duration": "8:47",
+          "duration_seconds": 527,
+          "video_id": "DBa590YpD1Q",
+          "url": "https://www.youtube.com/watch?v=DBa590YpD1Q",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=DBa590YpD1Q",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-OlZJ3hgX99A",
+          "title": "2만불 돌파를 예측한 이유와 조건들 / 알트 순환펌핑의 이유",
+          "source_playlist": "강의실",
+          "duration": "6:56",
+          "duration_seconds": 416,
+          "video_id": "OlZJ3hgX99A",
+          "url": "https://www.youtube.com/watch?v=OlZJ3hgX99A",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=OlZJ3hgX99A",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-2uQFAc72qyQ",
+          "title": "고점에서의 디센딩 트라이앵글 / 비트코인 상승과 도미넌스, 알트코인의 관 계",
+          "source_playlist": "강의실",
+          "duration": "6:07",
+          "duration_seconds": 367,
+          "video_id": "2uQFAc72qyQ",
+          "url": "https://www.youtube.com/watch?v=2uQFAc72qyQ",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=2uQFAc72qyQ",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-0Uut1_TNJB0",
+          "title": "비트코인의 역사와 미래.. 그리고 단타 / 19년도 재탕인가 (프렉탈)",
+          "source_playlist": "강의실",
+          "duration": "10:31",
+          "duration_seconds": 631,
+          "video_id": "0Uut1_TNJB0",
+          "url": "https://www.youtube.com/watch?v=0Uut1_TNJB0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=0Uut1_TNJB0",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-ZuIMYLsvP38",
+          "title": "알트코인 매수 시기 (알트가 비트보다 먼저 빠질 때)",
+          "source_playlist": "강의실",
+          "duration": "7:42",
+          "duration_seconds": 462,
+          "video_id": "ZuIMYLsvP38",
+          "url": "https://www.youtube.com/watch?v=ZuIMYLsvP38",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ZuIMYLsvP38",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        14,
+        15
+      ],
+      "id": "MP-A-07",
+      "sequence": 7,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 5375,
+      "video_count": 9,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-04",
+        "MARU-VPA-6_1"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-04",
+      "weekday_ko": "수",
+      "title": "심화 4 준비 - 패턴·자력·프라이스액션",
+      "video_items": [
+        {
+          "id": "mp-9LxUsxXiEYM",
+          "title": "차트 분석 심화 (제 4강) - 차트 패턴",
+          "source_playlist": "차트분석 심화",
+          "duration": "18:00",
+          "duration_seconds": 1080,
+          "video_id": "9LxUsxXiEYM",
+          "url": "https://www.youtube.com/watch?v=9LxUsxXiEYM",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=9LxUsxXiEYM",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-qgzBqgqriZ0",
+          "title": "자력 (磁力)(Magnatic Force)과 차트의 프라이스 액션 (PA)",
+          "source_playlist": "라이브 방송",
+          "duration": "1:25:38",
+          "duration_seconds": 5138,
+          "video_id": "qgzBqgqriZ0",
+          "url": "https://www.youtube.com/watch?v=qgzBqgqriZ0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=qgzBqgqriZ0",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-xMtfmJdGkqk",
+          "title": "차트와 자력 (磁力)(Manatic Force), 중심선 구하는 법",
+          "source_playlist": "강의실",
+          "duration": "8:17",
+          "duration_seconds": 497,
+          "video_id": "xMtfmJdGkqk",
+          "url": "https://www.youtube.com/watch?v=xMtfmJdGkqk",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=xMtfmJdGkqk",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-WTltK3OmKak",
+          "title": "차트와 자력 Q&A",
+          "source_playlist": "강의실",
+          "duration": "7:13",
+          "duration_seconds": 433,
+          "video_id": "WTltK3OmKak",
+          "url": "https://www.youtube.com/watch?v=WTltK3OmKak",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=WTltK3OmKak",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        16
+      ],
+      "id": "MP-A-08",
+      "sequence": 8,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 7148,
+      "video_count": 4,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-PA_PSYCHOLOGY-02",
+        "MARU-MASTER_CLASS-10"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-06",
+      "weekday_ko": "금",
+      "title": "심화 3 - 캔들 패턴 풀 라이브",
+      "video_items": [
+        {
+          "id": "mp-BE-m_6fGusE",
+          "title": "10/14) 차트 분석 심화 - 제 3강 - 캔들패턴",
+          "source_playlist": "라이브 방송",
+          "duration": "3:02:31",
+          "duration_seconds": 10951,
+          "video_id": "BE-m_6fGusE",
+          "url": "https://www.youtube.com/watch?v=BE-m_6fGusE",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=BE-m_6fGusE",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-oIbXjPXHLwQ",
+          "title": "차트 분석 하는 법 - 캔들 패턴",
+          "source_playlist": "강의실",
+          "duration": "0:57",
+          "duration_seconds": 57,
+          "video_id": "oIbXjPXHLwQ",
+          "url": "https://www.youtube.com/watch?v=oIbXjPXHLwQ",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=oIbXjPXHLwQ",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-_BaoWZHwS8A",
+          "title": "차트 분석 하는 법 - 캔들 패턴과 거래량",
+          "source_playlist": "강의실",
+          "duration": "0:53",
+          "duration_seconds": 53,
+          "video_id": "_BaoWZHwS8A",
+          "url": "https://www.youtube.com/watch?v=_BaoWZHwS8A",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=_BaoWZHwS8A",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-K9Ovm8la-GE",
+          "title": "차트 분석 하는 법 - 수평적 지지선, 저항선",
+          "source_playlist": "강의실",
+          "duration": "1:00",
+          "duration_seconds": 60,
+          "video_id": "K9Ovm8la-GE",
+          "url": "https://www.youtube.com/watch?v=K9Ovm8la-GE",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=K9Ovm8la-GE",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-rluyNgnMOIk",
+          "title": "12월 9일 차트복기, 김비트와 알트코인, 그리고 도미넌스....",
+          "source_playlist": "차트 복기",
+          "duration": "6:23",
+          "duration_seconds": 383,
+          "video_id": "rluyNgnMOIk",
+          "url": "https://www.youtube.com/watch?v=rluyNgnMOIk",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=rluyNgnMOIk",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-HvRmr6kUGSo",
+          "title": "9월 5일 라방 엑기스 모음 (청산가)",
+          "source_playlist": "차트 복기",
+          "duration": "13:01",
+          "duration_seconds": 781,
+          "video_id": "HvRmr6kUGSo",
+          "url": "https://www.youtube.com/watch?v=HvRmr6kUGSo",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=HvRmr6kUGSo",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        17,
+        18
+      ],
+      "id": "MP-A-09",
+      "sequence": 9,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 12285,
+      "video_count": 6,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-04",
+        "MARU-VPA-6_1"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-07",
+      "weekday_ko": "토",
+      "title": "심화 4 - 차트 패턴 풀 라이브",
+      "video_items": [
+        {
+          "id": "mp-M9pyMlrB7dQ",
+          "title": "12/5) 차트 분석 심화 - 제 4강 - 차트 패턴, 비트 대폭락 차트 복기, 트레이 더의 마음가짐 리마인드",
+          "source_playlist": "라이브 방송",
+          "duration": "2:58:39",
+          "duration_seconds": 10719,
+          "video_id": "M9pyMlrB7dQ",
+          "url": "https://www.youtube.com/watch?v=M9pyMlrB7dQ",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=M9pyMlrB7dQ",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-8krs4UV0WNk",
+          "title": "대폭락에 떼돈을 벌어주는 마음가짐! 차트 심리의 중요성!!!!!!",
+          "source_playlist": "강의실",
+          "duration": "7:21",
+          "duration_seconds": 441,
+          "video_id": "8krs4UV0WNk",
+          "url": "https://www.youtube.com/watch?v=8krs4UV0WNk",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=8krs4UV0WNk",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-H1DU52kK-xU",
+          "title": "푸근했던 박스권, 채널 이탈할 때 생각할 것들과 대응 방법, 예측법",
+          "source_playlist": "강의실",
+          "duration": "3:21",
+          "duration_seconds": 201,
+          "video_id": "H1DU52kK-xU",
+          "url": "https://www.youtube.com/watch?v=H1DU52kK-xU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=H1DU52kK-xU",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-sh5hQB-9HXw",
+          "title": "하락 채널 이탈 전 시그널. 꼭 알아야 할 내용!",
+          "source_playlist": "강의실",
+          "duration": "2:46",
+          "duration_seconds": 166,
+          "video_id": "sh5hQB-9HXw",
+          "url": "https://www.youtube.com/watch?v=sh5hQB-9HXw",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=sh5hQB-9HXw",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        19
+      ],
+      "id": "MP-A-10",
+      "sequence": 10,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 11527,
+      "video_count": 4,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-14",
+        "MARU-VPA-11_1"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-10",
+      "weekday_ko": "화",
+      "title": "심화 5 - 피보나치·손익비",
+      "video_items": [
+        {
+          "id": "mp-aRy2QRVt7nU",
+          "title": "차트 분석 심화 (제 5강) - 피보나치, 손익비",
+          "source_playlist": "차트분석 심화",
+          "duration": "25:32",
+          "duration_seconds": 1532,
+          "video_id": "aRy2QRVt7nU",
+          "url": "https://www.youtube.com/watch?v=aRy2QRVt7nU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=aRy2QRVt7nU",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-EUm8WlN4mt4",
+          "title": "1/20 차트 분석 심화 - 제 5강 - 피보나치, 손익비 보기 / 실시간 IDO 참여",
+          "source_playlist": "라이브 방송",
+          "duration": "1:40:29",
+          "duration_seconds": 6029,
+          "video_id": "EUm8WlN4mt4",
+          "url": "https://www.youtube.com/watch?v=EUm8WlN4mt4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=EUm8WlN4mt4",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        20
+      ],
+      "id": "MP-A-11",
+      "sequence": 11,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 7561,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-16",
+        "MARU-MASTER_CLASS-17"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-11",
+      "weekday_ko": "수",
+      "title": "심화 6 - 거래량 핵심 + 볼륨 지표",
+      "video_items": [
+        {
+          "id": "mp-ZQCjMZ2P-Ho",
+          "title": "차트 분석 심화 (제 6강) - 거래량의 해석 (매우 중요) / 거래량 강의",
+          "source_playlist": "차트분석 심화",
+          "duration": "25:03",
+          "duration_seconds": 1503,
+          "video_id": "ZQCjMZ2P-Ho",
+          "url": "https://www.youtube.com/watch?v=ZQCjMZ2P-Ho",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ZQCjMZ2P-Ho",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-Qa4o0ktlWBQ",
+          "title": "거래량 지표 (볼륨 인디케이터) 오픈",
+          "source_playlist": "라이브 방송",
+          "duration": "1:04:20",
+          "duration_seconds": 3860,
+          "video_id": "Qa4o0ktlWBQ",
+          "url": "https://www.youtube.com/watch?v=Qa4o0ktlWBQ",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=Qa4o0ktlWBQ",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-x_S2j5nvvwQ",
+          "title": "팀메로나 거래량 보조지표 (볼륨 인디케이터) 설정 및 신청방법",
+          "source_playlist": "강의실",
+          "duration": "6:25",
+          "duration_seconds": 385,
+          "video_id": "x_S2j5nvvwQ",
+          "url": "https://www.youtube.com/watch?v=x_S2j5nvvwQ",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=x_S2j5nvvwQ",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-hfjAqCBtKD4",
+          "title": "거래량을 왜 봐야할까요?",
+          "source_playlist": "강의실",
+          "duration": "2:50",
+          "duration_seconds": 170,
+          "video_id": "hfjAqCBtKD4",
+          "url": "https://www.youtube.com/watch?v=hfjAqCBtKD4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=hfjAqCBtKD4",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        21
+      ],
+      "id": "MP-A-12",
+      "sequence": 12,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 5918,
+      "video_count": 4,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-09",
+        "MARU-MASTER_CLASS-24"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-13",
+      "weekday_ko": "금",
+      "title": "심화 6 - 거래량 풀 라이브",
+      "video_items": [
+        {
+          "id": "mp-yZlN4XpTRnU",
+          "title": "3/15 차트 분석 심화 - 제 6강 - 거래량!! 지긋지긋한 횡보.......",
+          "source_playlist": "라이브 방송",
+          "duration": "1:55:28",
+          "duration_seconds": 6928,
+          "video_id": "yZlN4XpTRnU",
+          "url": "https://www.youtube.com/watch?v=yZlN4XpTRnU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=yZlN4XpTRnU",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-iAo6bq7jBeA",
+          "title": "아직도 하루종일 차트보고 계십니까? 거래량 알람 보조지표 제작 완료! 설정 법 알려 드립니다",
+          "source_playlist": "라이브 방송",
+          "duration": "1:29:53",
+          "duration_seconds": 5393,
+          "video_id": "iAo6bq7jBeA",
+          "url": "https://www.youtube.com/watch?v=iAo6bq7jBeA",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=iAo6bq7jBeA",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        22
+      ],
+      "id": "MP-A-13",
+      "sequence": 13,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 12321,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-VPA-4_2",
+        "MARU-MASTER_CLASS-22"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-14",
+      "weekday_ko": "토",
+      "title": "기초 실전 - 바닥잡기 방송 + 코린이 방송",
+      "video_items": [
+        {
+          "id": "mp-fcsF9S2JvHc",
+          "title": "7.1) 비트코인 바닥잡기 강의 3편! 차트 복기도 할게 많네요",
+          "source_playlist": "라이브 방송",
+          "duration": "2:03:06",
+          "duration_seconds": 7386,
+          "video_id": "fcsF9S2JvHc",
+          "url": "https://www.youtube.com/watch?v=fcsF9S2JvHc",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=fcsF9S2JvHc",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-u8OLae8RAUA",
+          "title": "코린이 친화적 방송",
+          "source_playlist": "라이브 방송",
+          "duration": "2:02:01",
+          "duration_seconds": 7321,
+          "video_id": "u8OLae8RAUA",
+          "url": "https://www.youtube.com/watch?v=u8OLae8RAUA",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=u8OLae8RAUA",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        23
+      ],
+      "id": "MP-A-14",
+      "sequence": 14,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 14707,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-VPA-5_1",
+        "MARU-VPA-5_2"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-17",
+      "weekday_ko": "화",
+      "title": "차트 복기 집중 - 하락·조정·도미넌스",
+      "video_items": [
+        {
+          "id": "mp-NpeKjk4tAfI",
+          "title": "완만하게 계속 하락할때 차트복기 (5월 10일자) - 거래량",
+          "source_playlist": "차트 복기",
+          "duration": "9:42",
+          "duration_seconds": 582,
+          "video_id": "NpeKjk4tAfI",
+          "url": "https://www.youtube.com/watch?v=NpeKjk4tAfI",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=NpeKjk4tAfI",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-dcSccrO7G34",
+          "title": "조정을 기대 할 자리 / PNL을 안보는 이유 [241205 방송]",
+          "source_playlist": "차트 복기",
+          "duration": "6:49",
+          "duration_seconds": 409,
+          "video_id": "dcSccrO7G34",
+          "url": "https://www.youtube.com/watch?v=dcSccrO7G34",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=dcSccrO7G34",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-8-brtXncq-4",
+          "title": "11월 15일 이머프 근황 및 비트코인 복기 방송",
+          "source_playlist": "차트 복기",
+          "duration": "8:07",
+          "duration_seconds": 487,
+          "video_id": "8-brtXncq-4",
+          "url": "https://www.youtube.com/watch?v=8-brtXncq-4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=8-brtXncq-4",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-PCEXBV6Myt0",
+          "title": "비트코인 반감기 그 이후",
+          "source_playlist": "강의실",
+          "duration": "6:23",
+          "duration_seconds": 383,
+          "video_id": "PCEXBV6Myt0",
+          "url": "https://www.youtube.com/watch?v=PCEXBV6Myt0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=PCEXBV6Myt0",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-WJA6Dw7sBTM",
+          "title": "도파민 100% 충전까지 \"단 4초\"",
+          "source_playlist": "강의실",
+          "duration": "10:57",
+          "duration_seconds": 657,
+          "video_id": "WJA6Dw7sBTM",
+          "url": "https://www.youtube.com/watch?v=WJA6Dw7sBTM",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=WJA6Dw7sBTM",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-sDK-cSxap_8",
+          "title": "와라 불장이여",
+          "source_playlist": "강의실",
+          "duration": "11:38",
+          "duration_seconds": 698,
+          "video_id": "sDK-cSxap_8",
+          "url": "https://www.youtube.com/watch?v=sDK-cSxap_8",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=sDK-cSxap_8",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-8ltu8HEgito",
+          "title": "바이낸스: 너네집 김치 쩔더라",
+          "source_playlist": "강의실",
+          "duration": "11:47",
+          "duration_seconds": 707,
+          "video_id": "8ltu8HEgito",
+          "url": "https://www.youtube.com/watch?v=8ltu8HEgito",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=8ltu8HEgito",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-H8XT_kRg1SQ",
+          "title": "아니 롱만 치면 돈이 복사가 된다고 ㅋㅋ",
+          "source_playlist": "강의실",
+          "duration": "7:16",
+          "duration_seconds": 436,
+          "video_id": "H8XT_kRg1SQ",
+          "url": "https://www.youtube.com/watch?v=H8XT_kRg1SQ",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=H8XT_kRg1SQ",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-UQP-x4sD4nk",
+          "title": "아크 : 1인치 어서오고",
+          "source_playlist": "강의실",
+          "duration": "9:01",
+          "duration_seconds": 541,
+          "video_id": "UQP-x4sD4nk",
+          "url": "https://www.youtube.com/watch?v=UQP-x4sD4nk",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=UQP-x4sD4nk",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-eChtTafzDao",
+          "title": "이게 나야 ㅋ",
+          "source_playlist": "강의실",
+          "duration": "11:17",
+          "duration_seconds": 677,
+          "video_id": "eChtTafzDao",
+          "url": "https://www.youtube.com/watch?v=eChtTafzDao",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=eChtTafzDao",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-kwQR2nOlqgM",
+          "title": "OKX 증정금 태워먹기 / 119 불러!!!!!!",
+          "source_playlist": "강의실",
+          "duration": "8:38",
+          "duration_seconds": 518,
+          "video_id": "kwQR2nOlqgM",
+          "url": "https://www.youtube.com/watch?v=kwQR2nOlqgM",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=kwQR2nOlqgM",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        24,
+        25,
+        26
+      ],
+      "id": "MP-A-15",
+      "sequence": 15,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 6095,
+      "video_count": 11,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-VPA-7_1",
+        "MARU-VPA-10"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-18",
+      "weekday_ko": "수",
+      "title": "강의실 집중 - 원칙·FOMO·CVD·청산맵",
+      "video_items": [
+        {
+          "id": "mp-yyCPXyDoCGQ",
+          "title": "트레이딩에서 가장 중요한 것",
+          "source_playlist": "강의실",
+          "duration": "5:03",
+          "duration_seconds": 303,
+          "video_id": "yyCPXyDoCGQ",
+          "url": "https://www.youtube.com/watch?v=yyCPXyDoCGQ",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=yyCPXyDoCGQ",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-Wb2K2DA3tm8",
+          "title": "조정이 나왔을 때 트레이딩 하기",
+          "source_playlist": "강의실",
+          "duration": "5:15",
+          "duration_seconds": 315,
+          "video_id": "Wb2K2DA3tm8",
+          "url": "https://www.youtube.com/watch?v=Wb2K2DA3tm8",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=Wb2K2DA3tm8",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-5RaIKyZpOlA",
+          "title": "코린이 시드 얼마로 시작하는게 좋을까요?",
+          "source_playlist": "강의실",
+          "duration": "7:44",
+          "duration_seconds": 464,
+          "video_id": "5RaIKyZpOlA",
+          "url": "https://www.youtube.com/watch?v=5RaIKyZpOlA",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=5RaIKyZpOlA",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-_kdAEHYYnTY",
+          "title": "트레이더에게 독과 같은 FOMO를 이기는 법",
+          "source_playlist": "강의실",
+          "duration": "6:49",
+          "duration_seconds": 409,
+          "video_id": "_kdAEHYYnTY",
+          "url": "https://www.youtube.com/watch?v=_kdAEHYYnTY",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=_kdAEHYYnTY",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-1tjtxaNZXAI",
+          "title": "매매 슬럼프가 오는 이유, 질 싸움을 하지 말자",
+          "source_playlist": "강의실",
+          "duration": "11:05",
+          "duration_seconds": 665,
+          "video_id": "1tjtxaNZXAI",
+          "url": "https://www.youtube.com/watch?v=1tjtxaNZXAI",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=1tjtxaNZXAI",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-01TrS4FfgYI",
+          "title": "비트코인 CVD 파이어차트 보는 법",
+          "source_playlist": "강의실",
+          "duration": "9:00",
+          "duration_seconds": 540,
+          "video_id": "01TrS4FfgYI",
+          "url": "https://www.youtube.com/watch?v=01TrS4FfgYI",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=01TrS4FfgYI",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-KPvJYYrJD2I",
+          "title": "비트코인 청산맵 보는 법 / 사토시 차트 보는 이유 (BTC마켓)",
+          "source_playlist": "강의실",
+          "duration": "5:02",
+          "duration_seconds": 302,
+          "video_id": "KPvJYYrJD2I",
+          "url": "https://www.youtube.com/watch?v=KPvJYYrJD2I",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=KPvJYYrJD2I",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-aViGQbW9M5c",
+          "title": "그냥 눈만 뜨면 롱누름...",
+          "source_playlist": "라이브 방송",
+          "duration": "58:07",
+          "duration_seconds": 3487,
+          "video_id": "aViGQbW9M5c",
+          "url": "https://www.youtube.com/watch?v=aViGQbW9M5c",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=aViGQbW9M5c",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        27,
+        28
+      ],
+      "id": "MP-A-16",
+      "sequence": 16,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 6485,
+      "video_count": 8,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-22",
+        "MARU-MANUAL-12"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-20",
+      "weekday_ko": "금",
+      "title": "손실 분석 - 대형 손실 복기 + 손절 원칙",
+      "video_items": [
+        {
+          "id": "mp-dKN4cutmf50",
+          "title": "초심빔 손실 백만불.. 실패 원인 분석/복기",
+          "source_playlist": "라이브 방송",
+          "duration": "2:59:54",
+          "duration_seconds": 10794,
+          "video_id": "dKN4cutmf50",
+          "url": "https://www.youtube.com/watch?v=dKN4cutmf50",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=dKN4cutmf50",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-GLRKkr-HK0k",
+          "title": "당신이 손절 확정을 못 짓는다면, 매매를 하면 안됩니다",
+          "source_playlist": "강의실 · 복습",
+          "duration": "10:50",
+          "duration_seconds": 650,
+          "video_id": "GLRKkr-HK0k",
+          "url": "https://www.youtube.com/watch?v=GLRKkr-HK0k",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=GLRKkr-HK0k",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-qCTzR3wskyU",
+          "title": "큰 가격대를 돌파 했을 때의 매매 / 손절치고 재진입 하는 기준",
+          "source_playlist": "강의실 · 복습",
+          "duration": "10:35",
+          "duration_seconds": 635,
+          "video_id": "qCTzR3wskyU",
+          "url": "https://www.youtube.com/watch?v=qCTzR3wskyU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=qCTzR3wskyU",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        29
+      ],
+      "id": "MP-A-17",
+      "sequence": 17,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 12079,
+      "video_count": 3,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-04",
+        "MARU-MASTER_CLASS-06"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-21",
+      "weekday_ko": "토",
+      "title": "어려운 장 - 대응 원칙 재정비",
+      "video_items": [
+        {
+          "id": "mp-ghHkFF8-ShY",
+          "title": "장이 어렵네요. 어떻게 먹고 살아야 하나....",
+          "source_playlist": "라이브 방송",
+          "duration": "2:57:01",
+          "duration_seconds": 10621,
+          "video_id": "ghHkFF8-ShY",
+          "url": "https://www.youtube.com/watch?v=ghHkFF8-ShY",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ghHkFF8-ShY",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-Wb2K2DA3tm8",
+          "title": "조정이 나왔을 때 트레이딩 하기",
+          "source_playlist": "강의실 · 복습",
+          "duration": "5:15",
+          "duration_seconds": 315,
+          "video_id": "Wb2K2DA3tm8",
+          "url": "https://www.youtube.com/watch?v=Wb2K2DA3tm8",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=Wb2K2DA3tm8",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        30
+      ],
+      "id": "MP-A-18",
+      "sequence": 18,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 10936,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-08",
+        "MARU-MANUAL-29"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-24",
+      "weekday_ko": "화",
+      "title": "심리 관리 - 알고 있지만 못 지키는 이유",
+      "video_items": [
+        {
+          "id": "mp-27XBCiZ9TEE",
+          "title": "알고있지만 마음대로 안되는 나",
+          "source_playlist": "라이브 방송",
+          "duration": "1:44:40",
+          "duration_seconds": 6280,
+          "video_id": "27XBCiZ9TEE",
+          "url": "https://www.youtube.com/watch?v=27XBCiZ9TEE",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=27XBCiZ9TEE",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-hfjAqCBtKD4",
+          "title": "거래량을 왜 봐야할까요?",
+          "source_playlist": "강의실 · 복습",
+          "duration": "2:50",
+          "duration_seconds": 170,
+          "video_id": "hfjAqCBtKD4",
+          "url": "https://www.youtube.com/watch?v=hfjAqCBtKD4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=hfjAqCBtKD4",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        31
+      ],
+      "id": "MP-A-19",
+      "sequence": 19,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 6450,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-09",
+        "MARU-MANUAL-29"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-25",
+      "weekday_ko": "수",
+      "title": "시장 판단 - 실전 방송 2개 비교",
+      "video_items": [
+        {
+          "id": "mp-Qkw22xagS3E",
+          "title": "진짜 대박 났습니다. 유튜버식 제목 ok",
+          "source_playlist": "라이브 방송",
+          "duration": "1:09:48",
+          "duration_seconds": 4188,
+          "video_id": "Qkw22xagS3E",
+          "url": "https://www.youtube.com/watch?v=Qkw22xagS3E",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=Qkw22xagS3E",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-fqYiIsz_mqU",
+          "title": "김비트 도미 장사 잘하네...",
+          "source_playlist": "라이브 방송",
+          "duration": "1:12:34",
+          "duration_seconds": 4354,
+          "video_id": "fqYiIsz_mqU",
+          "url": "https://www.youtube.com/watch?v=fqYiIsz_mqU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=fqYiIsz_mqU",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        32
+      ],
+      "id": "MP-A-20",
+      "sequence": 20,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 8542,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-20",
+        "MARU-MASTER_CLASS-11"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-27",
+      "weekday_ko": "금",
+      "title": "강한 추세 - 추세 라이브 + PA 재복습",
+      "video_items": [
+        {
+          "id": "mp-oa1hoiGRufY",
+          "title": "날아오르라 독수리여!!!!",
+          "source_playlist": "라이브 방송",
+          "duration": "2:32:59",
+          "duration_seconds": 9179,
+          "video_id": "oa1hoiGRufY",
+          "url": "https://www.youtube.com/watch?v=oa1hoiGRufY",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=oa1hoiGRufY",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-qgzBqgqriZ0",
+          "title": "자력 (磁力)(Magnatic Force)과 차트의 프라이스 액션 (PA)",
+          "source_playlist": "라이브 방송 · 복습",
+          "duration": "1:25:38",
+          "duration_seconds": 5138,
+          "video_id": "qgzBqgqriZ0",
+          "url": "https://www.youtube.com/watch?v=qgzBqgqriZ0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=qgzBqgqriZ0",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        33
+      ],
+      "id": "MP-A-21",
+      "sequence": 21,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 14317,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-16",
+        "MARU-MASTER_CLASS-14"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-11-28",
+      "weekday_ko": "토",
+      "title": "급락장 - 거시 뉴스 + 질질 흐르는 차트",
+      "video_items": [
+        {
+          "id": "mp-bHWloNqmynM",
+          "title": "트럼프, 비트코인 범 지구적 대 통수",
+          "source_playlist": "라이브 방송",
+          "duration": "2:58:59",
+          "duration_seconds": 10739,
+          "video_id": "bHWloNqmynM",
+          "url": "https://www.youtube.com/watch?v=bHWloNqmynM",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=bHWloNqmynM",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-oQSuVi4jmuE",
+          "title": "(매매 복기) 질질 흐르는 차트에서의 매수 조건들",
+          "source_playlist": "차트 복기 · 복습",
+          "duration": "15:12",
+          "duration_seconds": 912,
+          "video_id": "oQSuVi4jmuE",
+          "url": "https://www.youtube.com/watch?v=oQSuVi4jmuE",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=oQSuVi4jmuE",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        34
+      ],
+      "id": "MP-A-22",
+      "sequence": 22,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 11651,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-24",
+        "MARU-MANUAL-36"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-01",
+      "weekday_ko": "화",
+      "title": "사이클·알트 - 정권 변화와 알트 흐름",
+      "video_items": [
+        {
+          "id": "mp-A7rmoqPH1UA",
+          "title": "트럼프 정권 그 후... 차트는 지금",
+          "source_playlist": "라이브 방송",
+          "duration": "1:33:55",
+          "duration_seconds": 5635,
+          "video_id": "A7rmoqPH1UA",
+          "url": "https://www.youtube.com/watch?v=A7rmoqPH1UA",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=A7rmoqPH1UA",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-ZuIMYLsvP38",
+          "title": "알트코인 매수 시기 (알트가 비트보다 먼저 빠질 때)",
+          "source_playlist": "강의실 · 복습",
+          "duration": "7:42",
+          "duration_seconds": 462,
+          "video_id": "ZuIMYLsvP38",
+          "url": "https://www.youtube.com/watch?v=ZuIMYLsvP38",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ZuIMYLsvP38",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-PCEXBV6Myt0",
+          "title": "비트코인 반감기 그 이후",
+          "source_playlist": "강의실 · 복습",
+          "duration": "6:23",
+          "duration_seconds": 383,
+          "video_id": "PCEXBV6Myt0",
+          "url": "https://www.youtube.com/watch?v=PCEXBV6Myt0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=PCEXBV6Myt0",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        35
+      ],
+      "id": "MP-A-23",
+      "sequence": 23,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 6480,
+      "video_count": 3,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-33",
+        "MARU-MANUAL-34"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-02",
+      "weekday_ko": "수",
+      "title": "악재 속 급락 - 대응과 확률",
+      "video_items": [
+        {
+          "id": "mp-rbXvPFXhnL0",
+          "title": "비트코인 호재 속 추락? 알트 떡락 매수기회??",
+          "source_playlist": "라이브 방송",
+          "duration": "1:52:27",
+          "duration_seconds": 6747,
+          "video_id": "rbXvPFXhnL0",
+          "url": "https://www.youtube.com/watch?v=rbXvPFXhnL0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=rbXvPFXhnL0",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-9AkCgfr9JDk",
+          "title": "휩소는 손절이 나은 이유. 그것이 \"확률\" 이니까",
+          "source_playlist": "강의실 · 복습",
+          "duration": "6:05",
+          "duration_seconds": 365,
+          "video_id": "9AkCgfr9JDk",
+          "url": "https://www.youtube.com/watch?v=9AkCgfr9JDk",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=9AkCgfr9JDk",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        36
+      ],
+      "id": "MP-A-24",
+      "sequence": 24,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 7112,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-26",
+        "MARU-MASTER_CLASS-08"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-04",
+      "weekday_ko": "금",
+      "title": "신고가·거래량 - 100K 시대와 볼륨 재점검",
+      "video_items": [
+        {
+          "id": "mp-ZCPTXaWm0XI",
+          "title": "우리는 비트코인 10만불의 시대에 살고있다..",
+          "source_playlist": "라이브 방송",
+          "duration": "3:12:24",
+          "duration_seconds": 11544,
+          "video_id": "ZCPTXaWm0XI",
+          "url": "https://www.youtube.com/watch?v=ZCPTXaWm0XI",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ZCPTXaWm0XI",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-hfjAqCBtKD4",
+          "title": "거래량을 왜 봐야할까요?",
+          "source_playlist": "강의실 · 복습",
+          "duration": "2:50",
+          "duration_seconds": 170,
+          "video_id": "hfjAqCBtKD4",
+          "url": "https://www.youtube.com/watch?v=hfjAqCBtKD4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=hfjAqCBtKD4",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-x_S2j5nvvwQ",
+          "title": "팀메로나 거래량 보조지표 (볼륨 인디케이터) 설정 및 신청방법",
+          "source_playlist": "강의실 · 복습",
+          "duration": "6:25",
+          "duration_seconds": 385,
+          "video_id": "x_S2j5nvvwQ",
+          "url": "https://www.youtube.com/watch?v=x_S2j5nvvwQ",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=x_S2j5nvvwQ",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        37
+      ],
+      "id": "MP-A-25",
+      "sequence": 25,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 12099,
+      "video_count": 3,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-36",
+        "MARU-VPA-10"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-05",
+      "weekday_ko": "토",
+      "title": "난해한 무빙 - 패턴·복기 재점검",
+      "video_items": [
+        {
+          "id": "mp-oDi2eAkEaMA",
+          "title": "ㅇ.ㅇ",
+          "source_playlist": "라이브 방송",
+          "duration": "2:41:57",
+          "duration_seconds": 9717,
+          "video_id": "oDi2eAkEaMA",
+          "url": "https://www.youtube.com/watch?v=oDi2eAkEaMA",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=oDi2eAkEaMA",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-T52I8IDA-z4",
+          "title": "쌍봉 떡락 자리지만 오를것 같은 차트! 퀀텀 삼고초려 메타. 킹보나치",
+          "source_playlist": "차트 복기 · 복습",
+          "duration": "6:52",
+          "duration_seconds": 412,
+          "video_id": "T52I8IDA-z4",
+          "url": "https://www.youtube.com/watch?v=T52I8IDA-z4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=T52I8IDA-z4",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-l8UbbMGUyGA",
+          "title": "1월 돈복사 해준 구간의 매매 포인트들 요점정리! 참 쉽죠!? 차트 복기",
+          "source_playlist": "차트 복기 · 복습",
+          "duration": "6:24",
+          "duration_seconds": 384,
+          "video_id": "l8UbbMGUyGA",
+          "url": "https://www.youtube.com/watch?v=l8UbbMGUyGA",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=l8UbbMGUyGA",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-NpeKjk4tAfI",
+          "title": "완만하게 계속 하락할때 차트복기 (5월 10일자) - 거래량",
+          "source_playlist": "차트 복기 · 복습",
+          "duration": "9:42",
+          "duration_seconds": 582,
+          "video_id": "NpeKjk4tAfI",
+          "url": "https://www.youtube.com/watch?v=NpeKjk4tAfI",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=NpeKjk4tAfI",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        38
+      ],
+      "id": "MP-A-26",
+      "sequence": 26,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 11095,
+      "video_count": 4,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-14",
+        "MARU-PA_PSYCHOLOGY-02"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-08",
+      "weekday_ko": "화",
+      "title": "라이브 응용 - 방송 전체 흐름 읽기",
+      "video_items": [
+        {
+          "id": "mp-Rzw2OgVm7B4",
+          "title": "방송 떠넘김 당하기",
+          "source_playlist": "라이브 방송",
+          "duration": "1:52:16",
+          "duration_seconds": 6736,
+          "video_id": "Rzw2OgVm7B4",
+          "url": "https://www.youtube.com/watch?v=Rzw2OgVm7B4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=Rzw2OgVm7B4",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-8-brtXncq-4",
+          "title": "11월 15일 이머프 근황 및 비트코인 복기 방송",
+          "source_playlist": "차트 복기 · 복습",
+          "duration": "8:07",
+          "duration_seconds": 487,
+          "video_id": "8-brtXncq-4",
+          "url": "https://www.youtube.com/watch?v=8-brtXncq-4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=8-brtXncq-4",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        39
+      ],
+      "id": "MP-A-27",
+      "sequence": 27,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 7223,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-01",
+        "MARU-VPA-11_1"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-09",
+      "weekday_ko": "수",
+      "title": "관세장 - 돌파·재진입 원칙 재점검",
+      "video_items": [
+        {
+          "id": "mp-WQAUh9WV7zU",
+          "title": "그렇습니다. 관세입니다",
+          "source_playlist": "라이브 방송",
+          "duration": "1:47:58",
+          "duration_seconds": 6478,
+          "video_id": "WQAUh9WV7zU",
+          "url": "https://www.youtube.com/watch?v=WQAUh9WV7zU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=WQAUh9WV7zU",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-qCTzR3wskyU",
+          "title": "큰 가격대를 돌파 했을 때의 매매 / 손절치고 재진입 하는 기준",
+          "source_playlist": "강의실 · 복습",
+          "duration": "10:35",
+          "duration_seconds": 635,
+          "video_id": "qCTzR3wskyU",
+          "url": "https://www.youtube.com/watch?v=qCTzR3wskyU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=qCTzR3wskyU",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        40
+      ],
+      "id": "MP-A-28",
+      "sequence": 28,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 7113,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-08",
+        "MARU-MASTER_CLASS-06"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-11",
+      "weekday_ko": "금",
+      "title": "최근 무빙 - 두 라이브 비교",
+      "video_items": [
+        {
+          "id": "mp-4BJl1-D2BrE",
+          "title": "이건 진짜 무슨 무빙인가",
+          "source_playlist": "라이브 방송",
+          "duration": "2:15:03",
+          "duration_seconds": 8103,
+          "video_id": "4BJl1-D2BrE",
+          "url": "https://www.youtube.com/watch?v=4BJl1-D2BrE",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=4BJl1-D2BrE",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-SbrMdSa0ucg",
+          "title": "초콜렛. 두바이 초콜렛",
+          "source_playlist": "라이브 방송",
+          "duration": "1:24:16",
+          "duration_seconds": 5056,
+          "video_id": "SbrMdSa0ucg",
+          "url": "https://www.youtube.com/watch?v=SbrMdSa0ucg",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=SbrMdSa0ucg",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        41
+      ],
+      "id": "MP-A-29",
+      "sequence": 29,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 13159,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-VPA-10",
+        "MARU-MASTER_CLASS-01"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-12",
+      "weekday_ko": "토",
+      "title": "장기 관점 - 5주년 방송 + 과거장 비교",
+      "video_items": [
+        {
+          "id": "mp-MbXkzvGxp8I",
+          "title": "철 지난 머프 유튜브 5주년 기념방송",
+          "source_playlist": "라이브 방송",
+          "duration": "2:11:40",
+          "duration_seconds": 7900,
+          "video_id": "MbXkzvGxp8I",
+          "url": "https://www.youtube.com/watch?v=MbXkzvGxp8I",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=MbXkzvGxp8I",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-PT3FSTGui-M",
+          "title": "오랜만입니다",
+          "source_playlist": "라이브 방송",
+          "duration": "1:17:30",
+          "duration_seconds": 4650,
+          "video_id": "PT3FSTGui-M",
+          "url": "https://www.youtube.com/watch?v=PT3FSTGui-M",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=PT3FSTGui-M",
+          "review_repeat": false
+        }
+      ],
+      "pdf_page_numbers": [
+        42
+      ],
+      "id": "MP-A-30",
+      "sequence": 30,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 12550,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-09",
+        "MARU-MANUAL-31"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-15",
+      "weekday_ko": "화",
+      "title": "ETF·오더플로 - CVD·청산맵 재점검",
+      "video_items": [
+        {
+          "id": "mp-eUDa3aixHPk",
+          "title": "비트코인 ETF! 이더리움 야너두?",
+          "source_playlist": "라이브 방송",
+          "duration": "1:38:19",
+          "duration_seconds": 5899,
+          "video_id": "eUDa3aixHPk",
+          "url": "https://www.youtube.com/watch?v=eUDa3aixHPk",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=eUDa3aixHPk",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-01TrS4FfgYI",
+          "title": "비트코인 CVD 파이어차트 보는 법",
+          "source_playlist": "강의실 · 복습",
+          "duration": "9:00",
+          "duration_seconds": 540,
+          "video_id": "01TrS4FfgYI",
+          "url": "https://www.youtube.com/watch?v=01TrS4FfgYI",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=01TrS4FfgYI",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-KPvJYYrJD2I",
+          "title": "비트코인 청산맵 보는 법 / 사토시 차트 보는 이유 (BTC마켓)",
+          "source_playlist": "강의실 · 복습",
+          "duration": "5:02",
+          "duration_seconds": 302,
+          "video_id": "KPvJYYrJD2I",
+          "url": "https://www.youtube.com/watch?v=KPvJYYrJD2I",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=KPvJYYrJD2I",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        43
+      ],
+      "id": "MP-A-31",
+      "sequence": 31,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 6741,
+      "video_count": 3,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MASTER_CLASS-22",
+        "MARU-MASTER_CLASS-21"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-16",
+      "weekday_ko": "수",
+      "title": "연말 시장 - 자력 Q&A 복습",
+      "video_items": [
+        {
+          "id": "mp-56IlbvfF7NU",
+          "title": "새해 복 많이 받으세요",
+          "source_playlist": "라이브 방송",
+          "duration": "1:48:51",
+          "duration_seconds": 6531,
+          "video_id": "56IlbvfF7NU",
+          "url": "https://www.youtube.com/watch?v=56IlbvfF7NU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=56IlbvfF7NU",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-WTltK3OmKak",
+          "title": "차트와 자력 Q&A",
+          "source_playlist": "강의실 · 복습",
+          "duration": "7:13",
+          "duration_seconds": 433,
+          "video_id": "WTltK3OmKak",
+          "url": "https://www.youtube.com/watch?v=WTltK3OmKak",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=WTltK3OmKak",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        44
+      ],
+      "id": "MP-A-32",
+      "sequence": 32,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 6964,
+      "video_count": 2,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-PA_PSYCHOLOGY-03",
+        "MARU-MANUAL-16"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    },
+    {
+      "planned_date_in_pdf": "2026-12-18",
+      "weekday_ko": "금",
+      "title": "최종 종합 - 최신 라이브 + 심화 1-6 압축 2회독",
+      "video_items": [
+        {
+          "id": "mp-p0FtSs2Nhl4",
+          "title": "빚투코인 라이브",
+          "source_playlist": "라이브 방송",
+          "duration": "1:41:08",
+          "duration_seconds": 6068,
+          "video_id": "p0FtSs2Nhl4",
+          "url": "https://www.youtube.com/watch?v=p0FtSs2Nhl4",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=p0FtSs2Nhl4",
+          "review_repeat": false
+        },
+        {
+          "id": "mp-IeOY3XM_mUI",
+          "title": "차트 분석 심화 (제 1강) - 분석 방법",
+          "source_playlist": "차트분석 심화 · 복습",
+          "duration": "10:29",
+          "duration_seconds": 629,
+          "video_id": "IeOY3XM_mUI",
+          "url": "https://www.youtube.com/watch?v=IeOY3XM_mUI",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=IeOY3XM_mUI",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-3pDMFNcbb1I",
+          "title": "차트 분석 심화 (제 2강) - 지지와 저항",
+          "source_playlist": "차트분석 심화 · 복습",
+          "duration": "11:13",
+          "duration_seconds": 673,
+          "video_id": "3pDMFNcbb1I",
+          "url": "https://www.youtube.com/watch?v=3pDMFNcbb1I",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=3pDMFNcbb1I",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-2tbrXmdZCb0",
+          "title": "차트 분석 심화 (제 3강) - 캔들 패턴",
+          "source_playlist": "차트분석 심화 · 복습",
+          "duration": "23:53",
+          "duration_seconds": 1433,
+          "video_id": "2tbrXmdZCb0",
+          "url": "https://www.youtube.com/watch?v=2tbrXmdZCb0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=2tbrXmdZCb0",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-9LxUsxXiEYM",
+          "title": "차트 분석 심화 (제 4강) - 차트 패턴",
+          "source_playlist": "차트분석 심화 · 복습",
+          "duration": "18:00",
+          "duration_seconds": 1080,
+          "video_id": "9LxUsxXiEYM",
+          "url": "https://www.youtube.com/watch?v=9LxUsxXiEYM",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=9LxUsxXiEYM",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-aRy2QRVt7nU",
+          "title": "차트 분석 심화 (제 5강) - 피보나치, 손익비",
+          "source_playlist": "차트분석 심화 · 복습",
+          "duration": "25:32",
+          "duration_seconds": 1532,
+          "video_id": "aRy2QRVt7nU",
+          "url": "https://www.youtube.com/watch?v=aRy2QRVt7nU",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=aRy2QRVt7nU",
+          "review_repeat": true
+        },
+        {
+          "id": "mp-ZQCjMZ2P-Ho",
+          "title": "차트 분석 심화 (제 6강) - 거래량의 해석 (매우 중요) / 거래량 강의",
+          "source_playlist": "차트분석 심화 · 복습",
+          "duration": "25:03",
+          "duration_seconds": 1503,
+          "video_id": "ZQCjMZ2P-Ho",
+          "url": "https://www.youtube.com/watch?v=ZQCjMZ2P-Ho",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ZQCjMZ2P-Ho",
+          "review_repeat": true
+        }
+      ],
+      "pdf_page_numbers": [
+        45,
+        46
+      ],
+      "id": "MP-A-33",
+      "sequence": 33,
+      "phase": "A",
+      "type": "video_session",
+      "estimated_video_seconds": 12918,
+      "video_count": 7,
+      "complete_only_if_all_video_done": true,
+      "is_historical_date_only": true,
+      "suggested_optional_blog_article_ids": [
+        "MARU-MANUAL-29",
+        "MARU-MANUAL-41"
+      ],
+      "video_completion_policy": "per_assignment (repeated video in a different session needs its own completion, show prior viewed indicator)",
+      "is_optional_blog_reading_blocking": false
+    }
+  ],
+  "phase_B_C_weekly_tasks": [
+    {
+      "id": "MP-B-W01",
+      "phase": "B",
+      "week": 1,
+      "title": " 분석 순서와 손실 한도",
+      "reference_start_date": "2026-12-22",
+      "reference_end_date": "2026-12-26",
+      "goal": "큰 구조 1D→4H→1H→15m, 사전 손절 정의",
+      "weekday_assignments": {
+        "1": "핵심 강의 복습 + 개념을 말로 설명",
+        "2": "가린 차트 5개: 진입 / 무효화 / 패스",
+        "4": "블라인드 리플레이 10개, 반례 3개",
+        "5": "실전처럼 90분 모의 + 주간 오답 검토"
+      },
+      "review_videos": [
+        {
+          "url": "https://www.youtube.com/watch?v=IeOY3XM_mUI",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=IeOY3XM_mUI"
+        }
+      ]
+    },
+    {
+      "id": "MP-B-W02",
+      "phase": "B",
+      "week": 2,
+      "title": " 지지·저항과 캔들 확인",
+      "reference_start_date": "2026-12-29",
+      "reference_end_date": "2027-01-02",
+      "goal": "자리와 확인 신호를 분리, 뒤늦은 추격 제외",
+      "weekday_assignments": {
+        "1": "핵심 강의 복습 + 개념을 말로 설명",
+        "2": "가린 차트 5개: 진입 / 무효화 / 패스",
+        "4": "블라인드 리플레이 10개, 반례 3개",
+        "5": "실전처럼 90분 모의 + 주간 오답 검토"
+      },
+      "review_videos": [
+        {
+          "url": "https://www.youtube.com/watch?v=3pDMFNcbb1I",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=3pDMFNcbb1I"
+        }
+      ]
+    },
+    {
+      "id": "MP-B-W03",
+      "phase": "B",
+      "week": 3,
+      "title": " 패턴과 손익비",
+      "reference_start_date": "2027-01-05",
+      "reference_end_date": "2027-01-09",
+      "goal": "진입 전에 무효화·최소 보상위험비 작성",
+      "weekday_assignments": {
+        "1": "핵심 강의 복습 + 개념을 말로 설명",
+        "2": "가린 차트 5개: 진입 / 무효화 / 패스",
+        "4": "블라인드 리플레이 10개, 반례 3개",
+        "5": "실전처럼 90분 모의 + 주간 오답 검토"
+      },
+      "review_videos": [
+        {
+          "url": "https://www.youtube.com/watch?v=9LxUsxXiEYM",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=9LxUsxXiEYM"
+        }
+      ]
+    },
+    {
+      "id": "MP-B-W04",
+      "phase": "B",
+      "week": 4,
+      "title": " 거래량과 가격 반응",
+      "reference_start_date": "2027-01-12",
+      "reference_end_date": "2027-01-16",
+      "goal": "거래량 단독 신호 금지, 확인 캔들 기록",
+      "weekday_assignments": {
+        "1": "핵심 강의 복습 + 개념을 말로 설명",
+        "2": "가린 차트 5개: 진입 / 무효화 / 패스",
+        "4": "블라인드 리플레이 10개, 반례 3개",
+        "5": "실전처럼 90분 모의 + 주간 오답 검토"
+      },
+      "review_videos": [
+        {
+          "url": "https://www.youtube.com/watch?v=ZQCjMZ2P-Ho",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ZQCjMZ2P-Ho"
+        }
+      ]
+    },
+    {
+      "id": "MP-B-W05",
+      "phase": "B",
+      "week": 5,
+      "title": " 바닥 잡기 1-5강",
+      "reference_start_date": "2027-01-19",
+      "reference_end_date": "2027-01-23",
+      "goal": "반전 조건과 실패 조건을 구별",
+      "weekday_assignments": {
+        "1": "핵심 강의 복습 + 개념을 말로 설명",
+        "2": "가린 차트 5개: 진입 / 무효화 / 패스",
+        "4": "블라인드 리플레이 10개, 반례 3개",
+        "5": "실전처럼 90분 모의 + 주간 오답 검토"
+      },
+      "review_videos": [
+        {
+          "url": "https://www.youtube.com/watch?v=ej27eMR8Wk0",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=ej27eMR8Wk0"
+        }
+      ]
+    },
+    {
+      "id": "MP-B-W06",
+      "phase": "B",
+      "week": 6,
+      "title": " 추세·횡보·급락장 분류",
+      "reference_start_date": "2027-01-26",
+      "reference_end_date": "2027-01-30",
+      "goal": "장세를 먼저 분류한 뒤 유효 셋업만",
+      "weekday_assignments": {
+        "1": "핵심 강의 복습 + 개념을 말로 설명",
+        "2": "가린 차트 5개: 진입 / 무효화 / 패스",
+        "4": "블라인드 리플레이 10개, 반례 3개",
+        "5": "실전처럼 90분 모의 + 주간 오답 검토"
+      },
+      "review_videos": [
+        {
+          "url": "https://www.youtube.com/watch?v=oQSuVi4jmuE",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=oQSuVi4jmuE"
+        }
+      ]
+    },
+    {
+      "id": "MP-B-W07",
+      "phase": "B",
+      "week": 7,
+      "title": " 실시간 판단 복원",
+      "reference_start_date": "2027-02-02",
+      "reference_end_date": "2027-02-06",
+      "goal": "라이브 정답을 가린 뒤 판단 순서 재현",
+      "weekday_assignments": {
+        "1": "핵심 강의 복습 + 개념을 말로 설명",
+        "2": "가린 차트 5개: 진입 / 무효화 / 패스",
+        "4": "블라인드 리플레이 10개, 반례 3개",
+        "5": "실전처럼 90분 모의 + 주간 오답 검토"
+      },
+      "review_videos": [
+        {
+          "url": "https://www.youtube.com/watch?v=wsyYHLsX0tE",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=wsyYHLsX0tE"
+        }
+      ]
+    },
+    {
+      "id": "MP-B-W08",
+      "phase": "B",
+      "week": 8,
+      "title": " 블라인드 종합 시험",
+      "reference_start_date": "2027-02-09",
+      "reference_end_date": "2027-02-13",
+      "goal": "한 달치 차트에서 30개 사전 시나리오",
+      "weekday_assignments": {
+        "1": "핵심 강의 복습 + 개념을 말로 설명",
+        "2": "가린 차트 5개: 진입 / 무효화 / 패스",
+        "4": "블라인드 리플레이 10개, 반례 3개",
+        "5": "실전처럼 90분 모의 + 주간 오답 검토"
+      },
+      "review_videos": [
+        {
+          "url": "https://www.youtube.com/watch?v=GLRKkr-HK0k",
+          "ios_app_url": "youtube://www.youtube.com/watch?v=GLRKkr-HK0k"
+        }
+      ]
+    },
+    {
+      "id": "MP-C-W01",
+      "phase": "C",
+      "week": 1,
+      "title": " 진입 전에 근거 말하기",
+      "reference_start_date": "2027-02-16",
+      "reference_end_date": "2027-02-20",
+      "goal": "모든 매매에 상위구조/진입근거/무효화 기록",
+      "weekday_assignments": {
+        "1": "상위 프레임 구조 / 셋업 사전 기록",
+        "2": "블라인드 5건 / 사전 손절 점검",
+        "4": "모의매매 실행 또는 조건 미달 시 관찰",
+        "5": "매매일지 평가 / 다음 주 수정 1개"
+      },
+      "review_videos": []
+    },
+    {
+      "id": "MP-C-W02",
+      "phase": "C",
+      "week": 2,
+      "title": " 손절 실행 일치",
+      "reference_start_date": "2027-02-23",
+      "reference_end_date": "2027-02-27",
+      "goal": "손절 확대·취소 0회 달성",
+      "weekday_assignments": {
+        "1": "상위 프레임 구조 / 셋업 사전 기록",
+        "2": "블라인드 5건 / 사전 손절 점검",
+        "4": "모의매매 실행 또는 조건 미달 시 관찰",
+        "5": "매매일지 평가 / 다음 주 수정 1개"
+      },
+      "review_videos": []
+    },
+    {
+      "id": "MP-C-W03",
+      "phase": "C",
+      "week": 3,
+      "title": " 추격 매매 제한",
+      "reference_start_date": "2027-03-02",
+      "reference_end_date": "2027-03-06",
+      "goal": "놓친 기회는 기록하고 추격하지 않음",
+      "weekday_assignments": {
+        "1": "상위 프레임 구조 / 셋업 사전 기록",
+        "2": "블라인드 5건 / 사전 손절 점검",
+        "4": "모의매매 실행 또는 조건 미달 시 관찰",
+        "5": "매매일지 평가 / 다음 주 수정 1개"
+      },
+      "review_videos": []
+    },
+    {
+      "id": "MP-C-W04",
+      "phase": "C",
+      "week": 4,
+      "title": " 셋업 1개만 반복",
+      "reference_start_date": "2027-03-09",
+      "reference_end_date": "2027-03-13",
+      "goal": "하나의 검증 가능 규칙을 일관되게 사용",
+      "weekday_assignments": {
+        "1": "상위 프레임 구조 / 셋업 사전 기록",
+        "2": "블라인드 5건 / 사전 손절 점검",
+        "4": "모의매매 실행 또는 조건 미달 시 관찰",
+        "5": "매매일지 평가 / 다음 주 수정 1개"
+      },
+      "review_videos": []
+    },
+    {
+      "id": "MP-C-W05",
+      "phase": "C",
+      "week": 5,
+      "title": " 소액 전환 적격성 평가",
+      "reference_start_date": "2027-03-16",
+      "reference_end_date": "2027-03-20",
+      "goal": "50회 이상 모의 표본 및 계획 준수 점검",
+      "weekday_assignments": {
+        "1": "상위 프레임 구조 / 셋업 사전 기록",
+        "2": "블라인드 5건 / 사전 손절 점검",
+        "4": "모의매매 실행 또는 조건 미달 시 관찰",
+        "5": "매매일지 평가 / 다음 주 수정 1개"
+      },
+      "review_videos": []
+    },
+    {
+      "id": "MP-C-W06",
+      "phase": "C",
+      "week": 6,
+      "title": " 소액 반복 또는 모의 연장",
+      "reference_start_date": "2027-03-23",
+      "reference_end_date": "2027-03-27",
+      "goal": "실제 돈은 규칙 충족 시에만 극소액",
+      "weekday_assignments": {
+        "1": "상위 프레임 구조 / 셋업 사전 기록",
+        "2": "블라인드 5건 / 사전 손절 점검",
+        "4": "모의매매 실행 또는 조건 미달 시 관찰",
+        "5": "매매일지 평가 / 다음 주 수정 1개"
+      },
+      "review_videos": []
+    },
+    {
+      "id": "MP-C-W07",
+      "phase": "C",
+      "week": 7,
+      "title": " 손익보다 행동 점수",
+      "reference_start_date": "2027-03-30",
+      "reference_end_date": "2027-04-03",
+      "goal": "20세션 계획 위반 없이 진행",
+      "weekday_assignments": {
+        "1": "상위 프레임 구조 / 셋업 사전 기록",
+        "2": "블라인드 5건 / 사전 손절 점검",
+        "4": "모의매매 실행 또는 조건 미달 시 관찰",
+        "5": "매매일지 평가 / 다음 주 수정 1개"
+      },
+      "review_videos": []
+    },
+    {
+      "id": "MP-C-W08",
+      "phase": "C",
+      "week": 8,
+      "title": " 총결산 및 다음 계획",
+      "reference_start_date": "2027-04-06",
+      "reference_end_date": "2027-04-10",
+      "goal": "기록된 매매의 기대값과 실패 유형 확인",
+      "weekday_assignments": {
+        "1": "상위 프레임 구조 / 셋업 사전 기록",
+        "2": "블라인드 5건 / 사전 손절 점검",
+        "4": "모의매매 실행 또는 조건 미달 시 관찰",
+        "5": "매매일지 평가 / 다음 주 수정 1개"
+      },
+      "review_videos": []
+    }
+  ],
+  "marupong_blog_articles": [
+    {
+      "id": "MARU-MANUAL-01",
+      "collection": "MANUAL",
+      "sequence": 1,
+      "article_number": "1",
+      "title": "시작하기 전 원칙",
+      "original_url": "https://marupong.tistory.com/entry/EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD-01-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0-%EC%A0%84-%EC%9B%90%EC%B9%99",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-02",
+      "collection": "MANUAL",
+      "sequence": 2,
+      "article_number": "2",
+      "title": "기술적 분석 소개 - 용어",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-03",
+      "collection": "MANUAL",
+      "sequence": 3,
+      "article_number": "3",
+      "title": "기술적 분석 - 캔들을 통한 매물대 찾기",
+      "original_url": "https://marupong.tistory.com/entry/EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD-03-%EA%B8%B0%EC%88%A0%EC%A0%81-%EB%B6%84%EC%84%9D-%EC%BA%94%EB%93%A4%EC%9D%84-%ED%86%B5%ED%95%9C-%EB%A7%A4%EB%AC%BC%EB%8C%80-%EC%B0%BE%EA%B8%B0",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-04",
+      "collection": "MANUAL",
+      "sequence": 4,
+      "article_number": "4",
+      "title": "기술적 분석 - 캔들의 종류 및 분석",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-05",
+      "collection": "MANUAL",
+      "sequence": 5,
+      "article_number": "5",
+      "title": "기술적 분석 - 지지선과 저항선",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-06",
+      "collection": "MANUAL",
+      "sequence": 6,
+      "article_number": "6",
+      "title": "리스크 관리 part.1 - 레버리지, 손익비 개념",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-07",
+      "collection": "MANUAL",
+      "sequence": 7,
+      "article_number": "7",
+      "title": "리스크 관리 part.2 - 손익비 란?",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-08",
+      "collection": "MANUAL",
+      "sequence": 8,
+      "article_number": "8",
+      "title": "리스크 관리 part.3 - 스탑로스, 손절매 설정 방법",
+      "original_url": "https://marupong.tistory.com/entry/08-%EB%A6%AC%EC%8A%A4%ED%81%AC-%EA%B4%80%EB%A6%AC-part3-%EC%8A%A4%ED%83%91%EB%A1%9C%EC%8A%A4-%EC%86%90%EC%A0%88%EB%A7%A4-%EC%84%A4%EC%A0%95-%EB%B0%A9%EB%B2%95-EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-09",
+      "collection": "MANUAL",
+      "sequence": 9,
+      "article_number": "9",
+      "title": "볼륨, 거래량에 대하여",
+      "original_url": "https://marupong.tistory.com/entry/EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD-09-%EB%B3%BC%EB%A5%A8-%EA%B1%B0%EB%9E%98%EB%9F%89%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-10",
+      "collection": "MANUAL",
+      "sequence": 10,
+      "article_number": "10",
+      "title": "다이버전스 part.1 - 상승 다이버전스 총 정리",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-11",
+      "collection": "MANUAL",
+      "sequence": 11,
+      "article_number": "11",
+      "title": "다이버전스 part.2 - 하락 다이버전스 총 정리",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-12",
+      "collection": "MANUAL",
+      "sequence": 12,
+      "article_number": "12",
+      "title": "미체결/미결제 약정 part.1 - 미체결 약정 이해 및 정리",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-13",
+      "collection": "MANUAL",
+      "sequence": 13,
+      "article_number": "13",
+      "title": "미체결 약정 part.2 - 미체결 약정을 이용한 매매",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-14",
+      "collection": "MANUAL",
+      "sequence": 14,
+      "article_number": "14",
+      "title": "헤드 앤 숄더 패턴 이해 및 정리",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-15",
+      "collection": "MANUAL",
+      "sequence": 15,
+      "article_number": "15",
+      "title": "프라이스 액션 part.1 - 시장 심리학",
+      "original_url": "https://marupong.tistory.com/entry/EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD-15-%ED%94%84%EB%9D%BC%EC%9D%B4%EC%8A%A4-%EC%95%A1%EC%85%98-part1-%EC%8B%9C%EC%9E%A5-%EC%8B%AC%EB%A6%AC%ED%95%99",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-16",
+      "collection": "MANUAL",
+      "sequence": 16,
+      "article_number": "16",
+      "title": "프라이스 액션 part.2 - 추세 반전",
+      "original_url": "https://marupong.tistory.com/entry/EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD-16-%ED%94%84%EB%9D%BC%EC%9D%B4%EC%8A%A4-%EC%95%A1%EC%85%98-part2-%EC%B6%94%EC%84%B8-%EB%B0%98%EC%A0%84",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-17",
+      "collection": "MANUAL",
+      "sequence": 17,
+      "article_number": "17",
+      "title": "알트코인의 돌파 신호/패턴",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-18",
+      "collection": "MANUAL",
+      "sequence": 18,
+      "article_number": "18",
+      "title": "이동 평균선 매매 전략",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-19",
+      "collection": "MANUAL",
+      "sequence": 19,
+      "article_number": "19",
+      "title": "수익을 내기 위한 방법 6가지",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-20",
+      "collection": "MANUAL",
+      "sequence": 20,
+      "article_number": "20",
+      "title": "상위 1퍼가 되기 위한 거래 방법",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-21",
+      "collection": "MANUAL",
+      "sequence": 21,
+      "article_number": "21",
+      "title": "100만원에 파는 실제 매매법 설명 - 1",
+      "original_url": "https://marupong.tistory.com/entry/21-100%EB%A7%8C%EC%9B%90%EC%97%90-%ED%8C%8C%EB%8A%94-%EC%8B%A4%EC%A0%9C-%EB%A7%A4%EB%A7%A4%EB%B2%95-%EC%84%A4%EB%AA%85-1-EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-22",
+      "collection": "MANUAL",
+      "sequence": 22,
+      "article_number": "22",
+      "title": "100만원에 파는 실제 매매법 설명 - 2",
+      "original_url": "https://marupong.tistory.com/entry/EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD-22-100%EB%A7%8C%EC%9B%90%EC%97%90-%ED%8C%8C%EB%8A%94-%EC%8B%A4%EC%A0%9C-%EB%A7%A4%EB%A7%A4%EB%B2%95-%EC%84%A4%EB%AA%85-2",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-23",
+      "collection": "MANUAL",
+      "sequence": 23,
+      "article_number": "23",
+      "title": "불타기 상세 설명",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-24",
+      "collection": "MANUAL",
+      "sequence": 24,
+      "article_number": "24",
+      "title": "매물대 보는 법 및 매매 방법",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-25",
+      "collection": "MANUAL",
+      "sequence": 25,
+      "article_number": "25",
+      "title": "기술적 분석 요약 및 정리",
+      "original_url": "https://marupong.tistory.com/entry/25-%EA%B8%B0%EC%88%A0%EC%A0%81-%EB%B6%84%EC%84%9D-%EC%9A%94%EC%95%BD-%EB%B0%8F-%EC%A0%95%EB%A6%AC-EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-26",
+      "collection": "MANUAL",
+      "sequence": 26,
+      "article_number": "26",
+      "title": "시장에서 가격 조작이 나타나는 과정",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-27",
+      "collection": "MANUAL",
+      "sequence": 27,
+      "article_number": "27",
+      "title": "선물 거래 시작 전 필수 요구 사항",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-28",
+      "collection": "MANUAL",
+      "sequence": 28,
+      "article_number": "28",
+      "title": "EmperorBTC의 투자 책 6가지 추천",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-29",
+      "collection": "MANUAL",
+      "sequence": 29,
+      "article_number": "29",
+      "title": "최고의 트레이딩 규칙 10가지",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-30",
+      "collection": "MANUAL",
+      "sequence": 30,
+      "article_number": "30",
+      "title": "숏 포지션 스캘핑 매매 예시",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-31",
+      "collection": "MANUAL",
+      "sequence": 31,
+      "article_number": "31",
+      "title": "스윙 트레이딩 매매 예시",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-32",
+      "collection": "MANUAL",
+      "sequence": 32,
+      "article_number": "32",
+      "title": "데이 트레이딩 매매 예시",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-33",
+      "collection": "MANUAL",
+      "sequence": 33,
+      "article_number": "33",
+      "title": "알트코인 스윙 매매 예시",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-34",
+      "collection": "MANUAL",
+      "sequence": 34,
+      "article_number": "34",
+      "title": "알트코인 진입 신호 찾기",
+      "original_url": "https://marupong.tistory.com/entry/34-%EC%95%8C%ED%8A%B8%EC%BD%94%EC%9D%B8-%EC%A7%84%EC%9E%85-%EC%8B%A0%ED%98%B8-%EC%B0%BE%EA%B8%B0-EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-35",
+      "collection": "MANUAL",
+      "sequence": 35,
+      "article_number": "35",
+      "title": "알트코인의 저점 찾기",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-36",
+      "collection": "MANUAL",
+      "sequence": 36,
+      "article_number": "36",
+      "title": "거래량 매매법 (포지션 종료)",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MANUAL-37",
+      "collection": "MANUAL",
+      "sequence": 37,
+      "article_number": "37",
+      "title": "RSI를 이용한 데이 트레이딩 매매 예시",
+      "original_url": "https://marupong.tistory.com/entry/37-RSI%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EB%8D%B0%EC%9D%B4-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%94%A9-%EB%A7%A4%EB%A7%A4-%EC%98%88%EC%8B%9C-EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-38",
+      "collection": "MANUAL",
+      "sequence": 38,
+      "article_number": "38",
+      "title": "스윙 트레이딩을 위한 가격 고점 찾는 법",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-39",
+      "collection": "MANUAL",
+      "sequence": 39,
+      "article_number": "39",
+      "title": "높은 확률로 알트코인 진입하는 방법",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-40",
+      "collection": "MANUAL",
+      "sequence": 40,
+      "article_number": "40",
+      "title": "반전 신호 (해머형 캔들)",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MANUAL-41",
+      "collection": "MANUAL",
+      "sequence": 41,
+      "article_number": "41",
+      "title": "기타 자료들",
+      "original_url": "https://marupong.tistory.com/entry/41%EB%A7%88%EC%A7%80%EB%A7%89-%EA%B8%B0%ED%83%80-%EC%9E%90%EB%A3%8C%EB%93%A4-EmperorBTC-TRADING-MANUAL-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/entry/EmperorBTC%EC%9D%98-PDF%EB%93%A4-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0-%EA%B3%A8%EB%9D%BC%EB%B3%B4%EB%8A%94-%EC%9A%A9",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-PRICE_REPORT-01",
+      "collection": "PRICE_REPORT",
+      "sequence": 1,
+      "article_number": "1",
+      "title": "지지/저항선 그리기 Part.1 (월봉)",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20PRICE%20REPORT",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-PRICE_REPORT-02",
+      "collection": "PRICE_REPORT",
+      "sequence": 2,
+      "article_number": "2",
+      "title": "지지/저항선 그리기 Part.2 (주봉, 일봉)",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20PRICE%20REPORT",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-PRICE_REPORT-03",
+      "collection": "PRICE_REPORT",
+      "sequence": 3,
+      "article_number": "3",
+      "title": "지지/저항선 그리기 Part.3",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20PRICE%20REPORT",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-PRICE_REPORT-04",
+      "collection": "PRICE_REPORT",
+      "sequence": 4,
+      "article_number": "4",
+      "title": "지지/저항선 그리기 Part.4 (가짜 추세 이탈, 리테스트)",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20PRICE%20REPORT",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-PRICE_REPORT-05",
+      "collection": "PRICE_REPORT",
+      "sequence": 5,
+      "article_number": "5",
+      "title": "지지/저항선 그리기 Part.5",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20PRICE%20REPORT",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-PA_PSYCHOLOGY-01",
+      "collection": "PA_PSYCHOLOGY",
+      "sequence": 1,
+      "article_number": "1",
+      "title": "프라이스 액션 심리학 소개",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20Price%20Action%20Psychology",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-PA_PSYCHOLOGY-02",
+      "collection": "PA_PSYCHOLOGY",
+      "sequence": 2,
+      "article_number": "2",
+      "title": "차트 추세의 형성 과정",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20Price%20Action%20Psychology",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-PA_PSYCHOLOGY-03",
+      "collection": "PA_PSYCHOLOGY",
+      "sequence": 3,
+      "article_number": "3",
+      "title": "되돌림 기초 및 추세 반전",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20Price%20Action%20Psychology",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-01",
+      "collection": "MASTER_CLASS",
+      "sequence": 1,
+      "article_number": "1",
+      "title": "프라이스 액션(PA) 마스터하기",
+      "original_url": "https://marupong.tistory.com/entry/42-%ED%94%84%EB%9D%BC%EC%9D%B4%EC%8A%A4-%EC%95%A1%EC%85%98-%EC%9B%90%EC%B9%99-EmperorBTC-MASTER-CLASS-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-02",
+      "collection": "MASTER_CLASS",
+      "sequence": 2,
+      "article_number": "2",
+      "title": "히트맵 차트를 이용해 매물대 찾기",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-03",
+      "collection": "MASTER_CLASS",
+      "sequence": 3,
+      "article_number": "3",
+      "title": "엠페러가 가상화폐로 돈을 벌게 된 과정 (110억)",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-04",
+      "collection": "MASTER_CLASS",
+      "sequence": 4,
+      "article_number": "4",
+      "title": "자금 보존 PART.1",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-05",
+      "collection": "MASTER_CLASS",
+      "sequence": 5,
+      "article_number": "5",
+      "title": "자금 보존 PART.2",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-06",
+      "collection": "MASTER_CLASS",
+      "sequence": 6,
+      "article_number": "6",
+      "title": "스탑 로스 - STOP LOSS 사용법 총 정리",
+      "original_url": "https://marupong.tistory.com/entry/6-%EC%8A%A4%ED%83%91-%EB%A1%9C%EC%8A%A4-STOP-LOSS-%EC%82%AC%EC%9A%A9%EB%B2%95-%EC%B4%9D-%EC%A0%95%EB%A6%AC-MASTER-CLASS-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-07",
+      "collection": "MASTER_CLASS",
+      "sequence": 7,
+      "article_number": "7",
+      "title": "On Balance Volume - OBV 사용법",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-08",
+      "collection": "MASTER_CLASS",
+      "sequence": 8,
+      "article_number": "8",
+      "title": "트레이딩에서 잡음을 피하는 방법",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-09",
+      "collection": "MASTER_CLASS",
+      "sequence": 9,
+      "article_number": "9",
+      "title": "직장에 다니면서 트레이딩을 하는 방법",
+      "original_url": "https://marupong.tistory.com/entry/9-%EC%A7%81%EC%9E%A5%EC%97%90-%EB%8B%A4%EB%8B%88%EB%A9%B4%EC%84%9C-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%94%A9%EC%9D%84-%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95-MASTER-CLASS-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-10",
+      "collection": "MASTER_CLASS",
+      "sequence": 10,
+      "article_number": "10",
+      "title": "스윙 실패 패턴/SFP 마스터 클래스",
+      "original_url": "https://marupong.tistory.com/entry/10-%EC%8A%A4%EC%9C%99-%EC%8B%A4%ED%8C%A8-%ED%8C%A8%ED%84%B4SFP-%EB%A7%88%EC%8A%A4%ED%84%B0-%ED%81%B4%EB%9E%98%EC%8A%A4-MASTER-CLASS-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-11",
+      "collection": "MASTER_CLASS",
+      "sequence": 11,
+      "article_number": "11",
+      "title": "가장 많이 듣는 매매 질문 12가지",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-12",
+      "collection": "MASTER_CLASS",
+      "sequence": 12,
+      "article_number": "12",
+      "title": "시장의 세력들은 개미들을 밟아 죽이려 할까?",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-13",
+      "collection": "MASTER_CLASS",
+      "sequence": 13,
+      "article_number": "13",
+      "title": "매매 질문 및 답변 Q&A",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-14",
+      "collection": "MASTER_CLASS",
+      "sequence": 14,
+      "article_number": "14",
+      "title": "레벨 투 레벨 매매법 part.1 이론",
+      "original_url": "https://marupong.tistory.com/entry/14-%EB%A0%88%EB%B2%A8-%ED%88%AC-%EB%A0%88%EB%B2%A8-%EB%A7%A4%EB%A7%A4%EB%B2%95-part1-Level-to-levelMASTER-CLASS-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-15",
+      "collection": "MASTER_CLASS",
+      "sequence": 15,
+      "article_number": "15",
+      "title": "레벨 투 레벨 매매법 part.2 응용",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-16",
+      "collection": "MASTER_CLASS",
+      "sequence": 16,
+      "article_number": "16",
+      "title": "피보나치 되돌림 및 확장 part.1",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-17",
+      "collection": "MASTER_CLASS",
+      "sequence": 17,
+      "article_number": "17",
+      "title": "피보나치의 고급 개념 part.2",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-18",
+      "collection": "MASTER_CLASS",
+      "sequence": 18,
+      "article_number": "18",
+      "title": "매물대 지표를 사용하는 방법 part.1 - VPVR",
+      "original_url": "https://marupong.tistory.com/entry/17-%EB%A7%A4%EB%AC%BC%EB%8C%80-%EC%A7%80%ED%91%9C%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95-part1-VPVR-Volume-Profile-Series-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-19",
+      "collection": "MASTER_CLASS",
+      "sequence": 19,
+      "article_number": "19",
+      "title": "매물대 지표를 사용하는 방법 part.2 - FRVP",
+      "original_url": "https://marupong.tistory.com/entry/18-%EB%A7%A4%EB%AC%BC%EB%8C%80-%EC%A7%80%ED%91%9C%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95-part2-FRVP-Volume-Profile-Series-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-20",
+      "collection": "MASTER_CLASS",
+      "sequence": 20,
+      "article_number": "20",
+      "title": "매물대 지표를 사용하는 방법 part.3 - VPSV",
+      "original_url": "https://marupong.tistory.com/entry/19-%EB%A7%A4%EB%AC%BC%EB%8C%80-%EC%A7%80%ED%91%9C%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95-part3-VPSV-Volume-Profile-Series-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-21",
+      "collection": "MASTER_CLASS",
+      "sequence": 21,
+      "article_number": "21",
+      "title": "세션 VWAP, 앵커드 VWAP 튜토리얼",
+      "original_url": "https://marupong.tistory.com/entry/20-%EC%84%B8%EC%85%98-VWAP-%EC%95%B5%EC%BB%A4%EB%93%9C-VWAP-%ED%8A%9C%ED%86%A0%EB%A6%AC%EC%96%BC-MASTER-CLASS-%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-22",
+      "collection": "MASTER_CLASS",
+      "sequence": 22,
+      "article_number": "22",
+      "title": "CVD, 누적 거래량 델타 사용 방법",
+      "original_url": "https://marupong.tistory.com/entry/22-CVD-%EB%88%84%EC%A0%81-%EA%B1%B0%EB%9E%98%EB%9F%89-%EB%8D%B8%ED%83%80-%EC%82%AC%EC%9A%A9-%EB%B0%A9%EB%B2%95-MASTER-CLASS%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-23",
+      "collection": "MASTER_CLASS",
+      "sequence": 23,
+      "article_number": "23",
+      "title": "불장 전용 : 최고의 트레이딩 전략들",
+      "original_url": "https://marupong.tistory.com/entry/23-%EB%B6%88%EC%9E%A5-%EC%A0%84%EC%9A%A9-%EC%B5%9C%EA%B3%A0%EC%9D%98-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%94%A9-%EC%A0%84%EB%9E%B5%EB%93%A4-MASTER-CLASS%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-MASTER_CLASS-24",
+      "collection": "MASTER_CLASS",
+      "sequence": 24,
+      "article_number": "24",
+      "title": "거래량 분석으로 차트를 읽는 방법",
+      "original_url": "https://marupong.tistory.com/entry/24-%EA%B1%B0%EB%9E%98%EB%9F%89-%EB%B6%84%EC%84%9D%EC%9C%BC%EB%A1%9C-%EC%B0%A8%ED%8A%B8%EB%A5%BC-%EC%9D%BD%EB%8A%94-%EB%B0%A9%EB%B2%95-MASTER-CLASS%ED%95%9C%EA%B8%80-%EB%B2%88%EC%97%AD",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20MASTER%20CLASS",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-01",
+      "collection": "VPA",
+      "sequence": 1,
+      "article_number": "1",
+      "title": "트레이딩에 새로운 것은 없다",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-VPA-02",
+      "collection": "VPA",
+      "sequence": 2,
+      "article_number": "2",
+      "title": "왜 거래량 인가?",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-03",
+      "collection": "VPA",
+      "sequence": 3,
+      "article_number": "3",
+      "title": "적정 가격",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-VPA-4_1",
+      "collection": "VPA",
+      "sequence": 4,
+      "article_number": "4-1",
+      "title": "첫 번째 원칙 및 예시",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-4_2",
+      "collection": "VPA",
+      "sequence": 5,
+      "article_number": "4-2",
+      "title": "다중 캔들 예시",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-5_1",
+      "collection": "VPA",
+      "sequence": 6,
+      "article_number": "5-1",
+      "title": "그림 구축하기 / 매집, 분배, 리테스트",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-5_2",
+      "collection": "VPA",
+      "sequence": 7,
+      "article_number": "5-2",
+      "title": "그림 구축하기 / 매도 정점과 매수 정점",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-6_1",
+      "collection": "VPA",
+      "sequence": 8,
+      "article_number": "6-1",
+      "title": "VPA 분석을 위한 캔들 및 패턴",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-6_2",
+      "collection": "VPA",
+      "sequence": 9,
+      "article_number": "6-2",
+      "title": "VPA 분석을 위한 나머지 캔들 및 패턴들",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-7_1",
+      "collection": "VPA",
+      "sequence": 10,
+      "article_number": "7-1",
+      "title": "지지와 저항 설명",
+      "original_url": "https://marupong.tistory.com/entry/VPA-7-1%EC%9E%A5-%EC%A7%80%EC%A7%80%EC%99%80-%EC%A0%80%ED%95%AD-%EC%84%A4%EB%AA%85-Volume-Price-Analysis",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-7_2",
+      "collection": "VPA",
+      "sequence": 11,
+      "article_number": "7-2",
+      "title": "지지와 저항 및 정체 단계",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-08",
+      "collection": "VPA",
+      "sequence": 12,
+      "article_number": "8",
+      "title": "다이내믹 추세와 추세선",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-VPA-09",
+      "collection": "VPA",
+      "sequence": 13,
+      "article_number": "9",
+      "title": "가격대의 거래량, Volume At Price, VAP",
+      "original_url": "https://marupong.tistory.com/entry/VPA-9%EC%9E%A5-%EA%B0%80%EA%B2%A9%EB%8C%80%EC%9D%98-%EA%B1%B0%EB%9E%98%EB%9F%89-Volume-At-Price-VAP-Volume-Price-Analysis",
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": true,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-VPA-10",
+      "collection": "VPA",
+      "sequence": 14,
+      "article_number": "10",
+      "title": "VPA의 실제 사용 예시들",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-11_1",
+      "collection": "VPA",
+      "sequence": 15,
+      "article_number": "11-1",
+      "title": "모든 것들을 하나로 합치기",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "core"
+    },
+    {
+      "id": "MARU-VPA-11_2",
+      "collection": "VPA",
+      "sequence": 16,
+      "article_number": "11-2",
+      "title": "3가지 캔들 패턴",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-VPA-12",
+      "collection": "VPA",
+      "sequence": 17,
+      "article_number": "12",
+      "title": "거래량 분석의 최신 방법론",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/VPA%20%20-%20Volume%20Price%20Analysis",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "origin": "마루둥둥 (둥둥마루) 블로그에 번역·정리된 외부 저자 자료",
+      "recommended_priority": "reference"
+    },
+    {
+      "id": "MARU-WIZARDS-01",
+      "collection": "CRYPTO_WIZARDS",
+      "sequence": 1,
+      "article_number": "1",
+      "title": "00년생의 6년차 트레이더 TraderMercury 인터뷰",
+      "original_url": null,
+      "collection_index_url": "https://marupong.tistory.com/category/%EA%BF%80%ED%86%B5/EmperorBTC%20CRYPTO%20WIZARDS%20SERIES",
+      "url_verified": false,
+      "estimated_read_minutes": null,
+      "recommended_priority": "reference"
+    }
+  ],
+  "reading_queue_suggestion_for_later_phases": [
+    "MARU-MANUAL-01",
+    "MARU-MANUAL-03",
+    "MARU-MANUAL-05",
+    "MARU-MANUAL-06",
+    "MARU-MANUAL-08",
+    "MARU-MANUAL-09",
+    "MARU-PA_PSYCHOLOGY-01",
+    "MARU-PA_PSYCHOLOGY-02",
+    "MARU-PA_PSYCHOLOGY-03",
+    "MARU-MASTER_CLASS-01",
+    "MARU-MASTER_CLASS-06",
+    "MARU-MASTER_CLASS-09",
+    "MARU-MASTER_CLASS-10",
+    "MARU-MASTER_CLASS-14",
+    "MARU-MASTER_CLASS-22",
+    "MARU-MASTER_CLASS-24",
+    "MARU-VPA-4_1",
+    "MARU-VPA-4_2",
+    "MARU-VPA-5_1",
+    "MARU-VPA-5_2",
+    "MARU-VPA-7_1",
+    "MARU-VPA-7_2",
+    "MARU-VPA-11_1",
+    "MARU-MANUAL-10",
+    "MARU-MANUAL-11",
+    "MARU-MANUAL-27",
+    "MARU-MANUAL-29",
+    "MARU-PRICE_REPORT-04"
+  ],
+  "progress_data_model": {
+    "user_id": "current_user",
+    "item_status_values": [
+      "not_started",
+      "in_progress",
+      "completed",
+      "skipped_by_user"
+    ],
+    "session_fields": [
+      "session_id",
+      "status",
+      "actual_assigned_date",
+      "started_at",
+      "completed_at",
+      "notes"
+    ],
+    "video_fields": [
+      "item_id",
+      "session_id",
+      "status",
+      "watched_seconds",
+      "last_video_position_seconds",
+      "completed_at",
+      "one_sentence_takeaway"
+    ],
+    "blog_fields": [
+      "article_id",
+      "status",
+      "last_opened_at",
+      "completed_at",
+      "notes",
+      "related_session_ids"
+    ],
+    "practice_fields": [
+      "session_id",
+      "case_id",
+      "setup",
+      "chart_image_url",
+      "timeframe",
+      "scenario_before_reveal",
+      "entry_rule",
+      "invalidation_rule",
+      "stop_loss",
+      "outcome",
+      "was_rule_followed",
+      "review_notes"
+    ],
+    "metrics": [
+      "sessions_done",
+      "videos_done",
+      "blog_articles_done",
+      "minutes_watched",
+      "weekly_completion_rate",
+      "replay_cases",
+      "rule_compliance_rate",
+      "stop_execution_rate",
+      "average_pnl_r",
+      "setup_expectancy_r"
+    ],
+    "save_method": "existing_app_storage_or_database; automatic persistence with import/export backup; no overwrite of prior user work",
+    "note": "On first install only, initialize missing statuses as not_started. On subsequent imports merge by IDs without resetting completed statuses."
+  },
+  "marupong_blog_plan": {
+    "default": "reference_library_in_phase_A",
+    "linked_articles_per_session": "up to 2 optional suggestions, no automatic assigned completion requirement",
+    "phase_B_C": "prioritize 1-2 linked readings each week as time allows, separate progress from video, no arbitrary deadline",
+    "reading_time_policy": "unknown: leave empty until measured or user enters manually",
+    "missing_permalink_policy": "show collection_index_url with label \"글 목록에서 찾기\"; never fabricate individual post URLs"
+  }
+}

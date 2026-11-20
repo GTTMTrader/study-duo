@@ -25,6 +25,10 @@ import { DEFAULT_ROOM } from './defaults.js';
 import { nowMs, kstDateStr } from './dates.js';
 import { deviceLabel } from './device.js';
 
+function soloBlank() {
+  return { loaded: false, error: null, settings: null, progress: {}, blog: {}, content: null };
+}
+
 export function createFirebaseStore() {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -57,6 +61,7 @@ export function createFirebaseStore() {
     progress: {},
     questions: {},
     answers: {},
+    solo: soloBlank(),
   };
 
   const emit = () => listeners.forEach((fn) => fn(state));
@@ -81,8 +86,37 @@ export function createFirebaseStore() {
       failQuiz
     );
 
+  // 내 공부: users/{uid}/solo/{settings|progress|blog|content} — 나만 읽고 쓰는 칸
+  const SOLO_DOCS = ['settings', 'progress', 'blog', 'content'];
+  const soloRef = (name) => doc(db, 'users', state.user.uid, 'solo', name);
+  function soloListen(uid) {
+    const seen = new Set();
+    for (const name of SOLO_DOCS) {
+      unsubs.push(onSnapshot(
+        doc(db, 'users', uid, 'solo', name),
+        (snap) => {
+          state.solo[name] = snap.exists() ? snap.data() : name === 'settings' || name === 'content' ? null : {};
+          seen.add(name);
+          if (seen.size === SOLO_DOCS.length) state.solo.loaded = true;
+          state.solo.error = null;
+          emit();
+        },
+        (e) => {
+          e.where = 'solo';
+          state.solo.error = e.code || 'error';
+          seen.add(name);
+          if (seen.size === SOLO_DOCS.length) state.solo.loaded = true;
+          emit();
+          fail(e);
+        }
+      ));
+    }
+  }
+
   function startListening(uid) {
     stopListening();
+    state.solo = soloBlank();
+    soloListen(uid);
     unsubs.push(mapListener('questions', 'questions'));
     unsubs.push(mapListener('answers', 'answers'));
     unsubs.push(
@@ -180,6 +214,7 @@ export function createFirebaseStore() {
         progress: {},
         questions: {},
         answers: {},
+        solo: soloBlank(),
       });
     }
     emit();
@@ -266,6 +301,14 @@ export function createFirebaseStore() {
     },
     async deleteSession(id) {
       await deleteDoc(sub('sessions', id));
+    },
+
+    // ── 내 공부 ── (patch는 깊게 병합 / set은 통째로 교체)
+    async soloMerge(name, patch) {
+      await setDoc(soloRef(name), patch, { merge: true });
+    },
+    async soloSet(name, data) {
+      await setDoc(soloRef(name), data);
     },
 
     // ── 문제은행 ──

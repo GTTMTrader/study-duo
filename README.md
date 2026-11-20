@@ -188,3 +188,25 @@ manifest.webmanifest  홈 화면 앱 설정
 firestore.rules       ★ Firebase 보안 규칙 (콘솔에 붙여넣기)
 icons/                앱 아이콘
 ```
+
+
+---
+
+## 내 공부 (머프 강의 + 마루둥둥 교재) — v1.5.0
+
+앱 맨 위 **우리의 공부 | 내 공부** 전환. 내 공부는 나만 보이는 공간 (가영 계정에서 안 보임).
+
+- 콘텐츠: `data/moneyprinter-marupong.json` (머프 33회차 · 영상 배정 124건 · B/C 16주 · 마루둥둥 91편)
+- 진도 저장: Firebase `users/{내 uid}/solo/{settings, progress, blog, content}` — 입력 즉시 자동 저장, 폰·아이패드 같은 계정이면 같이 보임
+- 일정: 공부 요일(기본 화·수·금·토)마다 정해진 분량(기본 1회차). 못 끝낸 회차는 다음 공부일로 그대로 이어짐. PDF 날짜로 자동 완료하지 않음
+- 이번 주만 요일 바꾸기: 오늘 탭 → 주간 진도에서 날짜 누르기
+- 설정(⚙): 기본 요일, 요일별 분량, 재생 속도, 시작 회차, JSON 다시 가져오기(중복 없음), 백업
+- 테스트: `node tests/solo-plan.test.mjs`
+
+### Firestore 규칙에 추가해야 하는 부분
+`firestore.rules` 파일 전체를 다시 게시 (아래 블록이 새로 들어감)
+```
+match /users/{uid}/{document=**} {
+  allow read, write: if isSelf(uid);
+}
+```
