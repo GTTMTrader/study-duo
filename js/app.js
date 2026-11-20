@@ -1,4 +1,4 @@
-import { firebaseConfig } from './config.js';
+import { firebaseConfig, SOLO_OWNERS } from './config.js';
 import { TYPES, PRACTICE_COUNT, SCHEMA, chaptersToText, textToChapters, fillChapterDates } from './defaults.js';
 import {
   nowMs, todayKST, setTodayOverride, kstHHMM, daysBetween, addDays, mondayOf, weekdayIdx,
@@ -8,7 +8,7 @@ import { deviceLabel } from './device.js';
 import { SKINS, getSkin, setSkin } from './skin.js';
 import { createSolo } from './solo.js';
 
-const VERSION = '1.5.0';
+const VERSION = '1.5.1';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -182,8 +182,12 @@ function smallHM(sec) {
   return `${h}<span>시간</span>${String(m).padStart(2, '0')}<span>분</span>`;
 }
 
+// '내 공부'는 주인 계정(세인)만. 가영 계정에서는 전환 버튼이 안 보이고 항상 우리의 공부
+function soloAllowed() {
+  return isDemo || SOLO_OWNERS.includes((S().user?.email || '').toLowerCase());
+}
 function head(brand, title, extra = '') {
-  return `<div class="space-switch" role="tablist" aria-label="공간 전환"><span class="sw-pill ${ui.space}"></span><button role="tab" aria-selected="${ui.space === 'duo'}" class="${ui.space === 'duo' ? 'on' : ''}" data-action="space" data-space="duo">우리의 공부</button><button role="tab" aria-selected="${ui.space === 'solo'}" class="${ui.space === 'solo' ? 'on' : ''}" data-action="space" data-space="solo">내 공부</button></div>
+  return `${soloAllowed() ? `<div class="space-switch" role="tablist" aria-label="공간 전환"><span class="sw-pill ${ui.space}"></span><button role="tab" aria-selected="${ui.space === 'duo'}" class="${ui.space === 'duo' ? 'on' : ''}" data-action="space" data-space="duo">우리의 공부</button><button role="tab" aria-selected="${ui.space === 'solo'}" class="${ui.space === 'solo' ? 'on' : ''}" data-action="space" data-space="solo">내 공부</button></div>` : ''}
   <div class="apphead"><div><div class="smallbrand">${brand}</div><div class="app-title">${title}</div></div>
   <div class="head-right">${extra}<button class="icon-btn" data-action="open-settings" aria-label="설정">${ICONS.gear}</button></div></div>`;
 }
@@ -1281,6 +1285,7 @@ function render() {
 
   const chipsScroll = document.getElementById('chips')?.scrollLeft;
   const y = window.scrollY;
+  if (ui.space === 'solo' && !soloAllowed()) ui.space = 'duo';
   // 입력 중이던 칸(메모·검색)은 다시 그려도 커서·글자 유지
   const ae = document.activeElement;
   const keep = ae && $app.contains(ae) && ae.dataset?.fid ? { fid: ae.dataset.fid, value: ae.value, s: ae.selectionStart, e: ae.selectionEnd } : null;
@@ -1344,6 +1349,7 @@ $app.addEventListener('click', async (e) => {
   try {
     if (act === 'space') {
       const sp = el.dataset.space;
+      if (sp === 'solo' && !soloAllowed()) return;
       if (sp !== ui.space) {
         ui.space = sp;
         try { localStorage.setItem('studyduo-space', sp); } catch (err) {}

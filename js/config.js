@@ -15,3 +15,6 @@ export const firebaseConfig = {
 
 // 둘이 같이 쓰는 방 이름. 바꿀 필요 없음.
 export const ROOM_ID = 'main';
+
+// '내 공부'(머프·마루둥둥) 공간을 쓸 수 있는 계정. 여기 없는 계정은 전환 버튼도 안 보이고 데이터도 안 불러옴.
+export const SOLO_OWNERS = ['hellin@study.com'];

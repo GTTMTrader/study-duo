@@ -20,7 +20,7 @@ import {
   deleteDoc,
   writeBatch,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { firebaseConfig, ROOM_ID } from './config.js';
+import { firebaseConfig, ROOM_ID, SOLO_OWNERS } from './config.js';
 import { DEFAULT_ROOM } from './defaults.js';
 import { nowMs, kstDateStr } from './dates.js';
 import { deviceLabel } from './device.js';
@@ -116,7 +116,8 @@ export function createFirebaseStore() {
   function startListening(uid) {
     stopListening();
     state.solo = soloBlank();
-    soloListen(uid);
+    // 내 공부는 주인 계정만 불러옴 (가영 계정은 아예 안 읽음)
+    if (SOLO_OWNERS.includes((state.user?.email || '').toLowerCase())) soloListen(uid);
     unsubs.push(mapListener('questions', 'questions'));
     unsubs.push(mapListener('answers', 'answers'));
     unsubs.push(
