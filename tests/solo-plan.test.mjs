@@ -64,4 +64,33 @@ const und = { assign: Object.fromEntries(c.sessions[0].items.map(i => [i.key, { 
 assert.equal(P.plan(c, P.settingsOf({ start: { seq: 1 } }, c), und, '2026-11-21').todayNext[0].id, 'MP-A-01'); console.log('manual done / undo ✓');
 // B 단계는 A 끝나기 전 잠금
 assert.equal(P.plan(c, settings, {}, '2026-11-20').phases.B.unlocked, false);
+// ── 주차별 기록 ──
+{
+  const s1 = P.settingsOf({ start: { seq: 1, at: at('2026-11-20') } }, c);
+  const k = c.sessions[0].items.map(i => i.key);
+  const pr = { assign: { [k[0]]: { st: 'completed', at: at('2026-11-20') }, [k[1]]: { st: 'completed', at: at('2026-11-21') }, [k[2]]: { st: 'completed', at: at('2026-11-25') }, [k[3]]: { st: 'in_progress', at: at('2026-11-25') } } };
+  const blog = { 'MARU-MANUAL-01': { read: at('2026-11-24') } };
+  const w = P.weeklyLog(c, s1, pr, blog, '2026-11-26');
+  assert.equal(w.length, 2); assert.equal(w[0].idx, 2); assert.equal(w[0].videos, 1); assert.equal(w[0].blogs, 1); assert.equal(w[1].videos, 2);
+  assert.equal(w[1].days[4], 1); assert.equal(w[1].days[5], 1);
+  console.log('weekly log ✓', w.map(x => `${x.idx}주차 영상${x.videos}`).join(', '));
+}
+// ── 회독 ──
+{
+  const all1 = { session: Object.fromEntries(c.sessions.map(s => [s.id, { manual: 'done', at: at('2026-12-01') }])), assign: { [c.sessions[0].items[0].key]: { st: 'completed', at: at('2026-11-20'), note: '1회독 메모' } } };
+  let s2 = P.settingsOf({ start: { seq: 1, at: at('2026-11-20') } }, c);
+  let p1 = P.plan(c, s2, P.roundProg(all1, 1), '2026-12-02');
+  assert.equal(p1.phases.A.complete, true);
+  s2 = P.settingsOf({ start: { seq: 1, at: at('2026-11-20') }, round: 2, roundStarts: { 2: { seq: 1, at: at('2026-12-02') } } }, c);
+  const prog2 = { ...all1, rounds: { 2: { assign: { [c.sessions[0].items[1].key]: { st: 'completed', at: at('2026-12-03') } } } } };
+  const p2 = P.plan(c, P.roundSettings(s2, 2), P.roundProg(prog2, 2), '2026-12-03');
+  assert.equal(p2.queue[0].id, 'MP-A-01'); assert.equal(p2.queue[0].info.doneN, 1);
+  assert.equal(P.roundProg(prog2, 1).assign[c.sessions[0].items[0].key].note, '1회독 메모');
+  const rs = P.roundSummary(c, s2, prog2);
+  assert.equal(rs.length, 2); assert.equal(rs[0].finished, true); assert.equal(rs[1].videos, 1);
+  const wl = P.weeklyLog(c, s2, prog2, {}, '2026-12-03');
+  assert.ok(wl[0].rounds.has(2) && wl.some(x => x.rounds.has(1)));
+  assert.deepEqual(P.roundPatch(2, { assign: { x: 1 } }), { rounds: { 2: { assign: { x: 1 } } } });
+  console.log('rounds ✓ (2회독은 01회차부터 새로, 1회독 기록 보관)');
+}
 console.log('ALL PLAN TESTS PASSED');

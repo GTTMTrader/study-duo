@@ -8,7 +8,7 @@ import { deviceLabel } from './device.js';
 import { SKINS, getSkin, setSkin } from './skin.js';
 import { createSolo } from './solo.js';
 
-const VERSION = '1.5.1';
+const VERSION = '1.6.0';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;

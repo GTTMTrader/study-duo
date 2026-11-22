@@ -19,7 +19,24 @@ export function settingsOf(raw, content) {
     start: raw?.start?.seq ? raw.start : null,
     weekOverrides: raw?.weekOverrides || {},
     extra: raw?.extra || {},
+    round: Math.max(1, Number(raw?.round || 1)),       // 지금 몇 회독째인지
+    roundStarts: raw?.roundStarts || {},               // 2회독부터: { "2": { seq, at } }
   };
+}
+
+// ── 회독 ──
+// 1회독 진도는 progress.assign/session 그대로, 2회독부터는 progress.rounds["2"].assign/session 에 따로 저장
+export function roundProg(prog, r) {
+  if (r <= 1) return { assign: prog?.assign || {}, session: prog?.session || {}, week: prog?.week || {} };
+  const x = prog?.rounds?.[r] || {};
+  return { assign: x.assign || {}, session: x.session || {}, week: prog?.week || {} };
+}
+export function roundSettings(settings, r) {
+  return r <= 1 ? settings : { ...settings, start: settings.roundStarts?.[r] || { seq: 1, at: 0 } };
+}
+// 진도 저장 경로: 현재 회독에 맞춰 감싸기
+export function roundPatch(r, patch) {
+  return r <= 1 ? patch : { rounds: { [r]: patch } };
 }
 
 export const isoWd = (date) => weekdayIdx(date) + 1;
@@ -152,4 +169,64 @@ export function weekRate(p, today) {
     if (d >= today) planned += (p.proj[d] || []).length;
   }
   return { done, planned, rate: done + planned ? done / (done + planned) : 0 };
+}
+
+// ── 실제로 한 일 (모든 회독 + 교재 + B/C 과제) ──
+export function activityEvents(content, settings, prog, blog) {
+  const rounds = Math.max(1, Number(settings.round || 1));
+  const items = new Map(content.sessions.flatMap((s) => s.items.map((i) => [i.key, { i, s }])));
+  const ev = [];
+  for (let r = 1; r <= rounds; r++) {
+    const rp = roundProg(prog, r);
+    for (const [key, a] of Object.entries(rp.assign)) {
+      const it = items.get(key);
+      if (a?.st === 'completed' && a.at && it) ev.push({ d: kstDateStr(a.at), k: 'video', sec: it.i.sec, r, id: key, sid: it.s.id });
+    }
+    for (const u of units(content, roundSettings(settings, r), rp)) {
+      if (u.type === 'session' && u.done && !u.skipped && u.doneAt) ev.push({ d: kstDateStr(u.doneAt), k: 'session', r, id: u.id });
+      if (r === 1 && u.type === 'task' && u.done && u.doneAt) ev.push({ d: kstDateStr(u.doneAt), k: 'task', id: u.id });
+    }
+  }
+  for (const [id, b] of Object.entries(blog || {})) if (b?.read) ev.push({ d: kstDateStr(b.read), k: 'blog', id });
+  return ev;
+}
+
+// ── 주차별 기록 ── (미리 정한 일정 없이, 실제로 한 만큼만 집계)
+// 1주차 = 시작 회차를 고른 날이 속한 주(월~일)
+export function weeklyLog(content, settings, prog, blog, today, ev = activityEvents(content, settings, prog, blog)) {
+  const startAt = settings.start?.at;
+  let firstMon = mondayOf(startAt ? kstDateStr(startAt) : today);
+  for (const e of ev) if (mondayOf(e.d) < firstMon) firstMon = mondayOf(e.d);
+  const lastMon = mondayOf(today);
+  const weeks = [];
+  for (let mon = firstMon, idx = 1; mon <= lastMon; mon = addDays(mon, 7), idx++) {
+    weeks.push({ mon, sun: addDays(mon, 6), idx, videos: 0, sec: 0, sessions: 0, tasks: 0, blogs: 0, days: [0, 0, 0, 0, 0, 0, 0], rounds: new Set() });
+  }
+  const byMon = new Map(weeks.map((w) => [w.mon, w]));
+  for (const e of ev) {
+    const w = byMon.get(mondayOf(e.d));
+    if (!w) continue;
+    if (e.k === 'video') { w.videos++; w.sec += e.sec; w.days[weekdayIdx(e.d)]++; w.rounds.add(e.r); }
+    else if (e.k === 'session') { w.sessions++; w.rounds.add(e.r); }
+    else if (e.k === 'task') w.tasks++;
+    else if (e.k === 'blog') w.blogs++;
+  }
+  return weeks.reverse(); // 최근 주가 먼저
+}
+
+// 회독별 요약
+export function roundSummary(content, settings, prog) {
+  const out = [];
+  for (let r = 1; r <= Math.max(1, Number(settings.round || 1)); r++) {
+    const rp = roundProg(prog, r);
+    const us = units(content, roundSettings(settings, r), rp).filter((u) => u.type === 'session');
+    const videos = Object.values(rp.assign).filter((a) => a?.st === 'completed').length;
+    const done = us.filter((u) => u.done && !u.skipped).length;
+    const skipped = us.filter((u) => u.skipped).length;
+    const startAt = r === 1 ? settings.start?.at : settings.roundStarts?.[r]?.at;
+    const finished = us.every((u) => u.done);
+    const endAt = finished ? Math.max(0, ...us.map((u) => u.doneAt || 0)) : 0;
+    out.push({ r, videos, done, skipped, total: us.length, startAt, endAt, finished });
+  }
+  return out;
 }

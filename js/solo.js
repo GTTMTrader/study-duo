@@ -2,9 +2,10 @@
 // 화면: 오늘 · 커리큘럼(A/B/C 24주) · 교재 · 기록
 // 데이터: 콘텐츠(data/moneyprinter-marupong.json + 내가 다시 가져온 파일) / 진도(Firebase users/{uid}/solo/*)
 import { normalizeContent, mergeContent, contentCounts, COLLECTIONS, CONTENT_URL } from './solo-content.js';
-import { settingsOf, plan, stats, weekRate, weekDaysFor, quota, isoWd, WD_KO, SPEEDS, DEFAULT_WEEKDAYS } from './solo-plan.js';
+import { settingsOf, plan, stats, isoWd, WD_KO, SPEEDS, roundProg, roundSettings, roundPatch, activityEvents, weeklyLog, roundSummary } from './solo-plan.js';
 import { addDays, mondayOf, kstDateStr, dateLabel, shortDate, weekdayIdx } from './dates.js';
 
+function hmSmall(sec) { const m = Math.round((sec || 0) / 60), h = Math.floor(m / 60), r = m % 60; return h ? `${h}<small>시간</small>${r ? ` ${r}<small>분</small>` : ''}` : `${r}<small>분</small>`; }
 export function createSolo(ctx) {
   const { S, store, esc, toast, handleError, confirmBox, lockBackground, render, head, ICONS, todayKST, nowMs } = ctx;
 
@@ -48,14 +49,24 @@ export function createSolo(ctx) {
     const key = [c, so.settings, so.progress, so.blog, today];
     if (memoP.k && memoP.k.every((x, i) => x === key[i])) return memoP.v;
     const settings = settingsOf(so.settings, c);
-    const p = plan(c, settings, so.progress || {}, today);
-    const st = stats(c, settings, so.progress || {}, p);
-    memoP = { k: key, v: { c, settings, p, st, today, prog: so.progress || {}, blog: so.blog?.a || {} } };
+    const round = settings.round;
+    const prog = so.progress || {};
+    const blog = so.blog?.a || {};
+    const rp = roundProg(prog, round);
+    const p = plan(c, roundSettings(settings, round), rp, today);
+    if (round > 1) { p.phases.B.unlocked = true; p.phases.C.unlocked = p.phases.B.complete; } // A는 이전 회독에서 끝냄
+    const st = stats(c, settings, rp, p);
+    const ev = activityEvents(c, settings, prog, blog);
+    const weeks = weeklyLog(c, settings, prog, blog, today, ev);
+    const prevAssign = round > 1 ? roundProg(prog, round - 1).assign : {};
+    memoP = { k: key, v: { c, settings, round, p, st, today, prog, rp, blog, ev, weeks, prevAssign } };
     return memoP.v;
   }
 
   // ── 저장 (입력 즉시 자동 저장; 오프라인이면 기기에 뒀다가 연결되면 올라감) ──
   const save = (name, patch) => store.soloMerge(name, patch).catch(handleError);
+  // 영상 체크·회차 완료·메모는 지금 회독 칸에 저장
+  const saveRound = (patch) => save('progress', roundPatch(P().round, patch));
 
   // ── 공통 조각 ──
   const fmtClock = (sec) => {
@@ -91,11 +102,11 @@ export function createSolo(ctx) {
     };
     const [bd, bt] = wk('B'), [cd, ct] = wk('C');
     return `<div class="ph-strip">
-      ${seg('A', '영상 1회독', `${P().c.sessions.length}회차 · 약 8주`, P().st.sessionsDone + P().st.sessionsSkipped, P().st.sessionsTotal, true)}
+      ${seg('A', `영상 ${P().round}회독`, `${P().c.sessions.length}회차`, P().st.sessionsDone + P().st.sessionsSkipped, P().st.sessionsTotal, true)}
       <span class="ph-arrow">›</span>
-      ${seg('B', '블라인드 복기', '8주', bd, bt, ph.B.unlocked)}
+      ${seg('B', '블라인드 복기', '8주 과제', bd, bt, ph.B.unlocked)}
       <span class="ph-arrow">›</span>
-      ${seg('C', '모의·실행 검증', '8주', cd, ct, ph.C.unlocked)}
+      ${seg('C', '모의·실행 검증', '8주 과제', cd, ct, ph.C.unlocked)}
     </div>`;
   }
 
@@ -118,6 +129,7 @@ export function createSolo(ctx) {
         <div class="vmeta"><b>${esc(i.dur)}</b>${speed !== 1 ? ` <span class="sp">→ ${fmtClock(i.sec / speed)}</span>` : ''} · ${esc(i.pl)}
           ${i.rev ? '<span class="tag">복습</span>' : ''}${i.st === 'in_progress' ? '<span class="tag prog">보는 중</span>' : ''}${seen ? `<span class="tag ok">${sessNo(seen)}회차에서 봄</span>` : ''}</div>
         <input class="vnote" data-fid="note-${esc(i.key)}" data-solo-note="assign" data-key="${esc(i.key)}" value="${esc(i.note)}" placeholder="핵심 한 줄 메모" maxlength="160" enterkeyhint="done">
+        ${P().prevAssign[i.key]?.note ? `<div class="prev-note">${P().round - 1}회독 메모 · ${esc(P().prevAssign[i.key].note)}</div>` : ''}
       </div>
       <button class="vplay" data-action="s-open" data-key="${esc(i.key)}" aria-label="YouTube에서 열기"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></button>
     </div>`;
@@ -157,32 +169,26 @@ export function createSolo(ctx) {
 
   const unitCard = (p, u, opt) => (u.type === 'session' ? sessionCard(p, u, opt) : taskCard(p, u));
 
-  // ── 오늘 ──
-  function weekStrip(v) {
-    const { p, settings, today } = v;
-    const mon = addDays(mondayOf(today), ui.weekOffset * 7);
-    const days = weekDaysFor(settings, mon);
-    const overridden = Array.isArray(settings.weekOverrides?.[mon]);
-    let cells = '';
-    for (let i = 0; i < 7; i++) {
-      const d = addDays(mon, i);
-      const iso = i + 1;
-      const study = days.includes(iso);
-      const done = (p.doneByDate[d] || []).map((id) => p.byId[id]).filter(Boolean);
-      const planned = d >= today ? (p.proj[d] || []).map((id) => p.byId[id]).filter(Boolean) : [];
-      const lbl = (u) => (u.type === 'session' ? `A${sessNo(u.s)}` : `${u.phase}${u.w.week}주`);
-      cells += `<button class="wk-day ${study ? 'study' : 'off'} ${d === today ? 'today' : ''} ${d < today ? 'past' : ''}" data-action="s-toggle-day" data-date="${d}" aria-label="${md(d)} ${study ? '공부일' : '쉬는 날'}">
-        <span class="wk-wd">${WD_KO[iso]}</span><span class="wk-dt">${Number(d.slice(8))}</span>
-        <span class="wk-tags">${done.map((u) => `<i class="ok">${lbl(u)}✓</i>`).join('')}${planned.map((u) => `<i>${lbl(u)}</i>`).join('')}${!study && !done.length && !planned.length ? '<i class="rest">쉼</i>' : ''}</span>
-      </button>`;
-    }
-    const r = weekRate(p, today);
+  // ── 공부 (일정 없이 순서대로 이어서) ──
+  function weekCard(v) {
+    const { weeks, today } = v;
+    const w = weeks[0], prev = weeks[1];
+    if (!w) return '';
+    const max = Math.max(1, ...w.days);
+    const diff = prev ? w.videos - prev.videos : null;
     return `<div class="card wk-card">
-      <div class="row"><span class="section-label">주간 진도</span>
-        <span class="wk-nav"><button data-action="s-week" data-d="-1" aria-label="이전 주">‹</button><span>${shortDate(mon)}–${shortDate(addDays(mon, 6))}</span><button data-action="s-week" data-d="1" aria-label="다음 주">›</button></span></div>
-      <div class="wk-grid">${cells}</div>
-      <div class="row wk-foot"><span class="mini muted">날짜를 누르면 이 주만 공부일/쉬는 날이 바뀌어요${overridden ? ' · <button class="linkish" data-action="s-week-reset" data-mon="' + mon + '">기본 요일로</button>' : ''}</span>
-        ${ui.weekOffset === 0 ? `<b class="mini">이번 주 ${Math.round(r.rate * 100)}%</b>` : ''}</div>
+      <div class="row"><span class="section-label">이번 주 기록</span><span class="mini muted">${w.idx}주차 · ${shortDate(w.mon)}–${shortDate(w.sun)}</span></div>
+      <div class="wk-nums">
+        <div><b>${w.videos}</b><span>영상</span></div>
+        <div><b>${w.sessions}</b><span>회차 완료</span></div>
+        <div class="t"><b>${hmSmall(w.sec)}</b><span>시청</span></div>
+        <div><b>${w.blogs}</b><span>교재</span></div>
+      </div>
+      <div class="wk-bars">${w.days.map((n, i) => {
+        const d = addDays(w.mon, i);
+        return `<div class="wk-bar ${d === today ? 'today' : ''} ${d > today ? 'future' : ''}"><em>${n || ''}</em><span class="col"><i style="height:${(n / max) * 100}%"></i></span><span class="wd">${WD_KO[i + 1]}</span></div>`;
+      }).join('')}</div>
+      ${prev ? `<div class="mini muted wk-cmp">지난주 영상 ${prev.videos}개${diff ? ` · <b class="${diff > 0 ? 'up' : 'down'}">${diff > 0 ? '+' : ''}${diff}</b>` : ''}</div>` : ''}
     </div>`;
   }
 
@@ -224,57 +230,50 @@ export function createSolo(ctx) {
 
   function renderToday() {
     const v = P();
-    const { p, settings, today, c, st } = v;
+    const { p, settings, c, st, round } = v;
     if (!settings.start) {
       return `${head('MY STUDY', '내 공부<span class="dot-end">.</span>')}${onboarding(v)}`;
     }
-    const iso = isoWd(today);
-    const tg = c.targets?.[String(iso)];
-    const studyToday = quota(settings, today) > 0;
     const speed = settings.speed;
-    const todayUnits = [...p.doneToday, ...p.todayNext];
-    const remainSec = p.todayNext.filter((u) => u.type === 'session').reduce((t, u) => t + u.info.remainSec, 0);
-    const allSec = todayUnits.filter((u) => u.type === 'session').reduce((t, u) => t + u.s.sec, 0);
+    const cur = p.queue[0];
+    const next = p.queue.slice(1, 3);
+    const roundDone = p.phases.A.complete;
+    const carry = (u) => u.type === 'session' && !u.done && u.info.items.some((i) => i.at && kstDateStr(i.at) < v.today);
     const lastDone = p.units.filter((u) => u.done && !u.skipped && u.doneAt).sort((a, b) => b.doneAt - a.doneAt)[0];
-    // 이어서: 오늘 전에 시작했는데 아직 못 끝낸 회차
-    const carry = (u) => u.type === 'session' && !u.done && u.info.items.some((i) => i.at && kstDateStr(i.at) < today);
+    const newRound = `<button class="btn-block" data-action="s-new-round">${round + 1}회독 시작하기</button>`;
 
-    let todayBody = '';
-    if (!p.queue.length) todayBody = '<div class="done-banner">🎉 24주 과정을 모두 마쳤어요</div>';
-    else if (!todayUnits.length) {
-      const nx = p.queue[0];
-      todayBody = `<div class="rest-day"><b>오늘은 쉬는 날이에요</b>
-        <span>다음 공부일 ${p.nextStudyDate ? md(p.nextStudyDate) : '–'} · ${nx.type === 'session' ? `A-${sessNo(nx.s)} ${esc(nx.s.title)}` : esc(nx.w.title)}</span>
-        <button class="btn-line" data-action="s-pull">그래도 오늘 하기</button></div>`;
-    } else {
-      todayBody = todayUnits.map((u) => unitCard(p, u, { carry: carry(u) })).join('');
-      if (!p.todayNext.length && p.nextAfterToday) {
-        const nx = p.nextAfterToday;
-        todayBody += `<div class="done-banner">오늘 분량 끝! 👏<span>다음은 ${p.nextStudyDate ? md(p.nextStudyDate) : '다음 공부일'} · ${nx.type === 'session' ? `A-${sessNo(nx.s)}` : esc(nx.w.title)}</span>
-          <button class="btn-line" data-action="s-pull">다음 회차 미리 하기</button></div>`;
-      }
+    let main = '';
+    if (roundDone) {
+      main += `<div class="done-banner">🎉 영상 ${round}회독 완료!<span>${cur ? '블라인드 복기 과제를 이어가거나, ' : ''}${round + 1}회독을 시작하면 01회차부터 체크가 새로 시작돼요. 지금까지 기록은 그대로 보관돼요.</span>${newRound}</div>`;
     }
-
-    const todayCard = `<div class="card today-card">
-      <div class="row"><div><div class="today-date">${dateLabel(today)}</div>
-        <div class="mini muted">${studyToday ? `공부일 · 분량 ${quota(settings, today)}회차${tg ? ` · 목표 ${tg[0]}–${tg[1]}분` : ''}` : '쉬는 날'}</div></div>
+    if (cur) {
+      const remain = cur.type === 'session' ? cur.info.remainSec : 0;
+      main += `<div class="row cont-head"><span class="section-label">이어서 공부</span>
         <div class="speed">${SPEEDS.map((x) => `<button class="${x === speed ? 'on' : ''}" data-action="s-speed" data-v="${x}">${x}×</button>`).join('')}</div></div>
-      ${todayUnits.length ? `<div class="today-sum"><span>오늘 영상 <b>${fmtClock(allSec)}</b>${speed !== 1 ? ` <small>(${speed}배 ${fmtClock(allSec / speed)})</small>` : ''}</span><span>남은 <b>${fmtHM(remainSec / speed)}</b></span></div>` : ''}
-      ${lastDone ? `<div class="mini muted last-done">마지막 완료: ${lastDone.type === 'session' ? `A-${sessNo(lastDone.s)} ${esc(lastDone.s.title)}` : esc(lastDone.w.title)} · ${md(kstDateStr(lastDone.doneAt))}</div>` : ''}
-    </div>`;
+        ${cur.type === 'session' && cur.info.doneN ? `<div class="mini muted cont-sub">남은 영상 ${cur.info.total - cur.info.doneN}개 · ${fmtHM(remain / speed)}</div>` : ''}
+        ${unitCard(p, cur, { carry: carry(cur) })}`;
+      if (next.length) {
+        main += `<div class="next-list"><span class="mini strong">다음 순서</span>${next.map((u) => u.type === 'session'
+          ? `<button class="next-row" data-action="s-open-sess" data-id="${u.id}"><b>A-${sessNo(u.s)}</b><span>${esc(u.s.title)}</span><small>영상 ${u.info.total} · ${fmtClock(u.s.sec)}</small></button>`
+          : `<button class="next-row" data-action="s-phase" data-phase="${u.phase}"><b>${u.phase}-${u.w.week}주</b><span>${esc(u.t.text)}</span></button>`).join('')}</div>`;
+      }
+    } else if (!roundDone) {
+      main += '<div class="done-banner">🎉 모든 과정을 마쳤어요</div>';
+    }
+    if (lastDone) main += `<div class="mini muted last-done">마지막 완료 · ${lastDone.type === 'session' ? `A-${sessNo(lastDone.s)} ${esc(lastDone.s.title)}` : esc(lastDone.w.title)} · ${md(kstDateStr(lastDone.doneAt))}</div>`;
 
     const tiles = `<div class="solo-tiles">
-      <div><span>회차</span><b>${st.sessionsDone}<small>/${st.sessionsTotal}</small></b></div>
-      <div><span>영상</span><b>${st.videosDone}<small>/${st.videosTotal}</small></b></div>
-      <div><span>누적 시청</span><b>${fmtHM(st.watchedSec)}</b></div>
+      <div><span>${round}회독 회차</span><b>${st.sessionsDone}<small>/${st.sessionsTotal}</small></b></div>
+      <div><span>${round}회독 영상</span><b>${st.videosDone}<small>/${st.videosTotal}</small></b></div>
+      <div><span>누적 시청 <small>(전체)</small></span><b>${fmtHM(v.ev.filter((e) => e.k === 'video').reduce((t, e) => t + e.sec, 0))}</b></div>
       <div><span>교재</span><b>${Object.values(v.blog).filter((b) => b.read).length}<small>/${c.blog.length}</small></b></div>
     </div>`;
 
     return `${head('MY STUDY', '내 공부<span class="dot-end">.</span>')}
       ${phaseStrip(p)}
       <div class="solo-cols">
-        <div class="solo-main">${todayCard}<div class="today-units">${todayBody}</div></div>
-        <div class="solo-side">${weekStrip(v)}${overview(v)}${tiles}</div>
+        <div class="solo-main">${weekCard(v)}${main}</div>
+        <div class="solo-side">${overview(v)}${tiles}</div>
       </div>`;
   }
 
@@ -294,12 +293,12 @@ export function createSolo(ctx) {
       }
       ui.sessionId = null;
     }
-    const tabs = `<div class="booktabs">${[['A', 'A 영상 1회독'], ['B', 'B 블라인드 복기'], ['C', 'C 모의·실행']].map(([k, l]) => `<button class="${ui.phase === k ? 'active' : ''}" data-action="s-phase" data-phase="${k}">${l}</button>`).join('')}</div>`;
+    const tabs = `<div class="booktabs">${[['A', `A 영상 ${v.round}회독`], ['B', 'B 블라인드 복기'], ['C', 'C 모의·실행']].map(([k, l]) => `<button class="${ui.phase === k ? 'active' : ''}" data-action="s-phase" data-phase="${k}">${l}</button>`).join('')}</div>`;
     let body = '';
     if (ui.phase === 'A') {
       body = `<div class="qlist">${p.units.filter((u) => u.type === 'session').map((u) => {
         const s = u.s, i = u.info;
-        const when = i.done ? (i.skipped ? '건너뜀' : `완료 ${md(kstDateStr(i.doneAt))}`) : p.plannedDate[u.id] ? `예정 ${md(p.plannedDate[u.id])}` : '';
+        const when = i.done ? (i.skipped ? '건너뜀' : `완료 ${md(kstDateStr(i.doneAt))}`) : '';
         return `<button class="qrow sess-row ${i.status} ${p.queue[0]?.id === u.id ? 'next' : ''}" data-action="s-open-sess" data-id="${u.id}">
           <span class="qno">${sessNo(s)}</span>
           <span class="qtext"><b>${esc(s.title)}</b><small>영상 ${i.total} · ${fmtClock(s.sec)}${when ? ` · ${when}` : ''}</small></span>
@@ -393,56 +392,72 @@ export function createSolo(ctx) {
       <div class="hint-row">마루둥둥(둥둥마루) 블로그에 번역·정리된 외부 저자 자료예요. 머프 강의와 저자가 달라요.<br>원문은 블로그에서 읽고, 여기서는 읽음·북마크·메모만 관리해요.</div>`;
   }
 
-  // ── 기록 ──
+  // ── 기록 ── 주차별로 실제로 한 만큼 + 달력 + 회독별 요약
   function renderRecord() {
     const v = P();
-    const { p, st, today, c } = v;
+    const { p, st, today, c, ev, weeks, round } = v;
     if (!ui.calMonth) ui.calMonth = today.slice(0, 7);
     if (!ui.calSel) ui.calSel = today;
+    const maxV = Math.max(1, ...weeks.map((w) => w.videos));
+    const totalSec = ev.filter((e) => e.k === 'video').reduce((t, e) => t + e.sec, 0);
+    const wlog = weeks.map((w, i) => `<div class="wlog-row ${i === 0 ? 'cur' : ''}">
+        <div class="wlog-l"><b>${w.idx}주차</b><small>${shortDate(w.mon)}–${shortDate(w.sun)}</small></div>
+        <div class="wlog-m"><div class="wlog-bar"><i style="width:${(w.videos / maxV) * 100}%"></i></div>
+          <small>${w.videos ? `회차 ${w.sessions} · ${fmtHM(w.sec)}` : '기록 없음'}${w.blogs ? ` · 교재 ${w.blogs}` : ''}${w.tasks ? ` · 과제 ${w.tasks}` : ''}${w.rounds.size ? ` · ${[...w.rounds].sort().map((r) => `${r}회독`).join('·')}` : ''}</small></div>
+        <div class="wlog-r"><b>${w.videos}</b><small>영상</small></div>
+      </div>`).join('');
+    const rs = roundSummary(c, v.settings, v.prog);
+    const rounds = rs.map((r) => `<div class="round-row ${r.r === round ? 'cur' : ''}"><b>${r.r}회독</b>
+        <span>영상 ${r.videos}/${st.videosTotal} · 회차 ${r.done}/${r.total}${r.skipped ? ` (건너뜀 ${r.skipped})` : ''}</span>
+        <small>${r.startAt ? `${md(kstDateStr(r.startAt))} 시작` : ''}${r.endAt ? ` · ${md(kstDateStr(r.endAt))} 완료` : r.r === round ? ' · 진행 중' : ''}</small></div>`).join('');
+
+    // 달력 (모든 회독 포함)
     const [y, m] = ui.calMonth.split('-').map(Number);
     const first = `${ui.calMonth}-01`;
     const last = `${ui.calMonth}-${String(new Date(Date.UTC(y, m, 0)).getUTCDate()).padStart(2, '0')}`;
     const g0 = mondayOf(first), g1 = addDays(mondayOf(last), 6);
-    const blogBy = {};
-    for (const [id, b] of Object.entries(v.blog)) if (b.read) (blogBy[kstDateStr(b.read)] ||= []).push(id);
-    const vidBy = {};
-    for (const u of p.units) if (u.type === 'session') for (const i of u.info.items) if (i.st === 'completed' && i.at) (vidBy[kstDateStr(i.at)] ||= []).push(i);
+    const byDay = {};
+    for (const e of ev) (byDay[e.d] ||= []).push(e);
     let cells = '';
     for (let d = g0; d <= g1; d = addDays(d, 1)) {
-      const units = (p.doneByDate[d] || []).map((id) => p.byId[id]);
-      const nv = (vidBy[d] || []).length, nb = (blogBy[d] || []).length;
+      const es = byDay[d] || [];
+      const nv = es.filter((e) => e.k === 'video').length;
+      const ns = es.filter((e) => e.k === 'session');
+      const nb = es.filter((e) => e.k === 'blog').length;
       const tags = [
-        ...units.slice(0, 2).map((u) => `<span class="cal-tag"><span class="cal-chno">${u.type === 'session' ? `A${sessNo(u.s)}` : `${u.phase}${u.w.week}주`}</span></span>`),
-        nv && !units.length ? `<span class="cal-tag"><span class="cal-chno">영상 ${nv}</span></span>` : '',
+        ...ns.slice(0, 2).map((e) => `<span class="cal-tag"><span class="cal-chno">${e.id.replace('MP-', '')}${e.r > 1 ? `<small>${e.r}회</small>` : ''}</span></span>`),
+        nv && !ns.length ? `<span class="cal-tag"><span class="cal-chno">영상 ${nv}</span></span>` : '',
         nb ? `<span class="cal-tag blog"><span class="cal-chno">글 ${nb}</span></span>` : '',
       ].join('');
       cells += `<button class="cal-cell ${d.slice(0, 7) === ui.calMonth ? '' : 'out'} ${d === today ? 'today' : ''} ${d === ui.calSel ? 'sel' : ''} ${weekdayIdx(d) >= 5 ? 'wkend' : ''}" data-action="s-cal-day" data-date="${d}"><span class="cal-num">${Number(d.slice(8))}</span>${tags}</button>`;
     }
-    const sel = ui.calSel;
-    const selUnits = (p.doneByDate[sel] || []).map((id) => p.byId[id]);
-    const selVids = vidBy[sel] || [];
-    const selBlogs = (blogBy[sel] || []).map((id) => c.blog.find((b) => b.id === id)).filter(Boolean);
+    const sel = byDay[ui.calSel] || [];
+    const sessTitle = (id) => c.sessions.find((x) => x.id === id);
+    const selV = sel.filter((e) => e.k === 'video');
     const detail = [
-      ...selUnits.map((u) => `<div class="recent-item"><span class="dot me"></span><div class="grow"><b>${u.type === 'session' ? `A-${sessNo(u.s)} ${esc(u.s.title)}` : `${u.phase}-${u.w.week}주 · ${esc(u.t.text)}`}</b><div class="mini muted">${u.type === 'session' ? '회차 완료' : '과제 완료'}</div></div></div>`),
-      selVids.length ? `<div class="recent-item"><span class="dot me"></span><div class="grow"><b>영상 ${selVids.length}개 체크</b><div class="mini muted">${fmtHM(selVids.reduce((t, i) => t + i.sec, 0))} (원본)</div></div></div>` : '',
-      ...selBlogs.map((b) => `<div class="recent-item"><span class="dot fr"></span><div class="grow"><b>${esc(colName(b.col))} ${esc(b.num)} · ${esc(b.title)}</b><div class="mini muted">교재 읽음</div></div></div>`),
+      ...sel.filter((e) => e.k === 'session').map((e) => { const x = sessTitle(e.id); return `<div class="recent-item"><span class="dot me"></span><div class="grow"><b>A-${x ? sessNo(x) : ''} ${esc(x?.title || '')}</b><div class="mini muted">${e.r}회독 · 회차 완료</div></div></div>`; }),
+      selV.length ? `<div class="recent-item"><span class="dot me"></span><div class="grow"><b>영상 ${selV.length}개 체크</b><div class="mini muted">${fmtHM(selV.reduce((t, e) => t + e.sec, 0))} (원본)</div></div></div>` : '',
+      ...sel.filter((e) => e.k === 'task').map((e) => `<div class="recent-item"><span class="dot me"></span><div class="grow"><b>${esc(p.byId[e.id]?.t?.text || e.id)}</b><div class="mini muted">B·C 과제 완료</div></div></div>`),
+      ...sel.filter((e) => e.k === 'blog').map((e) => { const b2 = c.blog.find((x) => x.id === e.id); return b2 ? `<div class="recent-item"><span class="dot fr"></span><div class="grow"><b>${esc(colName(b2.col))} ${esc(b2.num)} · ${esc(b2.title)}</b><div class="mini muted">교재 읽음</div></div></div>` : ''; }),
     ].join('');
-    const r = weekRate(p, today);
+
     return `${head('MY RECORD', '내 기록')}
       <div class="solo-tiles four">
-        <div><span>회차 완료</span><b>${st.sessionsDone}<small>/${st.sessionsTotal}</small></b>${st.sessionsSkipped ? `<em>건너뜀 ${st.sessionsSkipped}</em>` : ''}</div>
-        <div><span>영상</span><b>${st.videosDone}<small>/${st.videosTotal}</small></b></div>
-        <div><span>누적 시청</span><b>${fmtHM(st.watchedSec)}</b><em>원본 기준</em></div>
+        <div><span>이번 주 영상</span><b>${weeks[0]?.videos || 0}</b><em>${weeks[0] ? `${weeks[0].idx}주차` : ''}</em></div>
+        <div><span>주 평균 영상</span><b>${weeks.length ? Math.round((weeks.reduce((t, w) => t + w.videos, 0) / weeks.length) * 10) / 10 : 0}</b><em>${weeks.length}주 기준</em></div>
+        <div><span>누적 시청</span><b>${fmtHM(totalSec)}</b><em>모든 회독 · 원본</em></div>
+        <div><span>${round}회독 진행</span><b>${st.videosDone}<small>/${st.videosTotal}</small></b><em>회차 ${st.sessionsDone}/${st.sessionsTotal}</em></div>
         <div><span>교재 읽음</span><b>${Object.values(v.blog).filter((b) => b.read).length}<small>/${c.blog.length}</small></b></div>
-        <div><span>이번 주</span><b>${Math.round(r.rate * 100)}<small>%</small></b><em>${r.done}개 완료 · 남은 ${r.planned}</em></div>
         <div><span>B·C 과제</span><b>${p.units.filter((u) => u.type === 'task' && u.done).length}<small>/${p.units.filter((u) => u.type === 'task').length}</small></b></div>
       </div>
+      <div class="card wlog" style="margin-top:14px"><div class="row"><span class="section-label">주차별 기록</span><span class="mini muted">총 ${weeks.length}주</span></div>${wlog}</div>
+      <div class="card rounds" style="margin-top:12px"><div class="row"><span class="section-label">회독</span><button class="linkish mini" data-action="s-new-round">${round + 1}회독 시작</button></div>${rounds}</div>
       <div class="recordcard cal-card" style="margin-top:14px">
         <div class="row cal-nav"><button class="cal-arrow" data-action="s-cal-move" data-d="-1">‹</button><span class="strong" style="font-size:16px">${y}년 ${m}월</span><button class="cal-arrow" data-action="s-cal-move" data-d="1">›</button></div>
         <div class="cal-grid cal-head">${['월', '화', '수', '목', '금', '토', '일'].map((w) => `<span>${w}</span>`).join('')}</div>
         <div class="cal-grid">${cells}</div>
       </div>
-      <div class="row" style="margin-top:18px"><span class="section-label">${dateLabel(sel)}</span></div>
+      <div class="row" style="margin-top:18px"><span class="section-label">${dateLabel(ui.calSel)}</span></div>
       <div class="recent">${detail || '<div class="empty-note" style="padding:14px 0">이날은 기록이 없어요.</div>'}</div>`;
   }
 
@@ -468,7 +483,7 @@ export function createSolo(ctx) {
     record: ICONS.stats,
   };
   function navHTML() {
-    return [['today', '오늘'], ['curri', '커리큘럼'], ['library', '교재'], ['record', '기록']]
+    return [['today', '공부'], ['curri', '커리큘럼'], ['library', '교재'], ['record', '기록']]
       .map(([k, l]) => `<button class="${ui.tab === k ? 'active' : ''}" data-action="s-go" data-tab="${k}"><span>${NAV_ICONS[k]}</span><span>${l}</span></button>`).join('');
   }
 
@@ -518,7 +533,7 @@ export function createSolo(ctx) {
       }
       case 's-start': {
         const seq = Number(document.getElementById('onb-seq')?.value || 1);
-        await save('settings', { start: { seq, at: now }, weekdays: v.settings.weekdays || DEFAULT_WEEKDAYS });
+        await save('settings', { start: { seq, at: now } });
         toast(`${String(seq).padStart(2, '0')}회차부터 시작해요`);
         return true;
       }
@@ -530,14 +545,14 @@ export function createSolo(ctx) {
         // 마지막 영상까지 체크하면 수동 '되돌리기'를 풀고 자동 완료
         if (!on && f.u.info.items.every((i) => i.key === f.i.key || i.st === 'completed')) patch.session = { [f.u.s.id]: { manual: null } };
         el.classList.toggle('on', !on);
-        await save('progress', patch);
+        await saveRound(patch);
         if (!on && patch.session) toast(`A-${sessNo(f.u.s)} 회차 완료! 👏`);
         return true;
       }
       case 's-open': {
         const f = findItem(el.dataset.key);
         if (!f) return true;
-        if (f.i.st === 'not_started') save('progress', { assign: { [f.i.key]: { st: 'in_progress', at: now } } });
+        if (f.i.st === 'not_started') saveRound({ assign: { [f.i.key]: { st: 'in_progress', at: now } } });
         openYouTube(f.i.url, f.i.ios);
         return true;
       }
@@ -545,11 +560,11 @@ export function createSolo(ctx) {
         openYouTube(el.dataset.url, el.dataset.ios || null);
         return true;
       case 's-sess-done':
-        await save('progress', { session: { [el.dataset.id]: { manual: 'done', at: now } } });
+        await saveRound({ session: { [el.dataset.id]: { manual: 'done', at: now } } });
         return true;
       case 's-sess-undo': {
         const ok = await confirmBox('완료를 되돌릴까요?', '이 회차가 다시 해야 할 목록으로 돌아와요. 체크한 영상과 메모는 그대로예요.', '되돌리기');
-        if (ok) await save('progress', { session: { [el.dataset.id]: { manual: 'undone', at: now } } });
+        if (ok) await saveRound({ session: { [el.dataset.id]: { manual: 'undone', at: now } } });
         return true;
       }
       case 's-task': {
@@ -562,26 +577,16 @@ export function createSolo(ctx) {
       case 's-speed':
         await save('settings', { speed: Number(el.dataset.v) });
         return true;
-      case 's-pull': {
-        const t = v.today;
-        await save('settings', { extra: { [t]: (v.settings.extra?.[t] || 0) + 1 } });
+      case 's-new-round': {
+        const r = v.round + 1;
+        const ok = await confirmBox(`${r}회독을 시작할까요?`, `01회차부터 체크가 새로 시작돼요. ${v.round}회독 체크·메모·주차별 기록은 그대로 보관되고, 영상마다 지난 메모가 같이 보여요.`, `${r}회독 시작`);
+        if (ok) {
+          await save('settings', { round: r, roundStarts: { [r]: { seq: 1, at: now } } });
+          ui.tab = 'today'; ctx.navigated();
+          toast(`${r}회독 시작! 01회차부터 이어서 가요`);
+        }
         return true;
       }
-      case 's-week':
-        ui.weekOffset += Number(el.dataset.d); render(); return true;
-      case 's-toggle-day': {
-        const d = el.dataset.date;
-        const mon = mondayOf(d);
-        const cur = [...weekDaysFor(v.settings, d)];
-        const iso = isoWd(d);
-        const next = cur.includes(iso) ? cur.filter((x) => x !== iso) : [...cur, iso].sort((a, b) => a - b);
-        await save('settings', { weekOverrides: { [mon]: next } });
-        toast(`${md(d)} ${next.includes(iso) ? '공부일로' : '쉬는 날로'} 바꿨어요 · 이 주만`);
-        return true;
-      }
-      case 's-week-reset':
-        await save('settings', { weekOverrides: { [el.dataset.mon]: null } });
-        return true;
       case 's-cal-day':
         ui.calSel = el.dataset.date;
         if (ui.calSel.slice(0, 7) !== ui.calMonth) ui.calMonth = ui.calSel.slice(0, 7);
@@ -622,8 +627,8 @@ export function createSolo(ctx) {
     const kind = t.dataset?.soloNote;
     if (!kind) return false;
     const val = t.value.trim();
-    if (kind === 'assign') save('progress', { assign: { [t.dataset.key]: { note: val } } });
-    else if (kind === 'session') save('progress', { session: { [t.dataset.id]: { note: val } } });
+    if (kind === 'assign') saveRound({ assign: { [t.dataset.key]: { note: val } } });
+    else if (kind === 'session') saveRound({ session: { [t.dataset.id]: { note: val } } });
     else if (kind === 'week') save('progress', { week: { [t.dataset.id]: { note: val } } });
     else if (kind === 'blog') save('blog', { a: { [t.dataset.id]: { note: val } } });
     t.classList.add('saved');
@@ -653,21 +658,19 @@ export function createSolo(ctx) {
       return `<div class="sheet" role="dialog" aria-label="내 공부 설정">
         <div class="sheet-head"><div class="grab"></div><h2>내 공부 설정</h2></div>
         <div class="sheet-body">
-          <label>공부 요일 <span class="muted" style="font-weight:600">(기본 · 매주 반복)</span></label>
-          <div class="wd-pick">${[1, 2, 3, 4, 5, 6, 7].map((d) => `<button class="${s.weekdays.includes(d) ? 'on' : ''}" data-set="wd" data-v="${d}">${WD_KO[d]}</button>`).join('')}</div>
-          <div class="hint">근무 때문에 이번 주만 바꾸려면 <b>오늘 탭 → 주간 진도</b>에서 날짜를 눌러요.</div>
-          <label>요일별 분량 <span class="muted" style="font-weight:600">(공부일 하루에 할 회차 수)</span></label>
-          ${s.weekdays.map((d) => {
-            const tg = c.targets?.[String(d)];
-            return `<div class="qty-row"><span>${WD_KO[d]}요일${tg ? ` <small>목표 ${tg[0]}–${tg[1]}분</small>` : ''}</span>
-              <span class="stepper"><button data-set="qty" data-d="${d}" data-v="-1" aria-label="줄이기">−</button><b>${s.perDay[d] ?? 1}회차</b><button data-set="qty" data-d="${d}" data-v="1" aria-label="늘리기">+</button></span></div>`;
-          }).join('')}
-          <div class="hint">회차마다 영상 길이가 달라요(약 1시간 25분~4시간). 못 끝낸 회차는 다음 공부일로 그대로 넘어가요.</div>
+          <label>회독 <span class="muted" style="font-weight:600">(같은 강의를 몇 번째 보는지)</span></label>
+          <div class="data-box rounds-box">
+            ${roundSummary(c, s, S().solo.progress || {}).map((r) => `<div class="round-row ${r.r === s.round ? 'cur' : ''}"><b>${r.r}회독</b><span>영상 ${r.videos}/${counts.items} · 회차 ${r.done}/${r.total}${r.skipped ? ` (건너뜀 ${r.skipped})` : ''}</span><small>${r.startAt ? `${md(kstDateStr(r.startAt))} 시작` : ''}${r.endAt ? ` · ${md(kstDateStr(r.endAt))} 완료` : r.r === s.round ? ' · 진행 중' : ''}</small></div>`).join('')}
+            <button class="btn-line" data-set="new-round">${s.round + 1}회독 시작하기</button>
+            ${s.round > 1 && !roundHasProgress(s.round) ? `<button class="btn-line subtle" data-set="undo-round">${s.round}회독 취소 · ${s.round - 1}회독으로 돌아가기</button>` : ''}
+            <span class="hint">새 회독은 01회차부터 다시 체크해요. 지난 회독 체크·메모·주차별 기록은 그대로 보관되고, 영상마다 지난 메모가 같이 보여요.</span>
+          </div>
           <label>재생 속도 <span class="muted" style="font-weight:600">(예상 시간만 다시 계산 · 원본 시간은 그대로)</span></label>
           <div class="speed wide">${SPEEDS.map((x) => `<button class="${x === s.speed ? 'on' : ''}" data-set="speed" data-v="${x}">${x}×</button>`).join('')}</div>
-          <label>시작 회차</label>
-          <div class="start-row"><select class="field" id="set-start">${c.sessions.map((x) => `<option value="${x.seq}" ${s.start?.seq === x.seq ? 'selected' : ''}>${sessNo(x)}회차 · ${esc(x.title)}</option>`).join('')}</select><button class="btn-line" data-set="start">적용</button></div>
+          <label>${s.round}회독 시작 회차</label>
+          <div class="start-row"><select class="field" id="set-start">${c.sessions.map((x) => `<option value="${x.seq}" ${roundSettings(s, s.round).start?.seq === x.seq ? 'selected' : ''}>${sessNo(x)}회차 · ${esc(x.title)}</option>`).join('')}</select><button class="btn-line" data-set="start">적용</button></div>
           <div class="hint">앞 회차는 '건너뜀'으로만 표시돼요(시청 시간에는 안 들어감). 이미 체크한 영상·메모는 그대로 남아요.</div>
+          <div class="hint">📅 정해진 요일·분량 없이 순서대로 이어서 보고, 한 만큼 <b>기록 탭 → 주차별 기록</b>에 쌓여요.</div>
           <label>커리큘럼 데이터</label>
           <div class="data-box"><b>머프 ${counts.sessions}회차 · 영상 배정 ${counts.items}건(고유 ${counts.uniqueVideos}개) · B/C ${counts.weeks}주 · 마루둥둥 ${counts.blog}편</b>
             <span>원본 영상 ${fmtClock(counts.seconds)}</span>
@@ -714,16 +717,18 @@ export function createSolo(ctx) {
       try {
         switch (b.dataset.set) {
           case 'close': return close();
-          case 'wd': {
-            const d = Number(b.dataset.v);
-            const next = s.weekdays.includes(d) ? s.weekdays.filter((x) => x !== d) : [...s.weekdays, d].sort((a, b2) => a - b2);
-            await save('settings', { weekdays: next });
+          case 'new-round': {
+            const r = s.round + 1;
+            if (await confirmBox(`${r}회독을 시작할까요?`, `01회차부터 체크가 새로 시작돼요. ${s.round}회독 기록은 그대로 보관돼요.`, `${r}회독 시작`)) {
+              await save('settings', { round: r, roundStarts: { [r]: { seq: 1, at: nowMs() } } });
+              toast(`${r}회독 시작!`);
+            }
             break;
           }
-          case 'qty': {
-            const d = b.dataset.d;
-            const n = Math.max(0, Math.min(4, (s.perDay[d] ?? 1) + Number(b.dataset.v)));
-            await save('settings', { perDay: { [d]: n } });
+          case 'undo-round': {
+            if (await confirmBox(`${s.round}회독을 취소할까요?`, `${s.round - 1}회독 진도로 돌아가요. (${s.round}회독에 체크한 게 없을 때만 가능)`, '취소하기')) {
+              await save('settings', { round: s.round - 1 });
+            }
             break;
           }
           case 'speed':
@@ -732,7 +737,9 @@ export function createSolo(ctx) {
           case 'start': {
             const seq = Number(wrap.querySelector('#set-start').value);
             if (await confirmBox(`${String(seq).padStart(2, '0')}회차부터 시작할까요?`, '앞 회차는 건너뜀으로 표시돼요. 체크한 기록은 지워지지 않아요.', '적용')) {
-              await save('settings', { start: { seq, at: nowMs() } });
+              // 1주차 기준일(처음 시작한 날)은 그대로 둠
+              if (s.round <= 1) await save('settings', { start: { seq, at: s.start?.at || nowMs() } });
+              else await save('settings', { roundStarts: { [s.round]: { seq, at: s.roundStarts?.[s.round]?.at || nowMs() } } });
               toast('시작 회차를 바꿨어요');
             }
             break;
@@ -744,6 +751,12 @@ export function createSolo(ctx) {
         redraw();
       } catch (err) { handleError(err); }
     });
+  }
+
+  // 지금 회독에 체크·완료 처리한 게 있는지 (회독 취소 가능 여부)
+  function roundHasProgress(r) {
+    const rp = roundProg(S().solo.progress || {}, r);
+    return Object.values(rp.assign).some((a) => a?.st && a.st !== 'not_started') || Object.values(rp.session).some((x) => x?.manual);
   }
 
   // 콘텐츠 파일 다시 가져오기 → ID 기준 병합해서 저장 (진도는 손대지 않음)
