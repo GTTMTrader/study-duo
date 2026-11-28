@@ -8,7 +8,7 @@ import { deviceLabel } from './device.js';
 import { SKINS, getSkin, setSkin } from './skin.js';
 import { createSolo } from './solo.js';
 
-const VERSION = '1.6.0';
+const VERSION = '1.7.0';
 const $app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
 const isDemo = !firebaseConfig.apiKey;
@@ -286,7 +286,8 @@ function renderHome() {
     <div class="todo-row todo-head"><span></span><span class="c-me">● ${esc(myName())}</span><span class="c-fr">● ${esc(friendName())}</span></div>
     ${todo}
   </div>
-  <div class="cta">${cta}</div>`;
+  <div class="cta">${cta}</div>
+  <a class="review-entry" href="review.html"><span class="re-t">✦ 복습 탐사대</span><span class="re-s">교재 카드로 간격 복습 · 오늘 10문제</span><span class="arrow">→</span></a>`;
 }
 
 // ───────────────── 타이머 ─────────────────

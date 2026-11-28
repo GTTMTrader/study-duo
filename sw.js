@@ -1,13 +1,13 @@
 // 오프라인에서도 앱이 열리게 하는 서비스워커.
 // 앱 파일은 '인터넷 먼저 → 안 되면 저장본', 글꼴·Firebase 라이브러리는 '저장본 먼저'.
 // 앱을 고쳐서 다시 올릴 때 VERSION 숫자를 올리면 됨.
-const VERSION = 'v1.6.0';
+const VERSION = 'v1.7.0';
 const CACHE = `studyduo-${VERSION}`;
 const SHELL = [
   './',
   './index.html',
-  './styles.css?v=1.6.0',
-  './js/app.js?v=1.6.0',
+  './styles.css?v=1.7.0',
+  './js/app.js?v=1.7.0',
   './js/config.js',
   './js/dates.js',
   './js/defaults.js',
@@ -22,6 +22,12 @@ const SHELL = [
   './manifest.webmanifest?v=3',
   './icons/app-icon-192.png',
   './icons/app-icon-180.png',
+  './review.html',
+  './review.css?v=1.7.0',
+  './js/review.js?v=1.7.0',
+  './js/review-core.js',
+  './js/review-store.js',
+  './data/nsca-sports-nutrition.json?v=1',
 ];
 
 self.addEventListener('install', (e) => {
